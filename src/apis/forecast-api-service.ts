@@ -40,7 +40,7 @@ export class ForecastApiService {
      * @returns List of tasks
      */
     public async getTasks(): Promise<Task[]> {
-        let response = await fetch("https://api.forecast.it/tasks", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
+        let response = await fetch("https://api.forecast.it/v3/tasks", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
 
         return response.json();
     }
