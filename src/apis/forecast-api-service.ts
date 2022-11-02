@@ -18,7 +18,7 @@ export class ForecastApiService {
      * @returns List of allocations
      */
     public async getAllocations(): Promise<Allocation[]> {
-        let response = await fetch("https://api.forecast.it/api/v1/allocations", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
+        const response = await fetch("https://api.forecast.it/api/v1/allocations", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
 
         return response.json();
     }
@@ -29,7 +29,7 @@ export class ForecastApiService {
      * @returns List of projects
      */
     public async getProjects(): Promise<Project[]> {
-        let response = await fetch("https://api.forecast.it/api/v1/projects", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
+        const response = await fetch("https://api.forecast.it/api/v1/projects", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
 
         return response.json();
     }
@@ -40,7 +40,7 @@ export class ForecastApiService {
      * @returns List of tasks
      */
     public async getTasks(): Promise<Task[]> {
-        let response = await fetch("https://api.forecast.it/api/v3/tasks", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
+        const response = await fetch("https://api.forecast.it/api/v3/tasks", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
 
         return response.json();
     }
