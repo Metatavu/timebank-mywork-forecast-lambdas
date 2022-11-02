@@ -38,7 +38,7 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   
   return {
     statusCode: 200,
-    body: JSON.stringify(allocations)
+    body: JSON.stringify(filteredAllocations)
   };
 };
 
