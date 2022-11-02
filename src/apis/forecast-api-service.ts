@@ -35,12 +35,13 @@ export class ForecastApiService {
     }
 
     /**
-     * Gets all tasks from the api
+     * Gets all tasks from the api filtered by project id
      * 
-     * @returns List of tasks
+     * @param projectId Id of project
+     * @returns List of tasks 
      */
-    public async getTasks(): Promise<Task[]> {
-        const response = await fetch("https://api.forecast.it/api/v3/tasks", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
+    public async getTasks(projectId: number): Promise<Task[]> {
+        const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/tasks`, { headers: { "X-FORECAST-API-KEY": this.apiKey } });
 
         return response.json();
     }
