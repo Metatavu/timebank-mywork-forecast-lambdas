@@ -19,29 +19,14 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   //     body: "Unauthorized"
   //   };
   // }
+  
+  const api = ForecastApiServiceFactory.getService();
 
-  // Make forecast allocations API call
-  const Forecast = ForecastApiServiceFactory.getService();
-
-  const allocations = await Forecast.getAllocations();
-
-  console.log("allocations is", allocations);
-
-  // Format response
-  // const responseAllocations = allocations.map(row => (
-  //   {
-  //     id: row.id,
-  //     name: row.name,
-  //     seedURLs: row.seedURLs,
-  //     frequency: row.frequency,
-  //   }
-  // ));
-
-  // console.log("It is runnning", authorization, Authorization);
+  const allocations = await api.getAllocations();
   
   return {
     statusCode: 200,
-    body: JSON.stringify({})
+    body: JSON.stringify(allocations)
   };
 };
 
