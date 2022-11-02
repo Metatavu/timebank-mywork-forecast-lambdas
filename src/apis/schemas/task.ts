@@ -5,7 +5,7 @@ export interface Task {
     project_id: number,
     remaining: number,
     estimate: number,
-    start_date: Date,
-    end_date: Date,
+    start_date: string,
+    end_date: string,
     assignedPersons: number[],
 }
