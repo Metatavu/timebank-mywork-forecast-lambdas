@@ -4,6 +4,9 @@ import listAllocations from '@functions/list-allocations';
 import listProjects from '@functions/list-projects';
 import listTasks from '@functions/list-tasks';
 
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + "/.env" });
+
 const serverlessConfiguration: AWS = {
   service: 'timebank-lambdas',
   frameworkVersion: '3',

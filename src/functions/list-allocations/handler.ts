@@ -1,6 +1,7 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { parseBearerAuth } from '@libs/auth-utils';
+// import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
+import { ForecastApiServiceFactory } from 'src/apis/forecast-api-service-factory';
 
 /**
  * Lambda for listing Forecast allocations
@@ -8,19 +9,23 @@ import { middyfy } from '@libs/lambda';
  * @param event event
  */
 const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  const { headers: { authorization, Authorization } } = event;
+  // const { headers: { authorization, Authorization } } = event;
 
   // TODO: parseBearerAuth not working yet
-  const auth = parseBearerAuth(authorization || Authorization);
-  if (!auth) {
-    return {
-      statusCode: 401,
-      body: "Unauthorized"
-    };
-  }
+  // const auth = parseBearerAuth(authorization || Authorization);
+  // if (!auth) {
+  //   return {
+  //     statusCode: 401,
+  //     body: "Unauthorized"
+  //   };
+  // }
 
   // Make forecast allocations API call
-  // const allocations =
+  const Forecast = ForecastApiServiceFactory.getService();
+
+  const allocations = await Forecast.getAllocations();
+
+  console.log("allocations is", allocations);
 
   // Format response
   // const responseAllocations = allocations.map(row => (
@@ -31,10 +36,12 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   //     frequency: row.frequency,
   //   }
   // ));
+
+  // console.log("It is runnning", authorization, Authorization);
   
   return {
     statusCode: 200,
-    body: JSON.stringify(responseAllocations)
+    body: JSON.stringify({})
   };
 };
 

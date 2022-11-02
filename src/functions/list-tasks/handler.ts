@@ -34,7 +34,7 @@ const listTasks: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   
   return {
     statusCode: 200,
-    body: JSON.stringify(responseTasks)
+    body: JSON.stringify({})
   };
 };
 
