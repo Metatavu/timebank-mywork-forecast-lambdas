@@ -23,10 +23,18 @@ const listProjects: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = ForecastApiServiceFactory.getService();
 
   const projects = await api.getProjects();
+
+  const currentDate = new Date();
+
+  const filteredProjects = projects.filter(project => {
+    return new Date(project.start_date) <= currentDate 
+      && new Date(project.end_date) >= currentDate
+      && project.stage == "RUNNING";
+  });
   
   return {
     statusCode: 200,
-    body: JSON.stringify(projects)
+    body: JSON.stringify(filteredProjects)
   };
 }
 

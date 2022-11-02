@@ -23,6 +23,18 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   const api = ForecastApiServiceFactory.getService();
 
   const allocations = await api.getAllocations();
+
+  const currentDate = new Date();
+
+  const projectId = event.pathParameters.projectId;
+  const personId = event.pathParameters.personId;
+
+  const filteredAllocations = allocations.filter(allocation => {
+    return new Date(allocation.start_date) <= currentDate 
+      && new Date(allocation.end_date) >= currentDate
+      && allocation.project.toString() == projectId
+      && allocation.person.toString() == personId;
+  })
   
   return {
     statusCode: 200,
