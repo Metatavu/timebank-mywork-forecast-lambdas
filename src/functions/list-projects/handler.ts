@@ -1,6 +1,7 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { parseBearerAuth } from '@libs/auth-utils';
+// import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
+import { ForecastApiServiceFactory } from 'src/apis/forecast-api-service-factory';
 
 /**
  * Lambda for listing Forecast projects
@@ -8,34 +9,25 @@ import { middyfy } from '@libs/lambda';
  * @param event event
  */
 const listProjects: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  const { headers: { authorization, Authorization } } = event;
+  // const { headers: { authorization, Authorization } } = event;
 
   // TODO: parseBearerAuth not working yet
-  const auth = parseBearerAuth(authorization || Authorization);
-  if (!auth) {
-    return {
-      statusCode: 401,
-      body: "Unauthorized"
-    };
-  }
+  // const auth = parseBearerAuth(authorization || Authorization);
+  // if (!auth) {
+  //   return {
+  //     statusCode: 401,
+  //     body: "Unauthorized"
+  //   };
+  // }
 
-  // Make forecast projects API call
-  // const projects =
+  const api = ForecastApiServiceFactory.getService();
 
-  // Format response
-  // const responseProjects = projects.map(row => (
-  //   {
-  //     id: row.id,
-  //     name: row.name,
-  //     seedURLs: row.seedURLs,
-  //     frequency: row.frequency,
-  //   }
-  // ));
+  const projects = await api.getProjects();
   
   return {
     statusCode: 200,
-    body: JSON.stringify({})
+    body: JSON.stringify(projects)
   };
-};
+}
 
 export const main = middyfy(listProjects);
