@@ -3,6 +3,8 @@ import type { AWS } from '@serverless/typescript';
 import listAllocations from '@functions/list-allocations';
 import listProjects from '@functions/list-projects';
 import listTasks from '@functions/list-tasks';
+import listTimeEntries from '@functions/list-time-entries';
+import listProjectSprints from '@functions/list-project-sprints';
 
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
@@ -23,7 +25,13 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
     },
   },
-  functions: { listAllocations, listProjects, listTasks },
+  functions: {
+    listAllocations,
+    listProjects,
+    listTasks,
+    listTimeEntries,
+    listProjectSprints
+  },
   package: { individually: true },
   custom: {
     esbuild: {
