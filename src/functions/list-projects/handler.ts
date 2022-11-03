@@ -21,15 +21,35 @@ const listProjects: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   // }
 
   const api = ForecastApiServiceFactory.getService();
-
   const projects = await api.getProjects();
 
   const currentDate = new Date();
 
+  const startDate = event.queryStringParameters.startDate;
+  const endDate = event.queryStringParameters.endDate;
+
   const filteredProjects = projects.filter(project => {
-    return new Date(project.start_date) <= currentDate 
-      && new Date(project.end_date) >= currentDate
-      && project.stage == "RUNNING";
+    if (startDate) {
+      if (project.start_date == null || new Date(startDate) <= new Date(project.start_date)) {
+        return false;
+      }
+    } else if (project.start_date == null || currentDate <= new Date(project.start_date)) {
+      return false;
+    }
+
+    if (endDate) {
+        if (project.end_date == null || new Date(endDate) >= new Date(project.end_date)) {
+          return false;
+        }
+    } else if (project.end_date == null || currentDate >= new Date(project.end_date)) {
+      return false;
+    }
+
+    if (project.stage != "RUNNING") {
+      return false;
+    }
+
+    return true;
   });
   
   return {

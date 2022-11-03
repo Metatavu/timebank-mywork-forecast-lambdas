@@ -26,14 +26,37 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
 
   const currentDate = new Date();
 
-  const projectId = event.pathParameters.projectId;
-  const personId = event.pathParameters.personId;
+  const startDate = event.queryStringParameters.startDate;
+  const endDate = event.queryStringParameters.endDate;
+  const personId = event.queryStringParameters.personId;
+  const projectId = event.queryStringParameters.projectId;
 
   const filteredAllocations = allocations.filter(allocation => {
-    return new Date(allocation.start_date) <= currentDate 
-      && new Date(allocation.end_date) >= currentDate
-      && allocation.project.toString() == projectId
-      && allocation.person.toString() == personId;
+    if (startDate) {
+      if (allocation.start_date == null || new Date(startDate) <= new Date(allocation.start_date)) {
+        return false;
+      }
+    } else if (allocation.start_date == null || currentDate <= new Date(allocation.start_date)) {
+      return false;
+    }
+
+    if (endDate) {
+        if (allocation.end_date == null || new Date(endDate) >= new Date(allocation.end_date)) {
+          return false;
+        }
+    } else if (allocation.end_date == null || currentDate >= new Date(allocation.end_date)) {
+      return false;
+    }
+
+    if (projectId != null && allocation.project.toString() != projectId) {
+      return false;
+    }
+
+    if (personId != null && allocation.person.toString() != personId) {
+      return false;
+    }
+
+    return true;
   })
   
   return {
