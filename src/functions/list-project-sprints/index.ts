@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'get',
-        path: '/tasks'
+        path: '/projects/{projectId}/sprints'
       },
     },
   ],

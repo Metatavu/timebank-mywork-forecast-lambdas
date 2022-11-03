@@ -1,13 +1,14 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { parseBearerAuth } from '@libs/auth-utils';
+// import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
+import { ForecastApiServiceFactory } from 'src/apis/forecast-api-service-factory';
 
 /**
- * Lambda for listing Forecast tasks
+ * Lambda for listing Forecast project sprints
  * 
  * @param event event
  */
-const listTasks: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
+const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   // const { headers: { authorization, Authorization } } = event;
 
   // TODO: parseBearerAuth not working yet
@@ -19,22 +20,12 @@ const listTasks: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   //   };
   // }
 
-  // TODO implement function logic
-
-  // Format response
-  // const responseTasks = tasks.map(row => (
-  //   {
-  //     id: row.id,
-  //     name: row.name,
-  //     seedURLs: row.seedURLs,
-  //     frequency: row.frequency,
-  //   }
-  // ));
+  // TODO: Implement function logic
   
   return {
     statusCode: 200,
     body: JSON.stringify({})
   };
-};
+}
 
-export const main = middyfy(listTasks);
+export const main = middyfy(listProjectSprints);
