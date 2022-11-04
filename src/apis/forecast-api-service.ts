@@ -6,6 +6,7 @@ export interface ForecastApiService {
     getAllocations: () => Promise<Allocation[]>;
     getProjects: () => Promise<Project[]>;
     getTasks: (projectId: number) => Promise<Task[]>;
+    getAllTasks: () => Promise<Task[]>;
 }
 
 /**
@@ -45,6 +46,12 @@ export function CreateForecastApiService(): ForecastApiService {
          */
         async getTasks(projectId: number): Promise<Task[]> {
             const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/tasks`, { headers: { "X-FORECAST-API-KEY": apiKey } });
+
+            return response.json();
+        },
+
+        async getAllTasks(): Promise<Task[]> {
+            const response = await fetch(`https://api.forecast.it/api/v3/tasks`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
             return response.json();
         }
