@@ -2,47 +2,51 @@ import { Allocation } from "./schemas/allocation";
 import { Project } from "./schemas/project";
 import { Task } from "./schemas/task";
 
+export interface ForecastApiService {
+    getAllocations: () => Promise<Allocation[]>;
+    getProjects: () => Promise<Project[]>;
+    getTasks: (projectId: number) => Promise<Task[]>;
+}
+
 /**
- * Class for the Forecast API
+ * Creates ForecastApiService
  */
-export class ForecastApiService {
-    private apiKey: string;
+export function CreateForecastApiService(): ForecastApiService {
+    const apiKey: string = process.env.FORECAST_API_KEY;
 
-    constructor(apiKey: string) {
-        this.apiKey = apiKey;
-    }
+    return {
+        /**
+         * Gets all allocations from the api
+         * 
+         * @returns List of allocations
+         */
+        async getAllocations(): Promise<Allocation[]> {
+            const response = await fetch("https://api.forecast.it/api/v1/allocations", { headers: { "X-FORECAST-API-KEY": apiKey } });
 
-    /**
-     * Gets all allocations from the api
-     * 
-     * @returns List of allocations
-     */
-    public async getAllocations(): Promise<Allocation[]> {
-        const response = await fetch("https://api.forecast.it/api/v1/allocations", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
+            return response.json();
+        },
 
-        return response.json();
-    }
+        /**
+         * Gets all projects from the api
+         * 
+         * @returns List of projects
+         */
+        async getProjects(): Promise<Project[]> {
+            const response = await fetch("https://api.forecast.it/api/v1/projects", { headers: { "X-FORECAST-API-KEY": apiKey } });
 
-    /**
-     * Gets all projects from the api
-     * 
-     * @returns List of projects
-     */
-    public async getProjects(): Promise<Project[]> {
-        const response = await fetch("https://api.forecast.it/api/v1/projects", { headers: { "X-FORECAST-API-KEY": this.apiKey } });
+            return response.json();
+        },
 
-        return response.json();
-    }
+        /**
+         * Gets all tasks from the api filtered by project id
+         * 
+         * @param projectId Id of project
+         * @returns List of tasks 
+         */
+        async getTasks(projectId: number): Promise<Task[]> {
+            const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/tasks`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
-    /**
-     * Gets all tasks from the api filtered by project id
-     * 
-     * @param projectId Id of project
-     * @returns List of tasks 
-     */
-    public async getTasks(projectId: number): Promise<Task[]> {
-        const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/tasks`, { headers: { "X-FORECAST-API-KEY": this.apiKey } });
-
-        return response.json();
+            return response.json();
+        }
     }
 }

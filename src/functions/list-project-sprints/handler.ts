@@ -1,7 +1,6 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
-import { ForecastApiServiceFactory } from 'src/apis/forecast-api-service-factory';
 
 /**
  * Lambda for listing Forecast project sprints

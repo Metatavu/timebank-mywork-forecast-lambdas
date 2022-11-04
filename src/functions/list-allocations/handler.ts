@@ -1,7 +1,7 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
-import { ForecastApiServiceFactory } from 'src/apis/forecast-api-service-factory';
+import { CreateForecastApiService } from 'src/apis/forecast-api-service';
 
 /**
  * Lambda for listing Forecast allocations
@@ -20,7 +20,7 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   //   };
   // }
   
-  const api = ForecastApiServiceFactory.getService();
+  const api = CreateForecastApiService();
 
   const allocations = await api.getAllocations();
 
