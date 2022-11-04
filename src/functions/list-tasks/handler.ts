@@ -2,6 +2,10 @@ import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
 
+async function listTasksFunction(): Promise<any> {
+
+} 
+
 /**
  * Lambda for listing Forecast tasks
  * 
@@ -30,10 +34,12 @@ const listTasks: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   //     frequency: row.frequency,
   //   }
   // ));
+
+  let tasks = await listTasksFunction();
   
   return {
     statusCode: 200,
-    body: JSON.stringify({})
+    body: JSON.stringify(tasks)
   };
 };
 

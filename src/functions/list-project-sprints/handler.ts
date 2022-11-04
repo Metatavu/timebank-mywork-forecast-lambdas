@@ -2,6 +2,10 @@ import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
 
+async function listProjectSprintsFunction(): Promise<any> {
+
+}
+
 /**
  * Lambda for listing Forecast project sprints
  * 
@@ -20,10 +24,12 @@ const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event 
   // }
 
   // TODO: Implement function logic
+
+  let projectSprints = await listProjectSprintsFunction();
   
   return {
     statusCode: 200,
-    body: JSON.stringify({})
+    body: JSON.stringify(projectSprints)
   };
 }
 

@@ -1,7 +1,44 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
-import { CreateForecastApiService } from 'src/apis/forecast-api-service';
+import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-api-service';
+
+interface Parameters {
+  startDate?: Date,
+  endDate?: Date,
+}
+
+async function listProjectsFunction(api: ForecastApiService, getCurrentDate: () => Date, parameters: Parameters): Promise<any> {
+  const projects = await api.getProjects();
+
+  const currentDate = getCurrentDate();
+
+  const filteredProjects = projects.filter(project => {
+    if (parameters.startDate) {
+      if (project.start_date == null || new Date(parameters.startDate) <= new Date(project.start_date)) {
+        return false;
+      }
+    } else if (project.start_date == null || currentDate <= new Date(project.start_date)) {
+      return false;
+    }
+
+    if (parameters.endDate) {
+        if (project.end_date == null || new Date(parameters.endDate) >= new Date(project.end_date)) {
+          return false;
+        }
+    } else if (project.end_date == null || currentDate >= new Date(project.end_date)) {
+      return false;
+    }
+
+    if (project.stage != "RUNNING") {
+      return false;
+    }
+
+    return true;
+  });
+
+  return filteredProjects;
+} 
 
 /**
  * Lambda for listing Forecast projects
@@ -21,36 +58,11 @@ const listProjects: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   // }
 
   const api = CreateForecastApiService();
-  const projects = await api.getProjects();
 
-  const currentDate = new Date();
-
-  const startDate = event.queryStringParameters.startDate;
-  const endDate = event.queryStringParameters.endDate;
-
-  const filteredProjects = projects.filter(project => {
-    if (startDate) {
-      if (project.start_date == null || new Date(startDate) <= new Date(project.start_date)) {
-        return false;
-      }
-    } else if (project.start_date == null || currentDate <= new Date(project.start_date)) {
-      return false;
-    }
-
-    if (endDate) {
-        if (project.end_date == null || new Date(endDate) >= new Date(project.end_date)) {
-          return false;
-        }
-    } else if (project.end_date == null || currentDate >= new Date(project.end_date)) {
-      return false;
-    }
-
-    if (project.stage != "RUNNING") {
-      return false;
-    }
-
-    return true;
-  });
+  const filteredProjects = await listProjectsFunction(api, () => new Date(), {
+    startDate: new Date(event.queryStringParameters.startDate),
+    endDate: new Date(event.queryStringParameters.endDate),
+  })
   
   return {
     statusCode: 200,

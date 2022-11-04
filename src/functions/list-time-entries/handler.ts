@@ -2,6 +2,10 @@ import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
 
+async function listTimeEntriesFunction(): Promise<any> {
+
+}
+
 /**
  * Lambda for listing Forecast time entries
  * 
@@ -20,10 +24,12 @@ const listTimeEntries: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   // }
 
   // TODO implement functoin logic
+
+  const timeEntries = await listTimeEntriesFunction();
   
   return {
     statusCode: 200,
-    body: JSON.stringify({})
+    body: JSON.stringify(timeEntries)
   };
 }
 
