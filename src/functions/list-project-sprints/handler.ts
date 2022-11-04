@@ -1,9 +1,34 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
+import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-api-service';
 
-async function listProjectSprintsFunction(): Promise<any> {
+interface Parameters {
+  projectId: number,
+}
 
+interface Response {
+  id: number,
+  name: string,
+  startDate: string,
+  endDate: string,
+}
+
+async function listProjectSprintsFunction(api: ForecastApiService, parameters: Parameters): Promise<Response[]> {
+  const sprints = await api.getProjectSprints(parameters.projectId);
+
+  const filteredSprints = sprints.filter(sprint => sprint.id == parameters.projectId);
+
+  const responseSprints = filteredSprints.map(sprint => {
+    return {
+      id: sprint.id,
+      name: sprint.name,
+      startDate: sprint.start_date,
+      endDate: sprint.end_date,
+    };
+  });
+
+  return responseSprints;
 }
 
 /**
@@ -23,9 +48,11 @@ const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event 
   //   };
   // }
 
-  // TODO: Implement function logic
+  const api = CreateForecastApiService();
 
-  let projectSprints = await listProjectSprintsFunction();
+  const projectSprints = await listProjectSprintsFunction(api, {
+    projectId: +event.queryStringParameters.projectId
+  });
   
   return {
     statusCode: 200,
