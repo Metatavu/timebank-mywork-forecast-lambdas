@@ -10,7 +10,21 @@ interface Parameters {
   projectId: string,
 }
 
-async function listAllocationsFunction(api: ForecastApiService, getCurrentDate: () => Date, parameters: Parameters): Promise<any> {
+export interface Response {
+  id: number,
+  project: number,
+  person: number,
+  startDate: string,
+  endDate: string,
+  monday: number,
+  tuesday: number,
+  wednesday: number,
+  thursday: number,
+  friday: number,
+  notes: string,
+}
+
+async function listAllocationsFunction(api: ForecastApiService, getCurrentDate: () => Date, parameters: Parameters): Promise<Response[]> {
   const allocations = await api.getAllocations();
 
   const currentDate = getCurrentDate();
@@ -41,9 +55,25 @@ async function listAllocationsFunction(api: ForecastApiService, getCurrentDate: 
     }
 
     return true;
-  })
+  });
 
-  return filteredAllocations;
+  const responseAllocations = filteredAllocations.map(allocation => {
+    return {
+      id: allocation.id,
+      project: allocation.project,
+      person: allocation.person,
+      startDate: allocation.start_date,
+      endDate: allocation.end_date,
+      monday: allocation.monday,
+      tuesday: allocation.tuesday,
+      wednesday: allocation.wednesday,
+      thursday: allocation.thursday,
+      friday: allocation.friday,
+      notes: allocation.notes,
+    }
+  });
+
+  return responseAllocations;
 }
 
 /**
@@ -65,7 +95,7 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   
   const api = CreateForecastApiService();
 
-  let allocations = await listAllocationsFunction(api, () => new Date(), {
+  const allocations = await listAllocationsFunction(api, () => new Date(), {
     startDate: new Date(event.queryStringParameters.start_date),
     endDate: new Date(event.queryStringParameters.endDate),
     personId: event.queryStringParameters.personId,
