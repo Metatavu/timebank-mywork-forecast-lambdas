@@ -6,8 +6,8 @@ import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-
 interface Parameters {
   startDate?: Date,
   endDate?: Date,
-  personId: string,
-  projectId: string,
+  personId?: string,
+  projectId?: string,
 }
 
 export interface Response {
@@ -24,10 +24,8 @@ export interface Response {
   notes: string,
 }
 
-async function listAllocationsFunction(api: ForecastApiService, getCurrentDate: () => Date, parameters: Parameters): Promise<Response[]> {
+async function listAllocationsFunction(api: ForecastApiService, currentDate: Date, parameters: Parameters): Promise<Response[]> {
   const allocations = await api.getAllocations();
-
-  const currentDate = getCurrentDate();
 
   const filteredAllocations = allocations.filter(allocation => {
     if (parameters.startDate) {
@@ -95,7 +93,7 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   
   const api = CreateForecastApiService();
 
-  const allocations = await listAllocationsFunction(api, () => new Date(), {
+  const allocations = await listAllocationsFunction(api, new Date(), {
     startDate: new Date(event.queryStringParameters.start_date),
     endDate: new Date(event.queryStringParameters.endDate),
     personId: event.queryStringParameters.personId,

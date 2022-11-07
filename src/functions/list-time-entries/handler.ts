@@ -1,7 +1,6 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from '@libs/lambda';
-import { time } from 'console';
 import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-api-service';
 
 interface Parameters {
@@ -49,7 +48,12 @@ const listTimeEntries: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   //   };
   // }
 
-  // TODO implement functoin logic
+  if (!event.queryStringParameters.projectId) {
+    return {
+      statusCode: 400,
+      body: "Invalid parameters"
+    };
+  }
 
   const api = CreateForecastApiService();
   

@@ -8,10 +8,8 @@ interface Parameters {
   endDate?: Date,
 }
 
-async function listProjectsFunction(api: ForecastApiService, getCurrentDate: () => Date, parameters: Parameters): Promise<any> {
+async function listProjectsFunction(api: ForecastApiService, currentDate: Date, parameters: Parameters): Promise<any> {
   const projects = await api.getProjects();
-
-  const currentDate = getCurrentDate();
 
   const filteredProjects = projects.filter(project => {
     if (parameters.startDate) {
@@ -59,7 +57,7 @@ const listProjects: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
 
   const api = CreateForecastApiService();
 
-  const filteredProjects = await listProjectsFunction(api, () => new Date(), {
+  const filteredProjects = await listProjectsFunction(api, new Date(), {
     startDate: new Date(event.queryStringParameters.startDate),
     endDate: new Date(event.queryStringParameters.endDate),
   })

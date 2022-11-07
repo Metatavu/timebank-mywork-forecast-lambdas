@@ -48,6 +48,13 @@ const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event 
   //   };
   // }
 
+  if (!event.queryStringParameters.projectId) {
+    return {
+      statusCode: 400,
+      body: "Invalid parameters"
+    };
+  }
+
   const api = CreateForecastApiService();
 
   const projectSprints = await listProjectSprintsFunction(api, {
