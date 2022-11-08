@@ -69,7 +69,7 @@ const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event 
   const api = CreateForecastApiService();
 
   const projectSprints = await listProjectSprintsFunction(api, {
-    projectId: parseInt(event.queryStringParameters.projectId),
+    projectId: parseInt(event.queryStringParameters.projectId)
   });
   
   return {
