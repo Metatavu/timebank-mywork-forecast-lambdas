@@ -1,41 +1,54 @@
-import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
+import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { filterByDate } from "@libs/filter-utils";
 // import { parseBearerAuth } from '@libs/auth-utils';
-import { middyfy } from '@libs/lambda';
-import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-api-service';
+import { middyfy } from "@libs/lambda";
+import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
 
-interface Parameters {
+/**
+ * Parameters for lambda
+ */
+export interface ListProjectsParameters {
   startDate?: Date,
   endDate?: Date,
 }
 
-async function listProjectsFunction(api: ForecastApiService, currentDate: Date, parameters: Parameters): Promise<any> {
+/**
+ * Response schema for lambda
+ */
+export interface Response {
+  id: number,
+  name: string,
+  startDate: string,
+  endDate: string,
+}
+
+/**
+ * Gets and filters projects
+ * 
+ * @param api Instance of ForecastApiService
+ * @param currentDate Current date
+ * @param parameters Parameters
+ * @returns Array of projects
+ */
+async function listProjectsFunction(api: ForecastApiService, currentDate: Date, parameters: ListProjectsParameters): Promise<Response[]> {
   const projects = await api.getProjects();
 
   const filteredProjects = projects.filter(project => {
-    if (parameters.startDate) {
-      if (project.start_date == null || new Date(parameters.startDate) <= new Date(project.start_date)) {
-        return false;
-      }
-    } else if (project.start_date == null || currentDate <= new Date(project.start_date)) {
-      return false;
+    if (filterByDate(project, currentDate, parameters) && project.stage == "RUNNING") {
+      return true;
     }
 
-    if (parameters.endDate) {
-        if (project.end_date == null || new Date(parameters.endDate) >= new Date(project.end_date)) {
-          return false;
-        }
-    } else if (project.end_date == null || currentDate >= new Date(project.end_date)) {
-      return false;
-    }
-
-    if (project.stage != "RUNNING") {
-      return false;
-    }
-
-    return true;
+    return false;
   });
 
-  return filteredProjects;
+  return filteredProjects.map(project => {
+    return {
+      id: project.id,
+      name: project.name,
+      startDate: project.start_date,
+      endDate: project.end_date,
+    }
+  })
 } 
 
 /**

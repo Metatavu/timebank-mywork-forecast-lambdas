@@ -1,15 +1,22 @@
-import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
+import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { filterByDate, filterByPerson, filterByProject } from "@libs/filter-utils";
 // import { parseBearerAuth } from '@libs/auth-utils';
-import { middyfy } from '@libs/lambda';
-import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-api-service';
+import { middyfy } from "@libs/lambda";
+import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
 
-interface Parameters {
+/**
+ * Parameters for lambda
+ */
+export interface ListAllocationsParameters {
   startDate?: Date,
   endDate?: Date,
   personId?: string,
   projectId?: string,
 }
 
+/**
+ * Response schema for lambda
+ */
 export interface Response {
   id: number,
   project: number,
@@ -24,38 +31,28 @@ export interface Response {
   notes: string,
 }
 
-async function listAllocationsFunction(api: ForecastApiService, currentDate: Date, parameters: Parameters): Promise<Response[]> {
+/**
+ * Gets and filters allocations
+ * 
+ * @param api Instance of ForecastApiService
+ * @param currentDate Current date
+ * @param parameters Parameters
+ * @returns Array of allocations
+ */
+async function listAllocationsFunction(api: ForecastApiService, currentDate: Date, parameters: ListAllocationsParameters): Promise<Response[]> {
   const allocations = await api.getAllocations();
 
   const filteredAllocations = allocations.filter(allocation => {
-    if (parameters.startDate) {
-      if (allocation.start_date == null || parameters.startDate <= new Date(allocation.start_date)) {
-        return false;
-      }
-    } else if (allocation.start_date == null || currentDate <= new Date(allocation.start_date)) {
-      return false;
+    if (filterByDate(allocation, currentDate, parameters)
+     && filterByProject(allocation, parameters)
+     && filterByPerson(allocation, parameters)) {
+      return true;
     }
 
-    if (parameters.endDate) {
-        if (allocation.end_date == null || parameters.endDate >= new Date(allocation.end_date)) {
-          return false;
-        }
-    } else if (allocation.end_date == null || currentDate >= new Date(allocation.end_date)) {
-      return false;
-    }
-
-    if (parameters.projectId != null && allocation.project.toString() != parameters.projectId) {
-      return false;
-    }
-
-    if (parameters.personId != null && allocation.person.toString() != parameters.personId) {
-      return false;
-    }
-
-    return true;
+    return false;
   });
 
-  const responseAllocations = filteredAllocations.map(allocation => {
+  return filteredAllocations.map(allocation => {
     return {
       id: allocation.id,
       project: allocation.project,
@@ -70,8 +67,6 @@ async function listAllocationsFunction(api: ForecastApiService, currentDate: Dat
       notes: allocation.notes,
     }
   });
-
-  return responseAllocations;
 }
 
 /**

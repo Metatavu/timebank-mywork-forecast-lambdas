@@ -1,13 +1,19 @@
-import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
+import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 // import { parseBearerAuth } from '@libs/auth-utils';
-import { middyfy } from '@libs/lambda';
-import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-api-service';
+import { middyfy } from "@libs/lambda";
+import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
 
-interface Parameters {
+/**
+ * Parameters for lambda
+ */
+export interface ListTimeEntriesParameters {
   projectId: number
 }
 
-interface Response {
+/**
+ * Response schema for lambda
+ */
+export interface Response {
   id: number,
   person: number,
   project: number,
@@ -15,10 +21,17 @@ interface Response {
   timeRegistered: number;
 }
 
-async function listTimeEntriesFunction(api: ForecastApiService, parameters: Parameters): Promise<Response[]> {
-  const timeEntries = await api.getTimeEntries(parameters.projectId);
+/**
+ * Gets time entries for a project
+ * 
+ * @param api Instance of ForecastApiService
+ * @param parameters Parameters
+ * @returns Array of time entries
+ */
+async function listTimeEntriesFunction(api: ForecastApiService, parameters: ListTimeEntriesParameters): Promise<Response[]> {
+  const timeEntries = await api.getTimeEntriesByProject(parameters.projectId);
 
-  const responseTimeEntries = timeEntries.map(timeEntry => {
+  return timeEntries.map(timeEntry => {
     return {
       id: timeEntry.id,
       person: timeEntry.person,
@@ -26,9 +39,7 @@ async function listTimeEntriesFunction(api: ForecastApiService, parameters: Para
       task: timeEntry.task,
       timeRegistered: timeEntry.time_registered,
     }
-  })
-
-  return responseTimeEntries;
+  });
 }
 
 /**
@@ -58,7 +69,7 @@ const listTimeEntries: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   const api = CreateForecastApiService();
   
   const timeEntries = await listTimeEntriesFunction(api, {
-    projectId: +event.queryStringParameters.projectId
+    projectId: parseInt(event.queryStringParameters.projectId),
   });
   
   return {

@@ -1,13 +1,20 @@
-import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { parseBearerAuth } from '@libs/auth-utils';
-import { middyfy } from '@libs/lambda';
-import { CreateForecastApiService, ForecastApiService } from 'src/apis/forecast-api-service';
+import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { parseBearerAuth } from "@libs/auth-utils";
+import { middyfy } from "@libs/lambda";
+import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { Task } from "src/apis/schemas/task";
 
-interface Parameters {
+/**
+ * Parameters for lambda
+ */
+export interface ListTasksParameters {
   projectId: number,
 }
 
-interface Response {
+/**
+ * Response schema for lambda
+ */
+export interface Response {
   id: string,
   title: string,
   description: string,
@@ -20,16 +27,25 @@ interface Response {
   assignedPersons: number[],
 }
 
-async function listTasksFunction(api: ForecastApiService, parameters: Parameters): Promise<Response[]> {
-  if (parameters.projectId != null) {
-    const tasks = await api.getTasks(parameters.projectId);
+/**
+ * Gets tasks for a project
+ * 
+ * @param api Instance of ForecastApiService
+ * @param parameters Parameters
+ * @returns Array of tasks
+ */
+async function listTasksFunction(api: ForecastApiService, parameters: ListTasksParameters): Promise<Response[]> {
+  let filteredTasks: Task[];
 
-    var filteredTasks = tasks.filter(task => task.project_id == parameters.projectId);
+  if (parameters.projectId !== null) {
+    const tasks = await api.getTasksByProject(parameters.projectId);
+
+    filteredTasks = tasks.filter(task => task.project_id === parameters.projectId);
   } else {
-    var filteredTasks = await api.getAllTasks();
+    filteredTasks = await api.getAllTasks();
   }
 
-  const responseTasks = filteredTasks.map(task => {
+  return filteredTasks.map(task => {
     return {
       id: task.id,
       title: task.title,
@@ -43,8 +59,6 @@ async function listTasksFunction(api: ForecastApiService, parameters: Parameters
       assignedPersons: task.assignedPersons,
     }
   });
-
-  return responseTasks;
 }
 
 /**
@@ -67,7 +81,7 @@ const listTasks: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
 
   const tasks = await listTasksFunction(api, {
-    projectId: +event.queryStringParameters.projectId,
+    projectId: parseInt(event.queryStringParameters.projectId),
   });
   
   return {

@@ -1,10 +1,10 @@
-import type { AWS } from '@serverless/typescript';
+import type { AWS } from "@serverless/typescript";
 
-import listAllocations from '@functions/list-allocations';
-import listProjects from '@functions/list-projects';
-import listTasks from '@functions/list-tasks';
-import listTimeEntries from '@functions/list-time-entries';
-import listProjectSprints from '@functions/list-project-sprints';
+import listAllocations from "@functions/list-allocations";
+import listProjects from "@functions/list-projects";
+import listTasks from "@functions/list-tasks";
+import listTimeEntries from "@functions/list-time-entries";
+import listProjectSprints from "@functions/list-project-sprints";
 
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });

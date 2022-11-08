@@ -5,10 +5,10 @@ import { Task } from "./schemas/task";
 export interface ForecastApiService {
     getAllocations: () => Promise<Allocation[]>;
     getProjects: () => Promise<Project[]>;
-    getTasks: (projectId: number) => Promise<Task[]>;
+    getTasksByProject: (projectId: number) => Promise<Task[]>;
     getAllTasks: () => Promise<Task[]>;
     getProjectSprints: (projectId: number) => Promise<Sprint[]>;
-    getTimeEntries: (projectId: number) => Promise<TimeEntry[]>;
+    getTimeEntriesByProject: (projectId: number) => Promise<TimeEntry[]>;
 }
 
 /**
@@ -46,7 +46,7 @@ export function CreateForecastApiService(): ForecastApiService {
          * @param projectId Id of project
          * @returns List of tasks 
          */
-        async getTasks(projectId: number): Promise<Task[]> {
+        async getTasksByProject(projectId: number): Promise<Task[]> {
             const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/tasks`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
             return response.json();
@@ -81,7 +81,7 @@ export function CreateForecastApiService(): ForecastApiService {
          * @param projectId Id of project
          * @returns List of time entries
          */
-        async getTimeEntries(projectId: number): Promise<TimeEntry[]> {
+        async getTimeEntriesByProject(projectId: number): Promise<TimeEntry[]> {
             const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/time_registrations`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
             return response.json();
