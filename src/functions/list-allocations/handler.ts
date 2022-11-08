@@ -89,7 +89,7 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   const api = CreateForecastApiService();
 
   const allocations = await listAllocationsFunction(api, new Date(), {
-    startDate: new Date(event.queryStringParameters.start_date),
+    startDate: new Date(event.queryStringParameters.startDate),
     endDate: new Date(event.queryStringParameters.endDate),
     personId: event.queryStringParameters.personId,
     projectId: event.queryStringParameters.projectId,
