@@ -28,7 +28,7 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of time entries
  */
-async function listTimeEntriesFunction(api: ForecastApiService, parameters: ListTimeEntriesParameters): Promise<Response[]> {
+const listTimeEntries = async (api: ForecastApiService, parameters: ListTimeEntriesParameters): Promise<Response[]> => {
   const timeEntries = await api.getTimeEntriesByProject(parameters.projectId);
 
   return timeEntries.map(timeEntry => {
@@ -47,18 +47,7 @@ async function listTimeEntriesFunction(api: ForecastApiService, parameters: List
  * 
  * @param event event
  */
-const listTimeEntries: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  // const { headers: { authorization, Authorization } } = event;
-
-  // TODO: parseBearerAuth not working yet
-  // const auth = parseBearerAuth(authorization || Authorization);
-  // if (!auth) {
-  //   return {
-  //     statusCode: 401,
-  //     body: "Unauthorized"
-  //   };
-  // }
-
+const listTimeEntriesHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   if (!event.queryStringParameters.projectId) {
     return {
       statusCode: 400,
@@ -68,7 +57,7 @@ const listTimeEntries: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
 
   const api = CreateForecastApiService();
   
-  const timeEntries = await listTimeEntriesFunction(api, {
+  const timeEntries = await listTimeEntries(api, {
     projectId: parseInt(event.queryStringParameters.projectId),
   });
   
@@ -78,4 +67,4 @@ const listTimeEntries: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   };
 }
 
-export const main = middyfy(listTimeEntries);
+export const main = middyfy(listTimeEntriesHandler);

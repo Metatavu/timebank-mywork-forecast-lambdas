@@ -27,7 +27,7 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of sprints
  */
-async function listProjectSprintsFunction(api: ForecastApiService, parameters: ListProjectSprintsParameters): Promise<Response[]> {
+const listProjectSprints = async (api: ForecastApiService, parameters: ListProjectSprintsParameters): Promise<Response[]> => {
   const sprints = await api.getProjectSprints(parameters.projectId);
 
   const filteredSprints = sprints.filter(sprint => sprint.id === parameters.projectId);
@@ -47,18 +47,7 @@ async function listProjectSprintsFunction(api: ForecastApiService, parameters: L
  * 
  * @param event event
  */
-const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  // const { headers: { authorization, Authorization } } = event;
-
-  // TODO: parseBearerAuth not working yet
-  // const auth = parseBearerAuth(authorization || Authorization);
-  // if (!auth) {
-  //   return {
-  //     statusCode: 401,
-  //     body: "Unauthorized"
-  //   };
-  // }
-
+const listProjectSprintsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   if (!event.queryStringParameters.projectId) {
     return {
       statusCode: 400,
@@ -68,7 +57,7 @@ const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event 
 
   const api = CreateForecastApiService();
 
-  const projectSprints = await listProjectSprintsFunction(api, {
+  const projectSprints = await listProjectSprints(api, {
     projectId: parseInt(event.queryStringParameters.projectId)
   });
   
@@ -78,4 +67,4 @@ const listProjectSprints: ValidatedEventAPIGatewayProxyEvent<any> = async event 
   };
 }
 
-export const main = middyfy(listProjectSprints);
+export const main = middyfy(listProjectSprintsHandler);

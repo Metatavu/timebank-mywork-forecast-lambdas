@@ -34,7 +34,7 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of tasks
  */
-async function listTasksFunction(api: ForecastApiService, parameters: ListTasksParameters): Promise<Response[]> {
+const listTasks = async (api: ForecastApiService, parameters: ListTasksParameters): Promise<Response[]> => {
   let filteredTasks: Task[];
 
   if (parameters.projectId !== null) {
@@ -55,7 +55,7 @@ async function listTasksFunction(api: ForecastApiService, parameters: ListTasksP
       estimate: task.estimate,
       startDate: task.start_date,
       endDate: task.end_date,
-      highPriority: task.highPriority,
+      highPriority: task.high_priority,
       assignedPersons: task.assignedPersons,
     }
   });
@@ -66,21 +66,10 @@ async function listTasksFunction(api: ForecastApiService, parameters: ListTasksP
  * 
  * @param event event
  */
-const listTasks: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  // const { headers: { authorization, Authorization } } = event;
-
-  // TODO: parseBearerAuth not working yet
-  // const auth = parseBearerAuth(authorization || Authorization);
-  // if (!auth) {
-  //   return {
-  //     statusCode: 401,
-  //     body: "Unauthorized"
-  //   };
-  // }
-
+const listTasksHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
 
-  const tasks = await listTasksFunction(api, {
+  const tasks = await listTasks(api, {
     projectId: parseInt(event.queryStringParameters.projectId),
   });
   
@@ -90,4 +79,4 @@ const listTasks: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   };
 };
 
-export const main = middyfy(listTasks);
+export const main = middyfy(listTasksHandler);

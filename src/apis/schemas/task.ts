@@ -7,6 +7,6 @@ export interface Task {
     estimate: number,
     start_date: string,
     end_date: string,
-    highPriority: boolean,
+    high_priority: boolean,
     assignedPersons: number[],
 }

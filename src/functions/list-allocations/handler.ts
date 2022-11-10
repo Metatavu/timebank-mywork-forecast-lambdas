@@ -1,5 +1,5 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { filterByDate, filterByPerson, filterByProject } from "@libs/filter-utils";
+import { FilterUtilities } from "@libs/filter-utils";
 // import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
@@ -39,17 +39,13 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of allocations
  */
-async function listAllocationsFunction(api: ForecastApiService, currentDate: Date, parameters: ListAllocationsParameters): Promise<Response[]> {
+const listAllocations = async (api: ForecastApiService, currentDate: Date, parameters: ListAllocationsParameters): Promise<Response[]> => {
   const allocations = await api.getAllocations();
 
   const filteredAllocations = allocations.filter(allocation => {
-    if (filterByDate(allocation, currentDate, parameters)
-     && filterByProject(allocation, parameters)
-     && filterByPerson(allocation, parameters)) {
-      return true;
-    }
-
-    return false;
+    return FilterUtilities.filterByDate(allocation, currentDate, parameters) 
+        && FilterUtilities.filterByProject(allocation.project, parameters.projectId) 
+        && FilterUtilities.filterByPerson(allocation.person, parameters.personId);
   });
 
   return filteredAllocations.map(allocation => {
@@ -74,26 +70,17 @@ async function listAllocationsFunction(api: ForecastApiService, currentDate: Dat
  * 
  * @param event event
  */
-const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  // const { headers: { authorization, Authorization } } = event;
-
-  // TODO: parseBearerAuth not working yet
-  // const auth = parseBearerAuth(authorization || Authorization);
-  // if (!auth) {
-  //   return {
-  //     statusCode: 401,
-  //     body: "Unauthorized"
-  //   };
-  // }
-  
+const listAllocationsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
 
-  const allocations = await listAllocationsFunction(api, new Date(), {
+  const allocations = await listAllocations(api, new Date(), {
     startDate: new Date(event.queryStringParameters.startDate),
     endDate: new Date(event.queryStringParameters.endDate),
     personId: event.queryStringParameters.personId,
     projectId: event.queryStringParameters.projectId,
   });
+
+  console.log(allocations)
   
   return {
     statusCode: 200,
@@ -101,4 +88,4 @@ const listAllocations: ValidatedEventAPIGatewayProxyEvent<any> = async event => 
   };
 };
 
-export const main = middyfy(listAllocations);
+export const main = middyfy(listAllocationsHandler);
