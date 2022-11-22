@@ -70,7 +70,7 @@ export function CreateForecastApiService(): ForecastApiService {
          * @returns List of sprints
          */
         async getProjectSprints(projectId: number): Promise<Sprint[]> {
-            const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/sprints`, { headers: { "X-FORECAST-API-KEY": apiKey } });
+            const response = await fetch(`https://api.forecast.it/api/v1/projects/${projectId}/sprints`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
             return response.json();
         },

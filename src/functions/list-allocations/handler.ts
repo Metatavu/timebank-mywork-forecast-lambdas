@@ -1,8 +1,9 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { isTokenValid } from "@libs/auth-utils";
 import { FilterUtilities } from "@libs/filter-utils";
-// import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { AccessToken } from "src/types";
 
 /**
  * Parameters for lambda
@@ -71,6 +72,18 @@ const listAllocations = async (api: ForecastApiService, currentDate: Date, param
  * @param event event
  */
 const listAllocationsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
+  const { headers: { accessToken } } = event;
+
+  const castToken = accessToken;
+
+  const auth = isTokenValid(JSON.parse(castToken));
+  if (!auth) {
+    return {
+      statusCode: 401,
+      body: "Unauthorized"
+    };
+  }
+
   const api = CreateForecastApiService();
 
   const allocations = await listAllocations(api, new Date(), {
@@ -80,8 +93,6 @@ const listAllocationsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async ev
     projectId: event.queryStringParameters.projectId,
   });
 
-  console.log(allocations)
-  
   return {
     statusCode: 200,
     body: JSON.stringify(allocations)

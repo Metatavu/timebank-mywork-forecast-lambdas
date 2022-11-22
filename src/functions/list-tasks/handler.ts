@@ -1,5 +1,4 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { parseBearerAuth } from "@libs/auth-utils";
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
 import { Task } from "src/apis/schemas/task";
@@ -37,9 +36,8 @@ export interface Response {
 const listTasks = async (api: ForecastApiService, parameters: ListTasksParameters): Promise<Response[]> => {
   let filteredTasks: Task[];
 
-  if (parameters.projectId !== null) {
+  if (parameters.projectId) {
     const tasks = await api.getTasksByProject(parameters.projectId);
-
     filteredTasks = tasks.filter(task => task.project_id === parameters.projectId);
   } else {
     filteredTasks = await api.getAllTasks();
