@@ -1,7 +1,7 @@
 import { Allocation } from "./schemas/allocation";
 import { Project } from "./schemas/project";
 import { Task } from "./schemas/task";
-
+import Config from "../app/config";
 export interface ForecastApiService {
     getAllocations: () => Promise<Allocation[]>;
     getProjects: () => Promise<Project[]>;
@@ -15,7 +15,7 @@ export interface ForecastApiService {
  * Creates ForecastApiService
  */
 export function CreateForecastApiService(): ForecastApiService {
-    const apiKey: string = process.env.FORECAST_API_KEY;
+  const apiKey: string = Config.get().api.apiKey;
 
     return {
         /**

@@ -21,3 +21,12 @@ export interface AccessToken {
   userId?: string;
   roles?: string[];
 }
+
+/**
+ * Application configuration
+ */
+ export interface Configuration {
+  api: {
+    apiKey: string;
+  }
+ }

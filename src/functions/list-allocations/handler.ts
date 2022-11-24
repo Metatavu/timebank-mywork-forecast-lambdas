@@ -75,8 +75,7 @@ const listAllocationsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async ev
   const { headers: { accessToken } } = event;
 
   const castToken = accessToken;
-
-  const auth = isTokenValid(JSON.parse(castToken));
+  const auth = isTokenValid(JSON.parse(JSON.stringify(castToken)));
   if (!auth) {
     return {
       statusCode: 401,
