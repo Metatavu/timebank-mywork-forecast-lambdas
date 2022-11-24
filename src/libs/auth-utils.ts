@@ -11,7 +11,6 @@ export const isTokenValid = (token: AccessToken) => {
     return false;
   }
 
-  // TODO this expiration check is incorrect
-  const expiresAt = moment(token.created).add(token.expires_in, "seconds");
+  const expiresAt = moment(token.created).add(token.expires_in, "milliseconds");
   return expiresAt.isAfter(moment());
 }
