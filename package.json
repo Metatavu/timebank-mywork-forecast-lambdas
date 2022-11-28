@@ -4,7 +4,8 @@
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-forecast-client": "openapi-generator-cli generate -i forecast-api-spec/forecast-openapi-spec.yaml -o src/generated/forecast-client -c generator-config.json -g typescript-fetch"
   },
   "engines": {
     "node": ">=14.15.0"
@@ -17,6 +18,7 @@
     "moment": "^2.29.4"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.5.2",
     "@serverless/typescript": "^3.0.0",
     "@types/aws-lambda": "^8.10.71",
     "@types/node": "^14.14.25",

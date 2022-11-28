@@ -1,0 +1,3 @@
+[submodule "forecast-api-spec"]
+	path = forecast-api-spec
+	url = https://github.com/Metatavu/forecast-api-spec.git
