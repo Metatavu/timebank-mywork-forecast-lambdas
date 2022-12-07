@@ -1,8 +1,9 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { FilterUtilities } from "@libs/filter-utils";
 // import { parseBearerAuth } from '@libs/auth-utils';
+import { isTokenValid } from "@libs/auth-utils";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { ForecastApiService } from "src/apis/forecast-api-service";
 
 /**
  * Parameters for lambda
@@ -10,6 +11,7 @@ import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-
 export interface ListProjectsParameters {
   startDate?: Date,
   endDate?: Date,
+  projectId: number
 }
 
 /**
@@ -18,8 +20,12 @@ export interface ListProjectsParameters {
 export interface Response {
   id: number,
   name: string,
-  startDate: string,
-  endDate: string,
+  stage: string,
+  status: string,
+  estimationUnits: string,
+  minutesPerEstimationPoint: number,
+  startDate: Date,
+  endDate: Date,
 }
 
 /**
@@ -30,21 +36,43 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of projects
  */
-const listProjects = async (api: ForecastApiService, currentDate: Date, parameters: ListProjectsParameters): Promise<Response[]> => {
-  const projects = await api.getProjects();
+const listProjects = async (currentDate: Date, parameters: ListProjectsParameters): Promise<Response | Response[]> => {
+  const projectsApi = await ForecastApiService.getProjectsApi();
+  let allProjects: any[];
 
-  const filteredProjects = projects.filter(project => {
-    return FilterUtilities.filterByDate(project, currentDate, parameters) && project.stage == "RUNNING";
-  });
+  if(parameters.projectId) {
+    const project = await projectsApi.getProject(parameters);
+      return {
+        id: project.id,
+        name: project.name,
+        stage: project.stage,
+        status: project.status,
+        estimationUnits: project.estimationUnits,
+        minutesPerEstimationPoint: project.minutesPerEstimationPoint,
+        startDate: project.createdAt,
+        endDate: project.endDate
+      }  
+  } else {
+    allProjects = await projectsApi.getProjects(); 
 
-  return filteredProjects.map(project => {
-    return {
-      id: project.id,
-      name: project.name,
-      startDate: project.start_date,
-      endDate: project.end_date,
-    }
-  })
+    const filteredProjects = allProjects.filter(project => {
+      return FilterUtilities.filterByDate(project, currentDate, parameters) && project.stage == "RUNNING"
+    });
+      return filteredProjects.map((project => {
+        return {
+          id: project.id,
+          companyProjectId: project.companyProjectId,
+          name: project.name,
+          stage: project.stage,
+          status: project.status,
+          estimationUnits: project.estimationUnits,
+          minutesPerEstimationPoint: project.minutesPerEstimationPoint,
+          startDate: project.createdAt,
+          endDate: project.endDate
+        }  
+      }))
+    
+  }
 } 
 
 /**
@@ -53,11 +81,18 @@ const listProjects = async (api: ForecastApiService, currentDate: Date, paramete
  * @param event event
  */
 const listProjectsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  const api = CreateForecastApiService();
-
-  const filteredProjects = await listProjects(api, new Date(), {
+  const { headers: { Authorization } } = event;
+  const auth = await isTokenValid(Authorization);
+  if (!auth) {
+    return {
+      statusCode: 401,
+      body: "Unauthorized"
+    };
+  }
+  const filteredProjects = await listProjects( new Date(), {
+    projectId: Number(event.queryStringParameters.projectId),
     startDate: new Date(event.queryStringParameters.startDate),
-    endDate: new Date(event.queryStringParameters.endDate),
+    endDate: new Date(event.queryStringParameters.endDate)
   })
   
   return {

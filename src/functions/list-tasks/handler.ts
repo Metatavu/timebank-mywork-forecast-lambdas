@@ -1,29 +1,31 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
-import { Task } from "src/apis/schemas/task";
+import {  ForecastApiService } from "src/apis/forecast-api-service";
+import { isTokenValid } from "@libs/auth-utils";
 
 /**
  * Parameters for lambda
  */
 export interface ListTasksParameters {
   projectId: number,
+  taskId: number,
+  childrenTask?: boolean
 }
 
 /**
  * Response schema for lambda
  */
 export interface Response {
-  id: string,
+  id: number,
   title: string,
   description: string,
-  projectId: number,
+  projectId: any,
   remaining: number,
   estimate: number,
-  startDate: string,
-  endDate: string,
-  highPriority: boolean,
-  assignedPersons: number[],
+  startDate: any,
+  endDate: any,
+  highPriority: any,
+  assignedPersons: string[],
 }
 
 /**
@@ -33,29 +35,48 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of tasks
  */
-const listTasks = async (api: ForecastApiService, parameters: ListTasksParameters): Promise<Response[]> => {
-  let filteredTasks: Task[];
+const listTasks = async (parameters: ListTasksParameters): Promise<Response | Response[]> => {
+  const tasks = await ForecastApiService.getTasksApi();
+  let filteredTasks: any[];
 
   if (parameters.projectId) {
-    const tasks = await api.getTasksByProject(parameters.projectId);
-    filteredTasks = tasks.filter(task => task.project_id === parameters.projectId);
-  } else {
-    filteredTasks = await api.getAllTasks();
-  }
-
-  return filteredTasks.map(task => {
+    console.log(parameters.projectId);
+    filteredTasks = await tasks.getTasksInProject(parameters); 
+  } 
+  // if (parameters.childrenTask && parameters.taskId) {
+  //   filteredTasks = await tasks.getChildrenTasks(parameters);
+  // } 
+  if (parameters.taskId) {
+    console.log(parameters.taskId);
+    const task = await tasks.getTask(parameters)
     return {
       id: task.id,
       title: task.title,
       description: task.description,
-      projectId: task.project_id,
+      projectId: task.projectId,
       remaining: task.remaining,
       estimate: task.estimate,
-      startDate: task.start_date,
-      endDate: task.end_date,
-      highPriority: task.high_priority,
-      assignedPersons: task.assignedPersons,
+      startDate: task.startDate,
+      endDate: task.endDate,
+      highPriority: task.highPriority,
+      assignedPersons: task.assignedPersons
     }
+  }
+  return filteredTasks.map(task => {
+    return {
+      id: task.id,
+      companyTaskId: task.companyTaskId,
+      title: task.title,
+      description: task.description,
+      projectId: task.projectId,
+      remaining: task.remaining,
+      estimate: task.estimate,
+      startDate: task.startDate,
+      endDate: task.endDate,
+      highPriority: task.highPriority,
+      sprint: task.sprint,
+      assignedPersons: task.assignedPersons
+    };
   });
 }
 
@@ -65,10 +86,18 @@ const listTasks = async (api: ForecastApiService, parameters: ListTasksParameter
  * @param event event
  */
 const listTasksHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  const api = CreateForecastApiService();
-
-  const tasks = await listTasks(api, {
+  const { headers: { Authorization } } = event;
+  const auth = await isTokenValid(Authorization);
+  if (!auth) {
+    return {
+      statusCode: 401,
+      body: "Unauthorized"
+    };
+  }
+  const tasks = await listTasks({
     projectId: parseInt(event.queryStringParameters.projectId),
+    taskId: parseInt(event.queryStringParameters.taskId)
+
   });
   
   return {

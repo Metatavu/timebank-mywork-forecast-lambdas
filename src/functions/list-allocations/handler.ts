@@ -2,8 +2,7 @@ import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { isTokenValid } from "@libs/auth-utils";
 import { FilterUtilities } from "@libs/filter-utils";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
-import { AccessToken } from "src/types";
+import { ForecastApiService } from "src/apis/forecast-api-service";
 
 /**
  * Parameters for lambda
@@ -11,7 +10,7 @@ import { AccessToken } from "src/types";
 export interface ListAllocationsParameters {
   startDate?: Date,
   endDate?: Date,
-  personId?: string,
+  personId?: number,
   projectId?: string,
 }
 
@@ -40,13 +39,14 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of allocations
  */
-const listAllocations = async (api: ForecastApiService, currentDate: Date, parameters: ListAllocationsParameters): Promise<Response[]> => {
-  const allocations = await api.getAllocations();
-
-  const filteredAllocations = allocations.filter(allocation => {
-    return FilterUtilities.filterByDate(allocation, currentDate, parameters) 
-        && FilterUtilities.filterByProject(allocation.project, parameters.projectId) 
-        && FilterUtilities.filterByPerson(allocation.person, parameters.personId);
+const listAllocations = async (currentDate: Date, parameters: ListAllocationsParameters): Promise<Response | Response[]> => {
+  const allocations = await ForecastApiService.getAllocationsApi();
+  let allAllocations: any[];
+  allAllocations = await allocations.getAllocations();
+  const filteredAllocations = allAllocations.filter(allocation => {
+    return FilterUtilities.filterByPerson(allocation.person, parameters.personId)
+        && FilterUtilities.filterByDate(allocation, currentDate, parameters);
+        // && FilterUtilities.filterByProject(allocation.project, parameters.projectId);
   });
 
   return filteredAllocations.map(allocation => {
@@ -54,8 +54,8 @@ const listAllocations = async (api: ForecastApiService, currentDate: Date, param
       id: allocation.id,
       project: allocation.project,
       person: allocation.person,
-      startDate: allocation.start_date,
-      endDate: allocation.end_date,
+      startDate: allocation.startDate,
+      endDate: allocation.endDate,
       monday: allocation.monday,
       tuesday: allocation.tuesday,
       wednesday: allocation.wednesday,
@@ -72,10 +72,9 @@ const listAllocations = async (api: ForecastApiService, currentDate: Date, param
  * @param event event
  */
 const listAllocationsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  const { headers: { accessToken } } = event;
+  const { headers: { Authorization } } = event;
 
-  const castToken = accessToken;
-  const auth = isTokenValid(JSON.parse(JSON.stringify(castToken)));
+  const auth = await isTokenValid(Authorization);
   if (!auth) {
     return {
       statusCode: 401,
@@ -83,12 +82,10 @@ const listAllocationsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async ev
     };
   }
 
-  const api = CreateForecastApiService();
-
-  const allocations = await listAllocations(api, new Date(), {
+  const allocations = await listAllocations( new Date(), {
     startDate: new Date(event.queryStringParameters.startDate),
     endDate: new Date(event.queryStringParameters.endDate),
-    personId: event.queryStringParameters.personId,
+    personId: parseInt(event.queryStringParameters.personId),
     projectId: event.queryStringParameters.projectId,
   });
 

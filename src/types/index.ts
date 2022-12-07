@@ -1,9 +1,11 @@
+
+
 /**
  * Date range type
  */
 export type DateRange = { 
-  start_date: string, 
-  end_date: string 
+  startDate: string, 
+  endDate: string 
 };
 
 /**
@@ -26,7 +28,14 @@ export interface AccessToken {
  * Application configuration
  */
  export interface Configuration {
-  api: {
+  forecast: {
     apiKey: string;
-  }
+    baseUrl: string;
+  },
+  keycloak: KeycloakConfiguration
+ }
+
+ export interface KeycloakConfiguration {
+  baseUrl: string;
+  realm: string;
  }

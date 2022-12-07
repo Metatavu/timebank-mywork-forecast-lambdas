@@ -1,12 +1,14 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { ForecastApiService } from "src/apis/forecast-api-service";
+import { isTokenValid } from "@libs/auth-utils";
 
 /**
  * Parameters for lambda
  */
 export interface ListProjectSprintsParameters {
   projectId: number,
+  sprintId: number
 }
 
 /**
@@ -15,8 +17,8 @@ export interface ListProjectSprintsParameters {
 export interface Response {
   id: number,
   name: string,
-  startDate: string,
-  endDate: string,
+  startDate: Date,
+  endDate: Date,
 }
 
 /**
@@ -26,20 +28,30 @@ export interface Response {
  * @param parameters Parameters
  * @returns Array of sprints
  */
-const listProjectSprints = async (api: ForecastApiService, parameters: ListProjectSprintsParameters): Promise<Response[]> => {
-  const sprints = await api.getProjectSprints(parameters.projectId);
+const listProjectSprints = async (parameters: ListProjectSprintsParameters): Promise<Response | Response[]> => {
+  let filteredSprints: any[];
 
-  const filteredSprints = sprints.filter(sprint => sprint.id === parameters.projectId);
-
-  return filteredSprints.map(sprint => {
+  const sprints = await ForecastApiService.getSprintsApi();
+  if (parameters.sprintId && parameters.projectId) {
+  const sprint = await sprints.getProjectSprint(parameters);
     return {
       id: sprint.id,
       name: sprint.name,
-      startDate: sprint.start_date,
-      endDate: sprint.end_date,
-    };
-  });
-}
+      startDate: sprint.startDate,
+      endDate: sprint.endDate,
+    }
+  } if (parameters.projectId && !parameters.sprintId) {
+  filteredSprints = await sprints.getProjectSprints(parameters);
+    return (await filteredSprints).map(sprint => {
+      return {
+        id: sprint.id,
+        name: sprint.name,
+        startDate: sprint.startDate,
+        endDate: sprint.endDate,
+      };
+    });
+  }
+};
 
 /**
  * Lambda for listing Forecast project sprints
@@ -47,17 +59,26 @@ const listProjectSprints = async (api: ForecastApiService, parameters: ListProje
  * @param event event
  */
 const listProjectSprintsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
+  const { headers: { Authorization } } = event;
+  const auth = await isTokenValid(Authorization);
+  
   if (!event.queryStringParameters.projectId) {
     return {
       statusCode: 400,
       body: "Invalid parameters"
     };
   }
+  
+  if (!auth) {
+    return {
+      statusCode: 401,
+      body: "Unauthorized"
+    };
+  }
 
-  const api = CreateForecastApiService();
-
-  const projectSprints = await listProjectSprints(api, {
-    projectId: parseInt(event.queryStringParameters.projectId)
+  const projectSprints = await listProjectSprints({
+    projectId: parseInt(event.queryStringParameters.projectId),
+    sprintId: parseInt(event.queryStringParameters.sprintId)
   });
   
   return {

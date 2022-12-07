@@ -10,23 +10,23 @@ export namespace FilterUtilities {
    * @returns If specified dates were null or not, if specified date parameters were between Forecast dates or if currentDate is between Forecast dates
    */
   export const filterByDate = (dateRange: DateRange, currentDate: Date, parameters: { startDate?: Date, endDate?: Date }): boolean => {
-    if (dateRange.start_date === null || dateRange.end_date === null) {
+    if (dateRange.startDate === null || dateRange.endDate === null) {
       return false;
     }
 
     if (parameters.startDate) {
-      if (parameters.startDate <= new Date(dateRange.start_date)) {
+      if (parameters.startDate <= new Date(dateRange.startDate)) {
         return false;
       }
-    } else if (currentDate <= new Date(dateRange.start_date)) {
+    } else if (currentDate <= new Date(dateRange.startDate)) {
       return false;
     }
 
     if (parameters.endDate) {
-        if (parameters.endDate >= new Date(dateRange.end_date)) {
+        if (parameters.endDate >= new Date(dateRange.endDate)) {
           return false;
         }
-    } else if (currentDate >= new Date(dateRange.end_date)) {
+    } else if (currentDate >= new Date(dateRange.endDate)) {
       return false;
     }
 
@@ -55,11 +55,10 @@ export namespace FilterUtilities {
    * @param personId Person id to compare
    * @returns If two parameters match or personId is null
    */
-  export const filterByPerson = (person?: number, personId?: string): boolean => {
-    if (personId !== undefined && person.toString() !== personId) {
+  export const filterByPerson = (person?: number, personId?: number): boolean => {
+    if (personId !== undefined && person !== personId) {
       return false;
     }
-
     return true;
   }
 }

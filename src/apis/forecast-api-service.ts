@@ -1,90 +1,69 @@
-import { Allocation } from "./schemas/allocation";
-import { Project } from "./schemas/project";
-import { Task } from "./schemas/task";
+import { Configuration, ProjectsApi, SprintsApi, TasksApi } from "src/generated/forecast-client";
+import { AllocationsApi } from "src/generated/forecast-client/apis/AllocationsApi";
+import { TimeRegistrationsApi } from "src/generated/forecast-client/apis/TimeRegistrationsApi";
 import Config from "../app/config";
-export interface ForecastApiService {
-    getAllocations: () => Promise<Allocation[]>;
-    getProjects: () => Promise<Project[]>;
-    getTasksByProject: (projectId: number) => Promise<Task[]>;
-    getAllTasks: () => Promise<Task[]>;
-    getProjectSprints: (projectId: number) => Promise<Sprint[]>;
-    getTimeEntriesByProject: (projectId: number) => Promise<TimeEntry[]>;
-}
+
 
 /**
  * Creates ForecastApiService
  */
-export function CreateForecastApiService(): ForecastApiService {
-  const apiKey: string = Config.get().api.apiKey;
+export class ForecastApiService {
+ /**
+   * Gets api configuration
+   *
+   * @param token accessToken
+   * @returns new configuration
+   */
+  private static getConfiguration() {
+    const { apiKey, baseUrl } = Config.get().forecast;
 
-    return {
-        /**
-         * Gets all allocations from the api
-         * 
-         * @returns List of allocations
-         */
-        async getAllocations(): Promise<Allocation[]> {
-            const response = await fetch("https://api.forecast.it/api/v1/allocations", { headers: { "X-FORECAST-API-KEY": apiKey } });
+    return new Configuration({
+      basePath: baseUrl,
+      apiKey: apiKey
+    });
+  }
 
-            return response.json();
-        },
+  /**
+   * Gets initialized DailyEntries API
+   * 
+   * @returns initialized DailyEntries API
+   */
+  public static getProjectsApi() {
+    return new ProjectsApi(ForecastApiService.getConfiguration());
+  }
 
-        /**
-         * Gets all projects from the api
-         * 
-         * @returns List of projects
-         */
-        async getProjects(): Promise<Project[]> {
-            const response = await fetch("https://api.forecast.it/api/v1/projects", { headers: { "X-FORECAST-API-KEY": apiKey } });
+  /**
+   * Get sprints of selected project
+   * @returns 
+   */
+  public static getSprintsApi() {
+    return new SprintsApi(ForecastApiService.getConfiguration());
+  }
 
-            return response.json();
-        },
+  /**
+   * Get tasks of selected project
+   * 
+   * @returns
+   */
+  public static getTasksApi() {
+    return new TasksApi(ForecastApiService.getConfiguration())
+  }
 
-        /**
-         * Gets all tasks from the api filtered by project id
-         * 
-         * @param projectId Id of project
-         * @returns List of tasks 
-         */
-        async getTasksByProject(projectId: number): Promise<Task[]> {
-            const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/tasks`, { headers: { "X-FORECAST-API-KEY": apiKey } });
+  /**
+   * Get allocations
+   * 
+   * @returns 
+   */
+  public static getAllocationsApi() {
+    return new AllocationsApi(ForecastApiService.getConfiguration())
+  }
 
-            return response.json();
-        },
-
-        /**
-         * Gets all tasks from the api
-         * 
-         * @returns List of tasks
-         */
-        async getAllTasks(): Promise<Task[]> {
-            const response = await fetch("https://api.forecast.it/api/v3/tasks", { headers: { "X-FORECAST-API-KEY": apiKey } });
-
-            return response.json();
-        },
-
-        /**
-         * Gets all sprints in a project
-         * 
-         * @param projectId Id of project
-         * @returns List of sprints
-         */
-        async getProjectSprints(projectId: number): Promise<Sprint[]> {
-            const response = await fetch(`https://api.forecast.it/api/v1/projects/${projectId}/sprints`, { headers: { "X-FORECAST-API-KEY": apiKey } });
-
-            return response.json();
-        },
-
-        /**
-         * Gets all time entries in a project
-         * 
-         * @param projectId Id of project
-         * @returns List of time entries
-         */
-        async getTimeEntriesByProject(projectId: number): Promise<TimeEntry[]> {
-            const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/time_registrations`, { headers: { "X-FORECAST-API-KEY": apiKey } });
-
-            return response.json();
-        }
-    }
+  /**
+   * Get time registerations
+   * 
+   * @returns
+   */
+  public static getTimeRegistrationsApi() {
+    return new TimeRegistrationsApi(ForecastApiService.getConfiguration())
+  }
 }

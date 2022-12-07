@@ -1,12 +1,15 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { ForecastApiService } from "src/apis/forecast-api-service";
+import { isTokenValid } from "@libs/auth-utils";
+import { FilterUtilities } from "@libs/filter-utils";
 
 /**
  * Parameters for lambda
  */
 export interface ListTimeEntriesParameters {
-  projectId: number
+  projectId: number,
+  personId: number
 }
 
 /**
@@ -23,22 +26,27 @@ export interface Response {
 /**
  * Gets time entries for a project
  * 
- * @param api Instance of ForecastApiService
  * @param parameters Parameters
  * @returns Array of time entries
  */
-const listTimeEntries = async (api: ForecastApiService, parameters: ListTimeEntriesParameters): Promise<Response[]> => {
-  const timeEntries = await api.getTimeEntriesByProject(parameters.projectId);
+const listTimeEntries = async (currentDate: Date, parameters: ListTimeEntriesParameters): Promise<Response | Response[]> => {
+  const allTimeEntries = await ForecastApiService.getTimeRegistrationsApi();
 
-  return timeEntries.map(timeEntry => {
-    return {
-      id: timeEntry.id,
-      person: timeEntry.person,
-      project: timeEntry.project,
-      task: timeEntry.task,
-      timeRegistered: timeEntry.time_registered,
-    }
-  });
+    const timeRegisterations = await allTimeEntries.getAllTimeRegistrationsInAProject(parameters)
+
+    const filteredTimeRegisterations = timeRegisterations.filter(timeRegisteration => {
+      return FilterUtilities.filterByPerson(timeRegisteration.person, parameters.personId)
+    });
+    return filteredTimeRegisterations.map(timeEntry => {
+      return {
+        id: timeEntry.id,
+        person: timeEntry.person,
+        project: timeEntry.project,
+        task: timeEntry.task,
+        timeRegistered: timeEntry.timeRegistered,
+      }
+    });
+  
 }
 
 /**
@@ -53,11 +61,18 @@ const listTimeEntriesHandler: ValidatedEventAPIGatewayProxyEvent<any> = async ev
       body: "Invalid parameters"
     };
   }
-
-  const api = CreateForecastApiService();
+  const { headers: { Authorization } } = event;
+  const auth = await isTokenValid(Authorization);
+  if (!auth) {
+    return {
+      statusCode: 401,
+      body: "Unauthorized"
+    };
+  }
   
-  const timeEntries = await listTimeEntries(api, {
+  const timeEntries = await listTimeEntries( new Date(), {
     projectId: parseInt(event.queryStringParameters.projectId),
+    personId: parseInt(event.queryStringParameters.personId)
   });
   
   return {
