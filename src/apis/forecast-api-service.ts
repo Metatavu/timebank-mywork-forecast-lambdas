@@ -2,6 +2,8 @@ import { Allocation } from "./schemas/allocation";
 import { Project } from "./schemas/project";
 import { Task } from "./schemas/task";
 import Config from "../app/config";
+import fetch from "node-fetch";
+
 export interface ForecastApiService {
     getAllocations: () => Promise<Allocation[]>;
     getProjects: () => Promise<Project[]>;
@@ -20,7 +22,7 @@ export function CreateForecastApiService(): ForecastApiService {
     return {
         /**
          * Gets all allocations from the api
-         * 
+         *
          * @returns List of allocations
          */
         async getAllocations(): Promise<Allocation[]> {
@@ -31,7 +33,7 @@ export function CreateForecastApiService(): ForecastApiService {
 
         /**
          * Gets all projects from the api
-         * 
+         *
          * @returns List of projects
          */
         async getProjects(): Promise<Project[]> {
@@ -42,9 +44,9 @@ export function CreateForecastApiService(): ForecastApiService {
 
         /**
          * Gets all tasks from the api filtered by project id
-         * 
+         *
          * @param projectId Id of project
-         * @returns List of tasks 
+         * @returns List of tasks
          */
         async getTasksByProject(projectId: number): Promise<Task[]> {
             const response = await fetch(`https://api.forecast.it/api/v3/projects/${projectId}/tasks`, { headers: { "X-FORECAST-API-KEY": apiKey } });
@@ -54,7 +56,7 @@ export function CreateForecastApiService(): ForecastApiService {
 
         /**
          * Gets all tasks from the api
-         * 
+         *
          * @returns List of tasks
          */
         async getAllTasks(): Promise<Task[]> {
@@ -65,7 +67,7 @@ export function CreateForecastApiService(): ForecastApiService {
 
         /**
          * Gets all sprints in a project
-         * 
+         *
          * @param projectId Id of project
          * @returns List of sprints
          */
@@ -77,7 +79,7 @@ export function CreateForecastApiService(): ForecastApiService {
 
         /**
          * Gets all time entries in a project
-         * 
+         *
          * @param projectId Id of project
          * @returns List of time entries
          */
