@@ -2,7 +2,8 @@ import { cleanEnv, str } from "envalid";
 import { Configuration } from "../types/index";
 
 const env = cleanEnv(process.env, {
-    FORECAST_API_KEY: str()
+    FORECAST_API_KEY: str(),
+    TIMEBANK_KEYCLOAK_URL: str()
 });
 
 export default class Config {
