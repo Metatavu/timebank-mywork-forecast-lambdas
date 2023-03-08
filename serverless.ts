@@ -29,7 +29,7 @@ const serverlessConfiguration: AWS = {
       cors: true,
       authorizers: {
         "timebankKeycloakAuthorizer": {
-          identitySource: "${request.header.Authorization}",
+          identitySource: "$request.header.Authorization",
           issuerUrl: env.TIMEBANK_KEYCLOAK_URL,
           audience: ["account"]
         }
