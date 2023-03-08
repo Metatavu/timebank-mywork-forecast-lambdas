@@ -37,67 +37,11 @@ const serverlessConfiguration: AWS = {
     },
   },
   functions: {
-    listAllocationsHandler:{
-      handler: listAllocationsHandler.handler,
-      // Problem this is overriding the lambda handler index.ts as authorizer not accessible from there?
-      events: [{
-          httpApi: {
-            method:"get",
-            path:"/allocations",
-            authorizer: {
-              name: "timebankKeycloakAuthorizer"
-            }
-          }
-        }]
-    },
-    listProjectsHandler: {
-      handler: listProjectsHandler.handler,
-      events: [{
-          httpApi: {
-            method:"get",
-            path:"/projects",
-            authorizer: {
-              name: "timebankKeycloakAuthorizer"
-            }
-          }
-        }]
-    },
-    listTasksHandler: {
-      handler: listTasksHandler.handler,
-      events: [{
-          httpApi: {
-            method:"get",
-            path:"/tasks",
-            authorizer: {
-              name: "timebankKeycloakAuthorizer"
-            }
-          }
-        }]
-    },
-    listTimeEntriesHandler: {
-      handler: listTimeEntriesHandler.handler,
-      events: [{
-          httpApi: {
-            method:"get",
-            path:"/time-entries",
-            authorizer: {
-              name: "timebankKeycloakAuthorizer"
-            }
-          }
-        }]
-    },
-    listProjectSprintsHandler: {
-      handler: listProjectSprintsHandler.handler,
-      events: [{
-          httpApi: {
-            method:"get",
-            path:"/projects/{projectId}/sprints",
-            authorizer: {
-              name: "timebankKeycloakAuthorizer"
-            }
-          }
-        }]
-    }
+    listAllocationsHandler,
+    listProjectsHandler,
+    listTasksHandler,
+    listTimeEntriesHandler,
+    listProjectSprintsHandler
   },
   package: { individually: true },
   custom: {

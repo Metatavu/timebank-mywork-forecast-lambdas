@@ -6,7 +6,10 @@ export default {
     {
       httpApi: {
         method: 'get',
-        path: '/projects/{projectId}/sprints'
+        path: '/projects/{projectId}/sprints',
+        authorizer: {
+          name: "timebankKeycloakAuthorizer"
+        }
       },
     },
   ],
