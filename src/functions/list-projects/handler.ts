@@ -10,6 +10,7 @@ import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-
 export interface ListProjectsParameters {
   startDate?: Date,
   endDate?: Date,
+  projectId?: string
 }
 
 /**
@@ -20,6 +21,8 @@ export interface Response {
   name: string,
   startDate: string,
   endDate: string,
+  status: string,
+  stage: string
 }
 
 /**
@@ -43,6 +46,8 @@ const listProjects = async (api: ForecastApiService, currentDate: Date, paramete
       name: project.name,
       startDate: project.start_date,
       endDate: project.end_date,
+      status: project.status,
+      stage: project.stage
     }
   })
 } 

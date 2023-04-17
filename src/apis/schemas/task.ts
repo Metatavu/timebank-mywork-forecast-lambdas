@@ -8,5 +8,5 @@ export interface Task {
     start_date: string,
     end_date: string,
     high_priority: boolean,
-    assignedPersons: number[],
+    assigned_persons: number[],
 }
