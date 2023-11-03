@@ -3,7 +3,7 @@ import { Configuration } from "../types/index";
 
 const env = cleanEnv(process.env, {
     FORECAST_API_KEY: str(),
-    TIMEBANK_KEYCLOAK_URL: str()
+    AUTH_ISSUER: str()
 });
 
 export default class Config {
@@ -14,6 +14,9 @@ export default class Config {
      * @returns promise of static application configuration
      */
     public static get = (): Configuration => ({
+      auth: {
+        issuer: env.AUTH_ISSUER
+      },  
       api: {
         apiKey: env.FORECAST_API_KEY
       }

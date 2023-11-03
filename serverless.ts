@@ -13,10 +13,14 @@ import { env } from "process";
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild'],
+  plugins: ['serverless-esbuild', 'serverless-deployment-bucket'],
   provider: {
     name: 'aws',
     runtime: 'nodejs16.x',
+    region: env.AWS_DEFAULT_REGION as any,
+    deploymentBucket: {
+      name: "${self:service}-${opt:stage}-deploy"
+    },
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -25,8 +29,8 @@ const serverlessConfiguration: AWS = {
       cors: true,
       authorizers: {
         "timebankKeycloakAuthorizer": {
-          identitySource: "${request.header.Authorization}",
-          issuerUrl: env.TIMEBANK_KEYCLOAK_URL,
+          identitySource: "$request.header.Authorization",
+          issuerUrl: env.AUTH_ISSUER,
           audience: ["account"]
         }
       }

@@ -26,6 +26,9 @@ export interface AccessToken {
  * Application configuration
  */
  export interface Configuration {
+  auth: {
+    issuer: string;
+  },
   api: {
     apiKey: string;
   }
