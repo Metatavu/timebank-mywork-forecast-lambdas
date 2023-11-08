@@ -1,8 +1,9 @@
 import { S3 } from "aws-sdk"
 import fetch from "node-fetch";
 import { DateTime } from "luxon";
-import S3Utils from "./s3-utils";
-import { OnCallEntry } from "./types";
+import { OnCallEntry } from "../../types"
+import S3Utils from "@libs/s3-utils";
+import { middyfy } from "@libs/lambda";
 
 /**
  * Schedule from Splunk
@@ -76,7 +77,7 @@ const getNextWeekFromSchedule = (schedule: Schedule, nextThursday: DateTime, pol
  * 
  * @param event event
  */
-export const main = async () => {
+export const weeklyCheckHandler = async () => {
     const { SPLUNK_SCHEDULE_POLICY_NAME, SPLUNK_TEAM_ONCALL_URL, SPLUNK_API_ID, SPLUNK_API_KEY } = process.env;
     if (!SPLUNK_SCHEDULE_POLICY_NAME || !SPLUNK_TEAM_ONCALL_URL || !SPLUNK_API_ID || !SPLUNK_API_KEY) {
         throw new Error('Missing environment variables');
@@ -98,20 +99,27 @@ export const main = async () => {
         throw new Error("No next week");
     }
 
-    const fileName = `${nextThursday.year}.json`;
-    const s3 = new S3();
+    // const fileName = `${nextThursday.year}.json`;
+    // const s3 = new S3();
 
-    const yearJson = (await S3Utils.loadJson<OnCallEntry[]>(s3, fileName)) || [];
+    // const yearJson = (await S3Utils.loadJson<OnCallEntry[]>(s3, fileName)) || [];
     
-    const index = yearJson.findIndex(entry => entry.Week == nextWeek.week);
-    if (index > -1) {
-        yearJson[index].Person = nextWeek.user;
-    } else {
-        yearJson.push({
-            Week: nextWeek.week,
-            Person: nextWeek.user
-        });
-    }
+    // const index = yearJson.findIndex(entry => entry.Week == nextWeek.week);
+    // if (index > -1) {
+    //     yearJson[index].Person = nextWeek.user;
+    // } else {
+    //     yearJson.push({
+    //         Week: nextWeek.week,
+    //         Person: nextWeek.user
+    //     });
+    // }
 
-    await S3Utils.saveJson(s3, fileName, yearJson);
+    // await S3Utils.saveJson(s3, fileName, yearJson);
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify(nextWeek)
+      };
 };
+
+export const main = middyfy(weeklyCheckHandler);

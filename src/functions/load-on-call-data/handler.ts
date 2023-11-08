@@ -1,117 +1,42 @@
 import { S3 } from "aws-sdk"
-import fetch from "node-fetch";
-import { DateTime } from "luxon";
-import S3Utils from "./s3-utils";
-import { OnCallEntry } from "./types";
+S3Utils
+import { OnCallEntry, PaidData } from "../../types";
+import S3Utils from "@libs/s3-utils";
+import { middyfy } from "@libs/lambda";
 
 /**
- * Schedule from Splunk
- */
-interface Schedule {
-    team: {
-        name: string;
-        slug: string;
-    },
-    schedules: [
-        {
-            policy: {
-                name: string;
-                slug: string;
-            },
-            schedule: [
-                {
-                    onCallUser: {
-                        username: string;
-                    },
-                    overrideOnCallUser?: {
-                        username: string;
-                    },
-                    onCallType: string;
-                    rotationName: string;
-                    shiftName: string;
-                    shiftRoll: string;
-                    rolls: [
-                        {
-                            start: string;
-                            end: string;
-                            onCallUser: {
-                                username: string;
-                            },
-                            isRoll: boolean
-                        }
-                    ]
-                }
-            ],
-            overrides: any[]
-        }
-    ]
-};
-
-/**
- * Resolve next week from schedule
- * 
- * @param schedule schedule
- * @param nextThursday next Thursday
- * @param policyName name of policy
- * @returns week from schedule
- */
-const getNextWeekFromSchedule = (schedule: Schedule, nextThursday: DateTime, policyName: string) => {
-    const scheduleSchedule = schedule.schedules.find(shedule => shedule.policy.name === policyName)?.schedule[0];
-    if (!scheduleSchedule) {
-        return null;
-    }
-
-    const onCallUser = scheduleSchedule.onCallUser;
-    const overrideOnCallUser = scheduleSchedule.overrideOnCallUser;
-    const weekNumber = nextThursday.weekNumber;
-    
-    return {
-        week: weekNumber,
-        user: overrideOnCallUser == null ? onCallUser.username : overrideOnCallUser.username
-    };
-};
-
-/**
- * Lambda for checking who is on call this week
+ * Lambda method for loading on-call data
  * 
  * @param event event
  */
-export const main = async () => {
-    const { SPLUNK_SCHEDULE_POLICY_NAME, SPLUNK_TEAM_ONCALL_URL, SPLUNK_API_ID, SPLUNK_API_KEY } = process.env;
-    if (!SPLUNK_SCHEDULE_POLICY_NAME || !SPLUNK_TEAM_ONCALL_URL || !SPLUNK_API_ID || !SPLUNK_API_KEY) {
-        throw new Error('Missing environment variables');
-    }
-
-    const splunkTeamOnCallUrl = SPLUNK_TEAM_ONCALL_URL;
+export const loadOnCallDataHandler = async (event: { queryStringParameters: { [key: string]: string } }) => {
+    const { queryStringParameters } = event;
     
-    const schedule = await (await fetch(`${splunkTeamOnCallUrl}/schedule?daysForward=4&daysSkip=3`, {
-        headers: {
-            'X-VO-Api-Id': SPLUNK_API_ID,
-            'X-VO-Api-Key': SPLUNK_API_KEY,
-            'Accept': 'application/json'
-        } 
-    })).json() as Schedule;
-
-    const nextThursday = DateTime.now().plus({ days: 4 });
-    const nextWeek = getNextWeekFromSchedule(schedule, nextThursday, SPLUNK_SCHEDULE_POLICY_NAME);
-    if (!nextWeek) {
-        throw new Error("No next week");
+    const year = parseInt(queryStringParameters.year);
+    if (!year || year < 2020 || year > new Date().getFullYear()) {
+        throw new Error("Invalid year");
     }
 
-    const fileName = `${nextThursday.year}.json`;
     const s3 = new S3();
 
-    const yearJson = (await S3Utils.loadJson<OnCallEntry[]>(s3, fileName)) || [];
-    
-    const index = yearJson.findIndex(entry => entry.Week == nextWeek.week);
-    if (index > -1) {
-        yearJson[index].Person = nextWeek.user;
-    } else {
-        yearJson.push({
-            Week: nextWeek.week,
-            Person: nextWeek.user
-        });
+    const nameMap = await S3Utils.loadJson<{ [key: string]: string } >(s3, "name-map.json") || {};
+    const data = await S3Utils.loadJson<OnCallEntry[]>(s3, `${year}.json`);
+    const paidData = await S3Utils.loadJson<PaidData>(s3, "paid.json") || {};
+
+    if (!data) {
+        throw new Error("No data");
     }
 
-    await S3Utils.saveJson(s3, fileName, yearJson);
-};
+    return {
+        statusCode: 200,
+        body: JSON.stringify(data.map((entry: any) => {
+            return {
+                ...entry,
+                Person: nameMap[entry.Person] || entry.Person,
+                Paid: paidData[year] && paidData[year][entry.Week] || false
+            }
+        }))
+    };
+}
+
+export const main = middyfy(loadOnCallDataHandler);

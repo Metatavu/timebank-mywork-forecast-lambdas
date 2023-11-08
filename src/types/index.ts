@@ -33,3 +33,25 @@ export interface AccessToken {
     apiKey: string;
   }
  }
+
+ /**
+ * Paid year interface
+ */
+export interface PaidYear {
+  [week: number ]: boolean
+}
+
+/**
+* Paid data interface
+*/
+export interface PaidData {
+  [year: number ]: PaidYear
+}
+
+/**
+* On call entry interface
+*/
+export interface OnCallEntry {
+  Week: number;
+  Person: string; 
+}

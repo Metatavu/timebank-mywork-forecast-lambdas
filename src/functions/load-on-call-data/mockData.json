@@ -3,5 +3,5 @@
       "Content-Type": "application/json"
     },
     "body": "{\"name\": \"Frederic\"}",
-    "queryStringParameters": { "startDate": "2023-11-03", "endDate": "2021-11-03" }
+    "queryStringParameters": { "year": "2023" }
 }

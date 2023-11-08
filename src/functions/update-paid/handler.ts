@@ -1,6 +1,6 @@
 import { S3 } from "aws-sdk"
-import S3Utils from "./s3-utils";
-import { PaidData } from "./types";
+import { PaidData } from "../../types"
+import S3Utils from "@libs/s3-utils";
 
 /**
  * Request body interface
@@ -16,7 +16,7 @@ interface RequestBody {
  * 
  * @param event event
  */
-export const main = async (event: { body: string }) => {
+export const updatePaidHandler = async (event: { body: string }) => {
     const requestBody: RequestBody = JSON.parse(event.body);
     const { year, week, paid } = requestBody;
 

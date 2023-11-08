@@ -5,6 +5,8 @@ import listProjectsHandler from "@functions/list-projects";
 import listTasksHandler from "@functions/list-tasks";
 import listTimeEntriesHandler from "@functions/list-time-entries";
 import listProjectSprintsHandler from "@functions/list-project-sprints";
+import loadOnCallDataHandler from "@functions/load-on-call-data";
+import weeklyCheckHandler from "@functions/weekly-check/";
 
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
@@ -30,22 +32,25 @@ const serverlessConfiguration: AWS = {
       authorizers: {
         "timebankKeycloakAuthorizer": {
           identitySource: "$request.header.Authorization",
-          issuerUrl: env.AUTH_ISSUER,
+          issuerUrl: "https://staging-time-bank-auth.metatavu.io",
           audience: ["account"]
         }
-      }
+      },
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-    },
+    }
   },
   functions: {
     listAllocationsHandler,
     listProjectsHandler,
     listTasksHandler,
     listTimeEntriesHandler,
-    listProjectSprintsHandler
+    listProjectSprintsHandler,
+    loadOnCallDataHandler,
+    weeklyCheckHandler
+
   },
   package: { individually: true },
   custom: {

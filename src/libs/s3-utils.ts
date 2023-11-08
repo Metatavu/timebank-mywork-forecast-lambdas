@@ -1,5 +1,4 @@
 import { S3 } from "aws-sdk"
-import { Bucket } from "sst/node/bucket";
 
 /**
  * Set of S3 utilities
@@ -16,7 +15,7 @@ namespace S3Utils {
     export const loadJson = async <T> (s3: S3, key: string): Promise<T | null> => {
         try {
             const object = await s3.getObject({
-                Bucket: Bucket.DataBucket.bucketName,
+                Bucket: "",
                 Key: key
             }).promise();
         
