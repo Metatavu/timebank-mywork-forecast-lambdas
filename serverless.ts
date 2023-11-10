@@ -32,7 +32,7 @@ const serverlessConfiguration: AWS = {
       authorizers: {
         "timebankKeycloakAuthorizer": {
           identitySource: "$request.header.Authorization",
-          issuerUrl: "https://staging-time-bank-auth.metatavu.io",
+          issuerUrl: env.AUTH_ISSUER,
           audience: ["account"]
         }
       },
@@ -40,6 +40,30 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      ON_CALL_BUCKET_NAME: "${opt:stage}-on-call-data",
+      FORECAST_API_KEY: env.FORECAST_API_KEY,
+      AUTH_ISSUER: env.AUTH_ISSUER
+    },
+    s3: {
+      "on-call": {
+        bucketName: "${opt:stage}-on-call-data"
+      }
+    },
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: "Allow",
+            Action: ["s3:GetObject"],
+            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+          },
+          {
+            Effect: "Allow",
+            Action: ["s3:PutObject"],
+            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+          }
+        ]
+      }
     }
   },
   functions: {

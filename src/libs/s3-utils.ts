@@ -12,10 +12,10 @@ namespace S3Utils {
      * @param key object key
      * @returns object data as JSON or null if not found
      */
-    export const loadJson = async <T> (s3: S3, key: string): Promise<T | null> => {
+    export const loadJson = async <T> (s3: S3, bucket: string, key: string): Promise<T | null> => {
         try {
             const object = await s3.getObject({
-                Bucket: "",
+                Bucket: bucket,
                 Key: key
             }).promise();
         
@@ -41,9 +41,9 @@ namespace S3Utils {
      * @param key object key
      * @param data data to be saved as JSON
      */
-    export const saveJson = async <T> (s3: S3, key: string, data: T): Promise<void> => {
+    export const saveJson = async <T> (s3: S3, bucket: string, key: string, data: T): Promise<void> => {
         await s3.putObject({
-            Bucket: Bucket.DataBucket.bucketName,
+            Bucket: bucket,
             Key: key,
             Body: JSON.stringify(data)
         }).promise();

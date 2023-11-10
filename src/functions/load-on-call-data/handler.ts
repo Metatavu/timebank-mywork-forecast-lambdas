@@ -1,8 +1,8 @@
 import { S3 } from "aws-sdk"
-S3Utils
 import { OnCallEntry, PaidData } from "../../types";
 import S3Utils from "@libs/s3-utils";
 import { middyfy } from "@libs/lambda";
+import Config from "../../app/config";
 
 /**
  * Lambda method for loading on-call data
@@ -19,9 +19,10 @@ export const loadOnCallDataHandler = async (event: { queryStringParameters: { [k
 
     const s3 = new S3();
 
-    const nameMap = await S3Utils.loadJson<{ [key: string]: string } >(s3, "name-map.json") || {};
-    const data = await S3Utils.loadJson<OnCallEntry[]>(s3, `${year}.json`);
-    const paidData = await S3Utils.loadJson<PaidData>(s3, "paid.json") || {};
+    const bucket = Config.get().onCall.bucketName;
+    const nameMap = await S3Utils.loadJson<{ [key: string]: string } >(s3, bucket, "name-map.json") || {};
+    const data = await S3Utils.loadJson<OnCallEntry[]>(s3, bucket, `${year}.json`);
+    const paidData = await S3Utils.loadJson<PaidData>(s3, bucket, "paid.json") || {};
 
     if (!data) {
         throw new Error("No data");

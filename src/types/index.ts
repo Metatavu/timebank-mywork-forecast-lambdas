@@ -31,6 +31,9 @@ export interface AccessToken {
   },
   api: {
     apiKey: string;
+  },
+  onCall: {
+    bucketName: string;
   }
  }
 
