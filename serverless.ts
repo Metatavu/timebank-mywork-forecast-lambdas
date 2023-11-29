@@ -1,5 +1,7 @@
 import type { AWS } from "@serverless/typescript";
 
+import listDealsHandler from "@functions/pipedrive/list-deals";
+
 import listAllocationsHandler from "@functions/list-allocations";
 import listProjectsHandler from "@functions/list-projects";
 import listTasksHandler from "@functions/list-tasks";
@@ -41,6 +43,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   functions: {
+    listDealsHandler,
     listAllocationsHandler,
     listProjectsHandler,
     listTasksHandler,

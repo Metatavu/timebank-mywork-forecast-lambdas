@@ -40,7 +40,7 @@ const listDeals = async (api: PipedriveApiService): Promise<Response[]> => {
     })
 }
 
-const listDealsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
+const listDealsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
     const api = CreatePipedriveApiService();
 
     const deals = await listDeals(api);

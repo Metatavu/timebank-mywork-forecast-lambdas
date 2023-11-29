@@ -1,7 +1,7 @@
 import { Deal } from "./schemas/pipedrive/deal";
 import { Lead } from "./schemas/pipedrive/lead";
 import { Interest } from "./schemas/pipedrive/interest";
-import { Project } from "./schemas/pipedrive/salesproject";
+import { LeadOrDeal } from "./schemas/pipedrive/leadordeal";
 import Config from "../app/config";
 import fetch from "node-fetch";
 
@@ -9,11 +9,11 @@ export interface PipedriveApiService {
     getAllLeads: () => Promise<Lead[]>;
     getAllDeals: () => Promise<Deal[]>;
     getAllDealsWon: () => Promise<Deal[]>;
-    getDealById: (rowtype: string, id: string) => Promise<Project[]>;
-    addDealInterestById: (id: string) => Promise<Interest[]>;
-    addLeadInterestById: (id: string) => Promise<Interest[]>;
-    removeDealInterestById: (id: string) => Promise<Interest[]>;
-    removeLeadInterestById: (id: string) => Promise<Interest[]>;
+    getLeadOrDealById: (rowtype: string, id: string) => Promise<LeadOrDeal[]>;
+    addDealInterestById: (id: string, interest: string) => Promise<Interest[]>;
+    addLeadInterestById: (id: string, interest: string) => Promise<Interest[]>;
+    removeDealInterestById: (id: string, interest: string) => Promise<Interest[]>;
+    removeLeadInterestById: (id: string, interest: string) => Promise<Interest[]>;
   }
 
 
@@ -39,35 +39,55 @@ export function CreatePipedriveApiService(): PipedriveApiService {
             return response.json();
           },
           
-          async getDealById(rowtype: string, id: string): Promise<Project[]> {
+          async getLeadOrDealById(rowtype: string, id: string): Promise<LeadOrDeal[]> {
             const response = await fetch(`https://metatavu.pipedrive.com/api/v1/${rowtype}/?${id}&${apiKey}`);
             return response.json();
           },
           
-          async addDealInterestById(id: string): Promise<Interest[]> {
+          async addDealInterestById(id: string, interest: string): Promise<Interest[]> {
             const response = await fetch(`https://metatavu.pipedrive.com/api/v1/deals/?${id}&${apiKey}`, {
-              method: 'PUT'
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
+
             });
             return response.json();
           },
           
-          async addLeadInterestById(id: string): Promise<Interest[]> {
+          async addLeadInterestById(id: string, interest: string): Promise<Interest[]> {
             const response = await fetch(`https://metatavu.pipedrive.com/api/v1/leads/?${id}&${apiKey}`, {
-              method: 'PATCH'
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
+
             });
             return response.json();
           },
           
-          async removeDealInterestById(id: string): Promise<Interest[]> {
+          async removeDealInterestById(id: string, interest: string): Promise<Interest[]> {
             const response = await fetch(`https://metatavu.pipedrive.com/api/v1/deals/?${id}&${apiKey}`, {
-              method: 'PUT'
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
+
             });
             return response.json();
           },
           
-          async removeLeadInterestById(id: string): Promise<Interest[]> {
+          async removeLeadInterestById(id: string, interest: string): Promise<Interest[]> {
             const response = await fetch(`https://metatavu.pipedrive.com/api/v1/leads/?${id}&${apiKey}`, {
-              method: 'PATCH'
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
+
             });
             return response.json();
           }

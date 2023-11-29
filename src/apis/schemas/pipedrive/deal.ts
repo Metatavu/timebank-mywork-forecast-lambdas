@@ -1,7 +1,8 @@
 export interface Deal {
     id: string;
     title: string;
-    interested: string;
+    interested: string; // NOTE: Might need to be changed to pipedrive api item-key
+    usedTech: string; // NOTE: Might need to be changed to pipedrive api item-key
     value: number;
     currency: string;
     add_time: string; 
