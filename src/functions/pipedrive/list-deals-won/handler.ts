@@ -18,9 +18,9 @@ interface Response {
     next_activity_note?: string;
 }
 
-const listDeals = async (api: PipedriveApiService): Promise<Response[]> => {
+const listDealsWon = async (api: PipedriveApiService): Promise<Response[]> => {
 
-    const deals = await api.getOpenDeals();
+    const deals = await api.getAllDealsWon();
 
 
     return deals.map(deal => {
@@ -40,14 +40,14 @@ const listDeals = async (api: PipedriveApiService): Promise<Response[]> => {
     })
 }
 
-const listDealsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
+const listDealsWonHandler: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
     const api = CreatePipedriveApiService();
 
-    const deals = await listDeals(api);
+    const deals = await listDealsWon(api);
     return{
         statusCode: 200,
         body: JSON.stringify(deals)
     };
 }
 
-export const main = middyfy(listDealsHandler);
+export const main = middyfy(listDealsWonHandler);

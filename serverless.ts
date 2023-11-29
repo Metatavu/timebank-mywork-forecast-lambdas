@@ -1,6 +1,13 @@
 import type { AWS } from "@serverless/typescript";
 
 import listDealsHandler from "@functions/pipedrive/list-deals";
+import listDealsWonHandler from "@functions/pipedrive/list-deals-won";
+import listLeadsHandler from "@functions/pipedrive/list-leads";
+import getLeadOrDealByIdHandler from "@functions/pipedrive/find-leadordeal-byid";
+import addInterestToDealHandler from "@functions/pipedrive/add-InterestToDeal";
+import addInterestToLeadHandler from "@functions/pipedrive/add-InterestToLead";
+import removeInterestFrmoDealHandler from "@functions/pipedrive/remove-InterestFromDeal";
+import removeInterestFrmoLeadHandler from "@functions/pipedrive/remove-InterestFromLead";
 
 import listAllocationsHandler from "@functions/list-allocations";
 import listProjectsHandler from "@functions/list-projects";
@@ -11,6 +18,8 @@ import listProjectSprintsHandler from "@functions/list-project-sprints";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import { env } from "process";
+
+
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -44,6 +53,14 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     listDealsHandler,
+    listDealsWonHandler,
+    listLeadsHandler,
+    getLeadOrDealByIdHandler,
+    addInterestToDealHandler,
+    addInterestToLeadHandler,
+    removeInterestFrmoDealHandler,
+    removeInterestFrmoLeadHandler,
+
     listAllocationsHandler,
     listProjectsHandler,
     listTasksHandler,

@@ -7,7 +7,7 @@ import fetch from "node-fetch";
 
 export interface PipedriveApiService {
     getAllLeads: () => Promise<Lead[]>;
-    getAllDeals: () => Promise<Deal[]>;
+    getOpenDeals: () => Promise<Deal[]>;
     getAllDealsWon: () => Promise<Deal[]>;
     getLeadOrDealById: (rowtype: string, id: string) => Promise<LeadOrDeal[]>;
     addDealInterestById: (id: string, interest: string) => Promise<Interest[]>;
@@ -29,8 +29,8 @@ export function CreatePipedriveApiService(): PipedriveApiService {
             return response.json();
           },
           
-          async getAllDeals(): Promise<Deal[]> {
-            const response = await fetch(`https://metatavu.pipedrive.com/api/v1/deals/?${apiKey}`);
+          async getOpenDeals(): Promise<Deal[]> {
+            const response = await fetch(`https://metatavu.pipedrive.com/api/v1/deals/?status=open&${apiKey}`);
             return response.json();
           },
           
