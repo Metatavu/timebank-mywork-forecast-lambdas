@@ -1,4 +1,3 @@
-
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { CreatePipedriveApiService, PipedriveApiService } from 'src/apis/pipedrive-api-service';
@@ -33,12 +32,11 @@ const addInterestToDeal = async (api: PipedriveApiService, param: AddInterestToD
     return 'Interest added successfully';
 };
 
-
-
 const addInterestToDealHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
     const api = CreatePipedriveApiService();
     const getDataFromBody: AddInterestToDealParameters = JSON.parse(JSON.stringify(event.body)) as AddInterestToDealParameters;
     const res = await addInterestToDeal(api, getDataFromBody);
+    
     return {
         statusCode: 200,
         body: res     

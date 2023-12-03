@@ -1,4 +1,3 @@
-
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { CreatePipedriveApiService, PipedriveApiService } from 'src/apis/pipedrive-api-service';
@@ -25,7 +24,6 @@ const removeInterestFromDeal = async (api: PipedriveApiService, param: RemoveInt
         updatedInterested = newValue;
       }
       else {
-    
         let userIdsArray = param.existingInterest.split(";");
         
         // Remove any empty strings from the array
@@ -37,24 +35,20 @@ const removeInterestFromDeal = async (api: PipedriveApiService, param: RemoveInt
         if (indexToRemove !== -1){
           userIdsArray.splice(indexToRemove, 1);
           updatedInterested = userIdsArray.join(';');
-          
           updatedInterested += ';'; // Add the semicolon at the end
         }
-
-    
       }
   
-    await api.removeDealInterestById( param.pid, updatedInterested );
+    await api.removeDealInterestById(param.pid, updatedInterested);
 
     return 'Interest removed successfully';
 };
-
-
 
 const removeInterestFrmoDealHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
     const api = CreatePipedriveApiService();
     const getDataFromBody: RemoveInterestFromDealParameters = JSON.parse(JSON.stringify(event.body)) as RemoveInterestFromDealParameters;
     const res = await removeInterestFromDeal(api, getDataFromBody);
+    
     return {
         statusCode: 200,
         body: res     

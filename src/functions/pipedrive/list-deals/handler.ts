@@ -1,8 +1,6 @@
-
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { CreatePipedriveApiService, PipedriveApiService } from 'src/apis/pipedrive-api-service';
-
 
 interface Response {
     id: string;
@@ -22,9 +20,8 @@ const listDeals = async (api: PipedriveApiService): Promise<Response[]> => {
 
     const deals = await api.getOpenDeals();
 
-
     return deals.map(deal => {
-        return{ 
+        return { 
             id: deal.id,
             title: deal.title,
             interested: deal.interested,
@@ -44,7 +41,7 @@ const listDealsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
     const api = CreatePipedriveApiService();
 
     const deals = await listDeals(api);
-    return{
+    return {
         statusCode: 200,
         body: JSON.stringify(deals)
     };

@@ -1,4 +1,3 @@
-
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { CreatePipedriveApiService, PipedriveApiService } from 'src/apis/pipedrive-api-service';
@@ -13,7 +12,6 @@ export interface RemoveInterestFromLeadParameters {
 interface Response {
     response: any;
 }
-
 
 const removeInterestFromLead = async (api: PipedriveApiService, param: RemoveInterestFromLeadParameters): Promise<string> => {
     // Assuming the add operation was successful
@@ -55,6 +53,7 @@ const removeInterestFrmoLeadHandler: ValidatedEventAPIGatewayProxyEvent<any> = a
     const api = CreatePipedriveApiService();
     const getDataFromBody: RemoveInterestFromLeadParameters = JSON.parse(JSON.stringify(event.body)) as RemoveInterestFromLeadParameters;
     const res = await removeInterestFromLead(api, getDataFromBody);
+
     return {
         statusCode: 200,
         body: res     
