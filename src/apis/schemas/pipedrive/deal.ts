@@ -1,14 +1,17 @@
+/**
+ * Deal object 
+ */
 export interface Deal {
-    id: string;
+    id: number;
     title: string;
-    interested: string; // NOTE: Might need to be changed to pipedrive api item-key
-    usedTech: string; // NOTE: Might need to be changed to pipedrive api item-key
+    interested: string;
+    usedTech: string;
     value: number;
     currency: string;
-    add_time: string; 
-    update_time: string; 
-    next_activity_date: string; 
+    addTime: string; 
+    updateTime: string; 
+    nextActivityDate: string; 
     status: string;
-    next_activity_subject?: string;
-    next_activity_note?: string;
+    nextActivitySubject: string;
+    nextActivityNote: string;
   }

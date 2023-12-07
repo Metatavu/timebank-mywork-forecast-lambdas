@@ -1,24 +1,31 @@
-import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { middyfy } from '@libs/lambda';
-import { CreatePipedriveApiService, PipedriveApiService } from 'src/apis/pipedrive-api-service';
+import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { middyfy } from "@libs/lambda";
+import { CreatePipedriveApiService, PipedriveApiService } from "src/apis/pipedrive-api-service";
+import { Deal } from "src/apis/schemas/pipedrive/deal";
 
 interface Response {
-    id: string;
+    id: number;
     title: string;
     interested: string;
     value: number;
     currency: string;
-    add_time: string; 
-    update_time: string; 
-    next_activity_date: string; 
+    addTime: string; 
+    updateTime: string; 
+    nextActivityDate: string; 
     status: string;
-    next_activity_subject?: string;
-    next_activity_note?: string;
+    nextActivitySubject: string;
+    nextActivityNote: string;
 }
 
-const listDeals = async (api: PipedriveApiService): Promise<Response[]> => {
+/**
+ * 
+ * @param api Choose what ApiService to use
+ * @param status Defines what deals to fetch
+ * @returns Array of deals that match for the status
+ */
+const listDeals = async (api: PipedriveApiService, status: string): Promise<Response[]> => {
 
-    const deals = await api.getOpenDeals();
+    const deals = await api.getDeals(status);
 
     return deals.map(deal => {
         return { 
@@ -27,20 +34,26 @@ const listDeals = async (api: PipedriveApiService): Promise<Response[]> => {
             interested: deal.interested,
             value: deal.value,
             currency: deal.currency,
-            add_time: deal.add_time,
-            update_time: deal.update_time,
-            next_activity_date: deal.next_activity_date,
+            addTime: deal.addTime,
+            updateTime: deal.updateTime,
+            nextActivityDate: deal.nextActivityDate,
             status: deal.status,
-            next_activity_subject: deal.next_activity_subject,
-            next_activity_note: deal.next_activity_note,
+            nextActivitySubject: deal.nextActivitySubject,
+            nextActivityNote: deal.nextActivityNote,
         }
     })
 }
+/**
+ * Handles listing deals
+ * 
+ * @param event Gives you the parameter
+ * @returns Status code 200 and an Array of deals
+ */
+const listDealsHandler: ValidatedEventAPIGatewayProxyEvent<Deal> = async(event) => {
 
-const listDealsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
+    const paramStatus = event.pathParameters.status;
     const api = CreatePipedriveApiService();
-
-    const deals = await listDeals(api);
+    const deals = await listDeals(api, paramStatus);
     return {
         statusCode: 200,
         body: JSON.stringify(deals)

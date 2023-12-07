@@ -1,3 +1,6 @@
+/**
+ * Interest object used to store userIds separeted with semicolons  
+ */
 export interface Interest {
-    'pipedrive-interest-key': string; // NOTE: pipedrive-interest-key to be switch as the key string 
+    interested: string; 
 }

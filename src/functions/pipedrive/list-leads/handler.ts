@@ -1,35 +1,51 @@
-import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { middyfy } from '@libs/lambda';
-import { CreatePipedriveApiService, PipedriveApiService } from 'src/apis/pipedrive-api-service';
+import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { middyfy } from "@libs/lambda";
+import { CreatePipedriveApiService, PipedriveApiService } from "src/apis/pipedrive-api-service";
+import { Lead } from "src/apis/schemas/pipedrive/lead";
 
+/**
+ * Response schema for Leads
+ */
 interface Response {
-    id: string;
+    leadId: string;
     title: string;
     interested: string;
-    add_time: string; 
-    update_time: string;
-    next_activity_date: string;
-    label_ids: string[];
+    usedTech: string;
+    addTime: string; 
+    updateTime: string;
+    nextActivityDate: string;
+    labelIds: string[];
 }
-
+/**
+ * Lists all Leads from Pipedrive API
+ * 
+ * @param api What api service you wnat to use.
+ * @returns List of Leads
+ */
 const listLeads = async (api: PipedriveApiService): Promise<Response[]> => {
 
     const leads = await api.getAllLeads();
 
     return leads.map(lead => {
         return { 
-            id: lead.id,
+            leadId: lead.id,
             title: lead.title,
             interested: lead.interested,
-            add_time: lead.add_time,
-            update_time: lead.update_time,
-            next_activity_date: lead.next_activity_date,
-            label_ids: lead.label_ids
+            usedTech: lead.usedTech,
+            addTime: lead.addTime,
+            updateTime: lead.updateTime,
+            nextActivityDate: lead.nextActivityDate,
+            labelIds: lead.labelIds
         }
     })
 }
 
-const listLeadsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
+/**
+ * Handles Lead fetching
+ * 
+ * @returns Status code 200 and the leads object array
+ */
+const listLeadsHandler: ValidatedEventAPIGatewayProxyEvent<Lead> = async () => {
     
     const api = CreatePipedriveApiService();
     const leads = await listLeads(api);

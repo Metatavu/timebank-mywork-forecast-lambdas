@@ -4,7 +4,8 @@ import { Configuration } from "../types/index";
 const env = cleanEnv(process.env, {
     FORECAST_API_KEY: str(),
     AUTH_ISSUER: str(),
-    PIPEFRIVE_API_KEY: str()
+    PIPEFRIVE_API_KEY: str(),
+    PIPEFRIVE_API_URL: str()
 });
 
 export default class Config {
@@ -22,7 +23,8 @@ export default class Config {
         apiKey: env.FORECAST_API_KEY
       },
       pipedriveApi: {
-        apiKey: env.PIPEFRIVE_API_KEY
+        apiKey: env.PIPEFRIVE_API_KEY,
+        apiUrl: env.PIPEFRIVE_API_URL
       }
     });
 }
