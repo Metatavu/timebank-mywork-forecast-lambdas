@@ -36,8 +36,9 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
      * @returns List of Leads
      */
     async getAllLeads(): Promise<Lead[]> {
-      const response = await fetch(`${apiUrl}/leads/?archived_status=not_archived&${apiKey}`);
-      return response.json();
+      const response = await fetch(`${apiUrl}/leads/?archived_status=not_archived&api_token=${apiKey}`);
+      const leads = await response.json(); 
+      return leads.data;
     },
 
     /**
@@ -47,8 +48,9 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
     * @returns List of Deals
     */
     async getDeals(status: string): Promise<Deal[]> {
-      const response = await fetch(`${apiUrl}/deals/?status=${status}&${apiKey}`);
-      return response.json();
+      const response = await fetch(`${apiUrl}/deals/?status=${status}&api_token=${apiKey}`);
+      const deals = await response.json();
+      return deals.data;
     },
 
     /**
@@ -57,8 +59,9 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
      * @returns lead object
      */
     async getLeadById(id: string): Promise<Lead[]> {
-      const response = await fetch(`${apiUrl}/leads/?${id}&${apiKey}`);
-      return response.json();
+      const response = await fetch(`${apiUrl}/leads/?${id}&api_token=${apiKey}`);
+      const lead = await response.json();
+      return lead.data;
     },
 
     /**
@@ -68,8 +71,9 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
     * @returns Deal object 
     */
     async getDealById(id: number): Promise<Deal[]> {
-      const response = await fetch(`${apiUrl}/deals/?${id}&${apiKey}`);
-      return response.json();
+      const response = await fetch(`${apiUrl}/deals/${id}?api_token=${apiKey}`);
+      const deal = await response.json();
+      return deal;
     },
    /**
     * Add interest to a deal
@@ -79,12 +83,12 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
     * @returns success message
     */
     async addDealInterestById(id: string, interest: string): Promise<Interest[]> {
-      const response = await fetch(`${apiUrl}/deals/?${id}&${apiKey}`, {
+      const response = await fetch(`${apiUrl}/deals/${id}?api_token=${apiKey}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
+        body: JSON.stringify({"9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest}) // STRING IS THE VARIABLE KEY FOR INTEREST
 
       });
       return response.json();
@@ -97,14 +101,14 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
     * @returns success message
     */
     async addLeadInterestById(id: string, interest: string): Promise<Interest[]> {
-      const response = await fetch(`${apiUrl}/leads/?${id}&${apiKey}`, {
+      const response = await fetch(`${apiUrl}/leads/${id}?api_token=${apiKey}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
-
+        body: JSON.stringify({"9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest}),
       });
+      console.log("RESPONSE:  ", response);
       return response.json();
     },
    /**
@@ -115,12 +119,12 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
     * @returns success message
     */
     async removeDealInterestById(id: string, interest: string): Promise<Interest[]> {
-      const response = await fetch(`${apiUrl}/deals/?${id}&${apiKey}`, {
+      const response = await fetch(`${apiUrl}/deals/${id}?api_token=${apiKey}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
+        body: JSON.stringify({"9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest}) // STRING IS THE VARIABLE KEY FOR INTEREST
 
       });
       return response.json();
@@ -133,12 +137,12 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
     * @returns success message
     */
     async removeLeadInterestById(id: string, interest: string): Promise<Interest[]> {
-      const response = await fetch(`${apiUrl}/leads/?${id}&${apiKey}`, {
+      const response = await fetch(`${apiUrl}/leads/${id}?api_token=${apiKey}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: { "9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest } // STRING IS THE VARIABLE KEY FOR INTEREST
+        body: JSON.stringify({"9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest})
 
       });
       return response.json();

@@ -10,7 +10,7 @@ import { Interest } from "src/apis/schemas/pipedrive/interest";
 interface RemoveInterestFromDealParameters {
   rowtype: string,
   userId: string,
-  projectId: string,
+  dealId: string,
   existingInterest: string
 }
 
@@ -36,7 +36,7 @@ const removeInterestFromDeal = async (api: PipedriveApiService, param: RemoveInt
     updatedInterested += ";";
   }
 
-  await api.removeDealInterestById(param.projectId, updatedInterested);
+  await api.removeDealInterestById(param.dealId, updatedInterested);
 
   return "Interest removed successfully";
 };

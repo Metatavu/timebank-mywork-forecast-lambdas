@@ -6,8 +6,8 @@ import getLeadByIdHandler from "@functions/pipedrive/find-lead-by-id";
 import getDealByIdHandler from "@functions/pipedrive/find-deal-by-id";
 import addInterestToDealHandler from "@functions/pipedrive/add-interest-to-deal"
 import addInterestToLeadHandler from "@functions/pipedrive/add-interest-to-lead";
-import removeInterestFrmoDealHandler from "@functions/pipedrive/remove-interest-from-deal";
-import removeInterestFrmoLeadHandler from "@functions/pipedrive/remove-interest-from-lead";
+import removeInterestFromDealHandler from "@functions/pipedrive/remove-interest-from-deal";
+import removeInterestFromLeadHandler from "@functions/pipedrive/remove-interest-from-lead";
 import listAllocationsHandler from "@functions/list-allocations";
 import listProjectsHandler from "@functions/list-projects";
 import listTasksHandler from "@functions/list-tasks";
@@ -55,8 +55,8 @@ const serverlessConfiguration: AWS = {
     getDealByIdHandler,
     addInterestToDealHandler,
     addInterestToLeadHandler,
-    removeInterestFrmoDealHandler,
-    removeInterestFrmoLeadHandler,
+    removeInterestFromDealHandler,
+    removeInterestFromLeadHandler,
     listAllocationsHandler,
     listProjectsHandler,
     listTasksHandler,
