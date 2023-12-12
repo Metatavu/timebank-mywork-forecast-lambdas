@@ -28,7 +28,7 @@ const listLeads = async (api: PipedriveApiService): Promise<Response[]> => {
 
     return leads.map(lead => {
         return { 
-            leadId: lead.id,
+            leadId: lead.leadId,
             title: lead.title,
             interested: lead.interested,
             usedTech: lead.usedTech,
