@@ -97,4 +97,4 @@ Any tsconfig.json can be used, but if you do, set the environment variable `TS_N
 
 ### Deployment bucket name configuration
 
-Deployment bucket name opt.stage should be included with the stage flag when using sls commands e.g. --stage dev
+Deployment bucket name opt.stage should be included with the stage flag when using sls commands e.g. --stage dev.
