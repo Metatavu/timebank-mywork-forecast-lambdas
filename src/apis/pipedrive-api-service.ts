@@ -4,9 +4,7 @@ import { Interest } from "./schemas/pipedrive/interest";
 import Config from "../app/config";
 import fetch from "node-fetch";
 /**
- * 
  * Holds all PipedriveApiService functions used to interact with Pipedrive API 
- * 
  */
 export interface PipedriveApiService {
   getAllLeads: () => Promise<Lead[]>;
@@ -21,9 +19,7 @@ export interface PipedriveApiService {
 
 
 /**
- * 
  * Creates PipedriveApiService
- * 
  */
 export const CreatePipedriveApiService = (): PipedriveApiService => {
   const apiKey: string = Config.get().pipedriveApi.apiKey;
@@ -108,7 +104,6 @@ export const CreatePipedriveApiService = (): PipedriveApiService => {
         },
         body: JSON.stringify({"9f6a98bf5664693aa24a0e5473bef88e1fae3cb3": interest}),
       });
-      console.log("RESPONSE:  ", response);
       return response.json();
     },
    /**

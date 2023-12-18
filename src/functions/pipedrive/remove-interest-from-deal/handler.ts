@@ -3,7 +3,6 @@ import { middyfy } from "@libs/lambda";
 import { CreatePipedriveApiService, PipedriveApiService } from "src/apis/pipedrive-api-service";
 import { Interest } from "src/apis/schemas/pipedrive/interest";
 
-
 /**
  * Parameter schema for Removing Deal interest
  */
@@ -13,7 +12,6 @@ interface RemoveInterestFromDealParameters {
   dealId: string,
   existingInterest: string
 }
-
 
 /**
  * Removes the wanted userId from the interested string
