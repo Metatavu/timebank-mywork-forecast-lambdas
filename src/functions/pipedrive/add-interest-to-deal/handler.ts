@@ -6,7 +6,7 @@ import { Interest } from "src/apis/schemas/pipedrive/interest";
 /**
  * Parameters for adding interest string to deal  
  */
-export interface AddInterestToDealParameters {
+interface AddInterestToDealParameters {
   rowtype: string,
   userId: string,
   dealId: string,

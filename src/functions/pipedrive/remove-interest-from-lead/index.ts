@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'PUT',
-        path: '/removeLeadInterest/{id}',
+        path: '/removeLeadInterest/{leadId}',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

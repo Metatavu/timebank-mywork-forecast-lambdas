@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'PATCH',
-        path: '/addLeadInterest/{id}',
+        path: '/addLeadInterest/{leadId}',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

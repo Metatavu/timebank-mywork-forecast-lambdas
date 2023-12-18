@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'get',
-        path: '/getLeadOrDealById/{rowtype}/{id}',
+        path: '/getDealById/{dealId}',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

@@ -3,6 +3,9 @@ import { middyfy } from "@libs/lambda";
 import { CreatePipedriveApiService, PipedriveApiService } from "src/apis/pipedrive-api-service";
 import { Deal } from "src/apis/schemas/pipedrive/deal";
 
+/**
+ * Response schema for Deals
+ */
 interface Response {
     id: number;
     title: string;
