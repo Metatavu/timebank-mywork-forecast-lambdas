@@ -31,5 +31,9 @@ export interface AccessToken {
   },
   api: {
     apiKey: string;
+  },
+  pipedriveApi: {
+    apiKey: string,
+    apiUrl: string
   }
  }
