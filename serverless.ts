@@ -46,6 +46,10 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      FORECAST_API_KEY: env.FORECAST_API_KEY,
+      AUTH_ISSUER: env.AUTH_ISSUER,
+      PIPEDRIVE_API_KEY: env.PIPEDRIVE_API_KEY,
+      PIPEDRIVE_API_URL: env.PIPEDRIVE_API_URL,
     },
   },
   functions: {
