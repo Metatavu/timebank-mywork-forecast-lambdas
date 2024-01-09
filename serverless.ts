@@ -8,11 +8,13 @@ import addInterestToDealHandler from "@functions/pipedrive/add-interest-to-deal"
 import addInterestToLeadHandler from "@functions/pipedrive/add-interest-to-lead";
 import removeInterestFromDealHandler from "@functions/pipedrive/remove-interest-from-deal";
 import removeInterestFromLeadHandler from "@functions/pipedrive/remove-interest-from-lead";
-import listAllocationsHandler from "@functions/list-allocations";
-import listProjectsHandler from "@functions/list-projects";
-import listTasksHandler from "@functions/list-tasks";
-import listTimeEntriesHandler from "@functions/list-time-entries";
-import listProjectSprintsHandler from "@functions/list-project-sprints";
+import listAllocationsHandler from "src/functions/forecast/list-allocations";
+import listProjectsHandler from "src/functions/forecast/list-projects";
+import listTasksHandler from "src/functions/forecast/list-tasks";
+import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
+import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
+import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
+import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
 
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
@@ -29,6 +31,8 @@ const serverlessConfiguration: AWS = {
     deploymentBucket: {
       name: "${self:service}-${opt:stage}-deploy"
     },
+    memorySize: 128,
+    timeout: 12,
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -50,6 +54,9 @@ const serverlessConfiguration: AWS = {
       AUTH_ISSUER: env.AUTH_ISSUER,
       PIPEDRIVE_API_KEY: env.PIPEDRIVE_API_KEY,
       PIPEDRIVE_API_URL: env.PIPEDRIVE_API_URL,
+      METATAVU_BOT_TOKEN: process.env.METATAVU_BOT_TOKEN,
+      TIMEBANK_BASE_URL: process.env.TIMEBANK_BASE_URL,
+      FORECAST_BASE_URL: process.env.FORECAST_BASE_URL
     },
   },
   functions: {
@@ -65,7 +72,9 @@ const serverlessConfiguration: AWS = {
     listProjectsHandler,
     listTasksHandler,
     listTimeEntriesHandler,
-    listProjectSprintsHandler
+    listProjectSprintsHandler,
+    sendDailyMessage,
+    sendWeeklyMessage
   },
   package: { individually: true },
   custom: {
