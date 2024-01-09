@@ -14,6 +14,9 @@ export default {
           }
         }
       }
+    },
+    {
+      schedule: "cron(15 6 ? * MON *)"
     }
   ]
 };
