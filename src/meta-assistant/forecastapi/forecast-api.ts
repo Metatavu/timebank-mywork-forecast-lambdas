@@ -32,13 +32,13 @@ namespace ForecastApiUtilities {
   /**
    * Get all allocations after yesterday
    *
-   * @param dayBeforeYesterday the day before yesterday
+   * @param date the day before yesterday
    * @returns all allocations after yesterday
    */
-  export const getTimeRegistrations = async (dayBeforeYesterday: string): Promise<TimeRegistrations[]> => {
+  export const getTimeRegistrations = async (date: string): Promise<TimeRegistrations[]> => {
     try {
-      const dayBeforeYesterdayUrl = dayBeforeYesterday.replace(/[-]/g, "");
-      const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
+      const dateUrl = date.replace(/[-]/g, "");
+      const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dateUrl}`, { headers: headers });
       const result: any = await request.json();
 
       if (request.status !== 200) throw new Error(result.message);

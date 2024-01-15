@@ -5,9 +5,11 @@ import { ParsedAccessToken } from "src/types/meta-assistant/index";
  * Namespace for Authentication
  */
 namespace Auth {
-
   const { KEYCLOAK_BASE_URL, KEYCLOAK_REALM, KEYCLOAK_USERNAME, KEYCLOAK_PASSWORD, KEYCLOAK_CLIENT, KEYCLOAK_CLIENT_SECRET } = process.env;
 
+  /**
+   * Get timebank access token from keycloak
+   */
   export const getAccessToken = async (): Promise<ParsedAccessToken> => {
     const headers = {};
     headers["Content-Type"] = "application/x-www-form-urlencoded";

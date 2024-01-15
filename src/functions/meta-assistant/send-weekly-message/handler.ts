@@ -2,7 +2,7 @@ import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, form
 import { middyfy } from "src/libs/lambda";
 import ForecastApiUtilities from "src/meta-assistant/forecastapi/forecast-api";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
-import SlackApiUtilities from "src/meta-assistant/slackapi/slackapi-utils";
+import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
 import TimebankUtilities from "src/meta-assistant/timebank/timebank-utils";
 import schema, { WeeklyCombinedData } from "src/types/meta-assistant/index";
@@ -10,26 +10,30 @@ import { Timespan } from "src/generated/client/api";
 import Auth from "src/meta-assistant/auth/auth-provider";
 
 /**
- * AWS-less handler for sendWeeklyMessage
+ * Handler for sendWeeklyMessage
  *
  * @returns Promise of WeeklyHandlerResponse
  */
-export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse> => {
+const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse> => {
   try {
     const { accessToken } = await Auth.getAccessToken();
+    if (!accessToken) {
+      throw new Error("Timebank authentication failed");
+    }
+
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
 
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
-    const slackUsers = await SlackApiUtilities.getSlackUsers();
+    const slackUsers = await SlackUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
-    const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
+    const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!timebankUsers) {
       throw new Error("No persons retrieved from Timebank");
     }
 
-    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates();
     const personTotalTimes: WeeklyCombinedData[] = [];
 
     for (const timebankUser of timebankUsers) {
@@ -48,7 +52,7 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
 
     const weeklyCombinedData = TimebankUtilities.combineWeeklyData(personTotalTimes, slackUsers);
 
-    const messagesSent = await SlackApiUtilities.postWeeklyMessageToUsers(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = await SlackUtilities.postWeeklyMessageToUsers(weeklyCombinedData, timeRegistrations, previousWorkDays, nonProjectTimes);
 
     const errors = messagesSent.filter(messageSent => messageSent.response.error);
 
@@ -79,7 +83,7 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
  * @param event API Gateway proxy event
  * @returns JSON response
  */
-export const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => (
+const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => (
   formatJSONResponse({
     ...await sendWeeklyMessageHandler(),
     event: event

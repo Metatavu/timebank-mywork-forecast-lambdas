@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues, CalculateWorkedTimeAndBillableHoursResponse } from "src/types/meta-assistant/index";
+import { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
 import { DateTime, Duration } from "luxon";
 import { PersonTotalTime } from "src/generated/client/api";
 
@@ -24,7 +24,7 @@ namespace TimeUtilities {
    *
    * @returns various date formats/ numbers for start and end of previous week
    */
-  export const lastWeekDateProvider = (): Dates => {
+  export const getlastWeeksDates = (): Dates => {
     const startOfWeek = DateTime.now().startOf("week");
 
     const weekStartDate = startOfWeek.minus({ weeks: 1 });
@@ -39,7 +39,7 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns human friendly time formats
    */
-  export const handleTimeConversion = (user: PersonTotalTime): DisplayValues => {
+  export const handleTimeFormatting = (user: PersonTotalTime): DisplayValues => {
     const { logged, expected, internalTime, balance, loggedProjectTime, billableProjectTime, nonBillableProjectTime } = user;
 
     const displayLogged = TimeUtilities.timeConversion(logged);
@@ -62,36 +62,7 @@ namespace TimeUtilities {
   };
 
   /**
-   * Calculates worked time and billable hours
-   *
-   * @param user data from timebank
-   * @returns a message based on the worked time and the percentage of billable hours
-   */
-  export const calculateWorkedTimeAndBillableHours = (user: PersonTotalTime | DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
-    const { balance, billableProjectTime, logged } = user;
-
-    const billableHoursPercentage = logged === 0 ? "0" : (billableProjectTime/logged * 100).toFixed(0);
-
-    const undertime = TimeUtilities.timeConversion(balance * -1);
-    const overtime = TimeUtilities.timeConversion(balance);
-
-    let message = "You worked the expected amount of time";
-    if (balance > 0) {
-      message = `Overtime: ${overtime}`;
-    }
-
-    if (balance < 0) {
-      message = `Undertime: ${undertime}`;
-    }
-
-    return {
-      message: message,
-      billableHoursPercentage: billableHoursPercentage
-    };
-  };
-
-  /**
-   * Checks if user is away or is it first day back
+   * Checks if user should receive message, not if off or is first day back
    *
    * @param timeRegistrations All timeregistrations after the day before yesterday
    * @param personId Users id
@@ -100,7 +71,7 @@ namespace TimeUtilities {
    * @param nonProjectTimes List of non project times
    * @returns false if can't find a time registration
    */
-  export const checkIfUserIsAwayOrIsItFirstDayBack = (
+  export const checkIfUserShouldRecieveMessage = (
     timeRegistrations: TimeRegistrations[],
     personId: number,
     expected: number,

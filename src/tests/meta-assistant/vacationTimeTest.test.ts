@@ -13,7 +13,7 @@ describe("vacation time tests", () => {
     const fakePersonId = 3;
     const fakeExpected = 433;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+    const result = TimeUtilities.checkIfUserShouldRecieveMessage(
       forecastMockTimeRegistrations,
       fakePersonId,
       fakeExpected,
@@ -27,7 +27,7 @@ describe("vacation time tests", () => {
     const fakePersonId = 124;
     const fakeExpected = 100;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+    const result = TimeUtilities.checkIfUserShouldRecieveMessage(
       forecastMockTimeRegistrations,
       fakePersonId,
       fakeExpected,
@@ -44,7 +44,7 @@ describe("vacation time tests", () => {
     const fakeExpected = 100;
 
     expect(() =>
-      TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(forecastMockTimeRegistrations, fakePersonId1, fakeExpected, today, fakeProjectTimes)
+      TimeUtilities.checkIfUserShouldRecieveMessage(forecastMockTimeRegistrations, fakePersonId1, fakeExpected, today, fakeProjectTimes)
     ).toThrow(TypeError);
   });
 
@@ -53,7 +53,7 @@ describe("vacation time tests", () => {
     const fakeExpected = undefined;
     const fakeDate = undefined;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+    const result = TimeUtilities.checkIfUserShouldRecieveMessage(
       forecastMockTimeRegistrations,
       fakePersonId1,
       fakeExpected,
@@ -69,7 +69,7 @@ describe("vacation time tests", () => {
     const fakeExpected = 435;
 
     expect(() =>
-      TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(fakeTimeRegistrations, fakePersonId1, fakeExpected, today, forecastMockNonProjectTimes)
+      TimeUtilities.checkIfUserShouldRecieveMessage(fakeTimeRegistrations, fakePersonId1, fakeExpected, today, forecastMockNonProjectTimes)
     ).toThrow(TypeError);
   });
 
@@ -78,7 +78,7 @@ describe("vacation time tests", () => {
     const fakeExpected = NaN;
     const fakeDate = null;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+    const result = TimeUtilities.checkIfUserShouldRecieveMessage(
       forecastMockTimeRegistrations,
       fakePersonId1,
       fakeExpected,

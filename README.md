@@ -104,8 +104,8 @@ Deployment bucket name opt.stage should be included with the stage flag when usi
 
 Staging implementation for selecting slack user ids (through an environment variable) who will receive all the messages sent by daily or weekly messages.
 
-For use in staging environment/ develop branch use the STAGING_IDS environment variable. If this variable does not exist or is empty the program runs normally. Copy the variable and add it (`STAGING_IDS=<slackid>`) to the `.env` file.
-Multiple ids must be divided by `,` for example `STAGING_IDS=xxxxxxx,xxxxxxx,xxxxxxx`
+For use in staging environment/ develop branch use the SLACK_USER_OVERRIDE environment variable. If this variable does not exist or is empty the program runs normally. Copy the variable and add it (`SLACK_USER_OVERRIDE=<slackid>`) to the `.env` file.
+Multiple ids must be divided by `,` for example `SLACK_USER_OVERRIDE=xxxxxxx,xxxxxxx,xxxxxxx`
 
 ##### Getting your slack id
 1. Click on a user profile within Slack.

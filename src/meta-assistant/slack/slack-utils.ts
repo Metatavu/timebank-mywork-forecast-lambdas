@@ -3,17 +3,18 @@ import { ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
+import MessageUtilities from "../generic/message-utils";
 
 /**
- * Namespace for Slack API utilities
+ * Namespace for Slack utilities
  */
-namespace SlackApiUtilities {
+namespace SlackUtilities {
 
   export const client = new WebClient(process.env.METATAVU_BOT_TOKEN, {
     logLevel: LogLevel.DEBUG
   });
 
-  const listOfIds = process.env.STAGING_IDS ? process.env.STAGING_IDS.split(",") : undefined;
+  const slackOverride = process.env.SLACK_USER_OVERRIDE ? process.env.SLACK_USER_OVERRIDE.split(",") : undefined;
 
   /**
    * Get list of slack users
@@ -47,12 +48,12 @@ namespace SlackApiUtilities {
       internal,
       billableProject,
       nonBillableProject
-    } = TimeUtilities.handleTimeConversion(user);
+    } = TimeUtilities.handleTimeFormatting(user);
 
     const {
       message,
       billableHoursPercentage
-    } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
+    } = MessageUtilities.calculateWorkedTimeAndBillableHours(user);
 
     const customMessage = `
 Hi ${firstName},
@@ -101,12 +102,12 @@ Have a great rest of the day!
       internal,
       billableProject,
       nonBillableProject
-    } = TimeUtilities.handleTimeConversion(user.selectedWeek);
+    } = TimeUtilities.handleTimeFormatting(user.selectedWeek);
 
     const {
       message,
       billableHoursPercentage
-    } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
+    } = MessageUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
     const customMessage = `
 Hi ${firstName},
@@ -168,20 +169,20 @@ Have a great week!
     for (const userData of dailyCombinedData) {
       const { slackId, personId, expected } = userData;
 
-      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       const message = constructDailyMessage(userData, numberOfToday);
 
       if (!isAway && !firstDayBack) {
-        if (!listOfIds) {
+        if (!slackOverride) {
           messageResults.push({
             message: message,
             response: await sendMessage(slackId, message.message)
           });
         }
         else {
-          for (const stagingid of listOfIds) {
+          for (const stagingid of slackOverride) {
             messageResults.push({
               message: message,
               response: await sendMessage(stagingid, message.message)
@@ -207,7 +208,7 @@ Have a great week!
     previousWorkDays: PreviousWorkdayDates,
     nonProjectTimes: NonProjectTime[]
   ): Promise<WeeklyMessageResult[]> => {
-    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates();
     const { yesterday, today } = previousWorkDays;
 
     const messageResults: WeeklyMessageResult[] = [];
@@ -215,19 +216,19 @@ Have a great week!
     for (const userData of weeklyCombinedData) {
       const { slackId, personId, expected } = userData;
 
-      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
-      const firstDayBack = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
 
       if (!isAway && !firstDayBack) {
-        if (!listOfIds) {
+        if (!slackOverride) {
           messageResults.push({
             message: message,
             response: await sendMessage(slackId, message.message)
           });
         } else {
-          for (const stagingid of listOfIds){
+          for (const stagingid of slackOverride) {
             messageResults.push({
               message: message,
               response: await sendMessage(stagingid, message.message)
@@ -240,4 +241,4 @@ Have a great week!
   };
 }
 
-export default SlackApiUtilities;
+export default SlackUtilities;

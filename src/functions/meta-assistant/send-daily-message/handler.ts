@@ -3,7 +3,7 @@ import { middyfy } from "src/libs/lambda";
 import schema from "src/types/meta-assistant/index";
 import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
 import TimebankUtilities from "src/meta-assistant/timebank/timebank-utils";
-import SlackApiUtilities from "src/meta-assistant/slackapi/slackapi-utils";
+import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import { DailyEntry } from "src/generated/client/api";
 import ForecastApiUtilities from "src/meta-assistant/forecastapi/forecast-api";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
@@ -14,17 +14,21 @@ import Auth from "src/meta-assistant/auth/auth-provider";
  *
  * @returns Promise of DailyHandlerResponse
  */
-export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
+const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
   try {
     const { accessToken } = await Auth.getAccessToken();
+    if (!accessToken) {
+      throw new Error("Timebank authentication failed");
+    }
+
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
 
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
-    const slackUsers = await SlackApiUtilities.getSlackUsers();
+    const slackUsers = await SlackUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
 
-    const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
+    const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!timebankUsers) {
       throw new Error("No persons retrieved from Timebank");
@@ -42,7 +46,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const filteredTimebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id));
 
     const dailyCombinedData = TimebankUtilities.combineDailyData(filteredTimebankUsers, dailyEntries, slackUsers);
-    const messagesSent = await SlackApiUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = await SlackUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, nonProjectTimes);
 
     const errors = messagesSent.filter(messageSent => messageSent.response.error);
 
@@ -73,7 +77,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
  * @param event API Gateway proxy event
  * @returns JSON response
  */
-export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => (
+const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => (
   formatJSONResponse({
     ...await sendDailyMessageHandler(),
     event: event

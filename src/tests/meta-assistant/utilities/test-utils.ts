@@ -1,7 +1,7 @@
 import { IncomingMessage } from "http";
 import { Socket } from "net";
 import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
-import slackApiUtilities from "src/meta-assistant/slackapi/slackapi-utils";
+import slackUtilities from "src/meta-assistant/slack/slack-utils";
 import fetch from "node-fetch";
 import { DailyMessageResult, WeeklyMessageResult } from "src/types/meta-assistant/index";
 import { Member, UsersListResponse } from "@slack/web-api/dist/response/UsersListResponse";
@@ -13,7 +13,7 @@ import * as KeycloakMock from "keycloak-mock";
 namespace TestHelpers {
   const personsClient = TimeBankApiProvider.personsClient;
   const dailyEntriesClient = TimeBankApiProvider.dailyEntriesClient;
-  const slackUsersClient = slackApiUtilities.client;
+  const slackUsersClient = slackUtilities.client;
 
   const { Response } = jest.requireActual("node-fetch");
 
