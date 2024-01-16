@@ -1,8 +1,7 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda"
 import type { FromSchema } from "json-schema-to-ts";
-
-type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> }
-export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>
+import { DailyMessageResult, WeeklyMessageResult } from "src/types/meta-assistant/index";
+import schema from "src/types/meta-assistant/index";
 
 export const formatJSONResponse = (response: Record<string, unknown>) => {
   return {
@@ -10,3 +9,31 @@ export const formatJSONResponse = (response: Record<string, unknown>) => {
     body: JSON.stringify(response)
   }
 }
+
+/**
+ * ValidatedAPIGatewayProxyEvent<S> data type for serverless lambda function
+ */
+export type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, "body"> & { body: FromSchema<S> };
+
+/**
+ * ValidatedEventAPIGatewayProxyEvent<S> data type for serverless lambda function
+ */
+export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>;
+
+/**
+ * Type for DailyHandlerResponse
+ */
+export type DailyHandlerResponse = {
+  message: string,
+  data?: DailyMessageResult[],
+  event?: ValidatedAPIGatewayProxyEvent<typeof schema>,
+};
+
+/**
+ * Type for WeeklyHandlerResponse
+ */
+export type WeeklyHandlerResponse = {
+  message: string,
+  data?: WeeklyMessageResult[],
+  event?: ValidatedAPIGatewayProxyEvent<typeof schema>,
+};
