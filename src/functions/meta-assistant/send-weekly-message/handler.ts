@@ -14,7 +14,7 @@ import Auth from "src/meta-assistant/auth/auth-provider";
  *
  * @returns Promise of WeeklyHandlerResponse
  */
-const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse> => {
+export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse> => {
   try {
     const { accessToken } = await Auth.getAccessToken();
     if (!accessToken) {

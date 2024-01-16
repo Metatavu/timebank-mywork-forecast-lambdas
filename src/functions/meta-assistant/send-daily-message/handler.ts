@@ -14,7 +14,7 @@ import Auth from "src/meta-assistant/auth/auth-provider";
  *
  * @returns Promise of DailyHandlerResponse
  */
-const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
+export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
   try {
     const { accessToken } = await Auth.getAccessToken();
     if (!accessToken) {

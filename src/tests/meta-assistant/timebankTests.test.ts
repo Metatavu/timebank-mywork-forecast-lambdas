@@ -77,7 +77,7 @@ describe("timebank-api-provider tests", () => {
     const fakePersonTotalTime1 = personTotalTimeMock1;
     const fakePersonTotalTime2 = personTotalTimeMock2;
 
-    const {  weekEndDate, weekStartDate } = TimeUtilities.lastWeekDateProvider();
+    const {  weekEndDate, weekStartDate } = TimeUtilities.getlastWeeksDates();
 
     const fakeTimespan = Timespan.WEEK;
     const fakeYear = weekStartDate.year;

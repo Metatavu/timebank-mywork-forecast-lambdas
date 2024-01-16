@@ -295,7 +295,7 @@ export const dailyEntryArrayMock: DailyEntry[] = [
   }
 ];
 
-const { weekStartDate } = TimeUtilities.lastWeekDateProvider();
+const { weekStartDate } = TimeUtilities.getlastWeeksDates();
 
 export const personTotalTimeMock: PersonTotalTime = {
   personId: 1,

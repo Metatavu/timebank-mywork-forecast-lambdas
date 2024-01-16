@@ -1,13 +1,14 @@
+import MessageUtilities from "src/meta-assistant/generic/message-utils";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import { DateTime } from "luxon";
 import { dailyCombinedDataMock1, dailyCombinedDataMock2, dailyCombinedDataMock3, dailyCombinedDataMock4, dailyCombinedDataMock5, personTotalTimeMock } from "./__mocks__/timebankMocks";
 
 describe("time-utils functions testing", () => {
   describe("calculateWorkedTimeAndBillableHours test", () => {
-    const results1 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock1);
-    const results2 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock2);
-    const results3 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock3);
-    const results4 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock4);
+    const results1 = MessageUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock1);
+    const results2 = MessageUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock2);
+    const results3 = MessageUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock3);
+    const results4 = MessageUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock4);
 
     it("Should return correct worked time and percentage of billable hours", () => {
       expect(results1.billableHoursPercentage).toBe("100");
@@ -24,7 +25,7 @@ describe("time-utils functions testing", () => {
     });
 
     it("should throw an error if no user data", () => {
-      expect(() => TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock5)).toThrow();
+      expect(() => MessageUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock5)).toThrow();
     });
   });
 
@@ -60,7 +61,7 @@ describe("time-utils functions testing", () => {
     it("should return converted times", () => {
       const fakeUserData = personTotalTimeMock;
 
-      const result = TimeUtilities.handleTimeConversion(fakeUserData);
+      const result = TimeUtilities.handleTimeFormatting(fakeUserData);
       expect(result.expected).toBe("2h 0 minutes");
       expect(result.internal).toBe("1h 0 minutes");
       expect(result.logged).toBe("1h 0 minutes");
@@ -71,7 +72,7 @@ describe("time-utils functions testing", () => {
     it("should throw an error if no user data", () => {
       const fakeUserData = undefined;
 
-      expect(() => TimeUtilities.handleTimeConversion(fakeUserData)).toThrow();
+      expect(() => TimeUtilities.handleTimeFormatting(fakeUserData)).toThrow();
     });
   });
 
@@ -81,7 +82,7 @@ describe("time-utils functions testing", () => {
     const fakeWeekStartDate = startOfWeek.minus({ weeks: 1 });
     const fakeWeekEndDate = startOfWeek.minus({ days: 1 });
 
-    const results = TimeUtilities.lastWeekDateProvider();
+    const results = TimeUtilities.getlastWeeksDates();
 
     expect(results.weekStartDate).toEqual(fakeWeekStartDate);
     expect(results.weekEndDate).toEqual(fakeWeekEndDate);
