@@ -1,10 +1,12 @@
 import { handlerPath } from "@libs/handler-resolver";
 
+const { WEEKLY_SCHEDULE_TIMER } = process.env;
+
 export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
-  events: [
+  events: WEEKLY_SCHEDULE_TIMER ? [
     {
-      schedule: "cron(15 6 ? * MON *)",
+      schedule: WEEKLY_SCHEDULE_TIMER,
     }
-  ]
+  ] : []
 };

@@ -1,3 +1,6 @@
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + "/.env" });
+import { env } from "process";
 import type { AWS } from "@serverless/typescript";
 
 import listDealsHandler from "@functions/pipedrive/list-deals";
@@ -15,10 +18,6 @@ import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
 import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
 import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
 import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
-
-import * as dotenv from "dotenv";
-dotenv.config({ path: __dirname + "/.env" });
-import { env } from "process";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -64,8 +63,8 @@ const serverlessConfiguration: AWS = {
       KEYCLOAK_PASSWORD: env.KEYCLOAK_PASSWORD,
       KEYCLOAK_CLIENT: env.KEYCLOAK_CLIENT,
       SLACK_USER_OVERRIDE: env.SLACK_USER_OVERRIDE,
-      // DAILY_SCHEDULE_TIMER: env.DAILY_SCHEDULE_TIMER,
-      // WEEKLY_SCHEDULE_TIMER: env.WEEKLY_SCHEDULE_TIMER
+      DAILY_SCHEDULE_TIMER: env.DAILY_SCHEDULE_TIMER,
+      WEEKLY_SCHEDULE_TIMER: env.WEEKLY_SCHEDULE_TIMER
     },
   },
   functions: {
