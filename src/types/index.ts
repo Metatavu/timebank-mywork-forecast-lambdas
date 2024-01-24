@@ -34,6 +34,10 @@ export interface AccessToken {
   },
   onCall: {
     bucketName: string;
+  },
+  pipedriveApi: {
+    apiKey: string,
+    apiUrl: string
   }
  }
 
