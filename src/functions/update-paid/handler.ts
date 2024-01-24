@@ -28,11 +28,12 @@ export const updatePaidHandler = async (event: { body: string }) => {
         throw new Error("Invalid week");
     }
 
-    const s3 = new S3();
+    //TODO: Saves JSON Data to the bucket
+    // const s3 = new S3();
 
-    const paidData = await S3Utils.loadJson<PaidData>(s3, "paid.json") || {};
-    paidData[year] = paidData[year] || {};
-    paidData[year][week] = paid;
+    // const paidData = await S3Utils.loadJson<PaidData>(s3, "paid.json") || {};
+    // paidData[year] = paidData[year] || {};
+    // paidData[year][week] = paid;
     
-    await S3Utils.saveJson(s3, "paid.json", paidData);
+    // await S3Utils.saveJson(s3, "paid.json", paidData);
 }

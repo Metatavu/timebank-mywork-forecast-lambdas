@@ -1,13 +1,9 @@
 import type { AWS } from "@serverless/typescript";
-
 import loadOnCallDataHandler from "@functions/load-on-call-data";
 import weeklyCheckHandler from "@functions/weekly-check/";
-
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import { env } from "process";
-import type { AWS } from "@serverless/typescript";
-
 import listDealsHandler from "@functions/pipedrive/list-deals";
 import listLeadsHandler from "@functions/pipedrive/list-leads";
 import getLeadByIdHandler from "@functions/pipedrive/find-lead-by-id";

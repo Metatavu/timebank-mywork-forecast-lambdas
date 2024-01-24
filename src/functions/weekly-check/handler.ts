@@ -99,6 +99,8 @@ export const weeklyCheckHandler = async () => {
         throw new Error("No next week");
     }
 
+    //TODO: Saves JSON Data to the bucket
+
     // const fileName = `${nextThursday.year}.json`;
     // const s3 = new S3();
 
