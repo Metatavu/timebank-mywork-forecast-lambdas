@@ -19,6 +19,8 @@ import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
 import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
 import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
 import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
+import updatePaidHandler from "src/functions/update-paid";
+
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -107,7 +109,8 @@ const serverlessConfiguration: AWS = {
     loadOnCallDataHandler,
     weeklyCheckHandler,
     sendDailyMessage,
-    sendWeeklyMessage
+    sendWeeklyMessage,
+    updatePaidHandler
   },
   package: { individually: true },
   custom: {

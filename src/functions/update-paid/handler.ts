@@ -1,6 +1,8 @@
 import { S3 } from "aws-sdk"
 import { PaidData } from "../../types"
 import S3Utils from "@libs/s3-utils";
+import Config from "src/app/config";
+import { middyfy } from "@libs/lambda";
 
 /**
  * Request body interface
@@ -27,13 +29,14 @@ export const updatePaidHandler = async (event: { body: string }) => {
     if (!week || week < 1 || week > 53) {
         throw new Error("Invalid week");
     }
-
-    //TODO: Saves JSON Data to the bucket
-    // const s3 = new S3();
-
-    // const paidData = await S3Utils.loadJson<PaidData>(s3, "paid.json") || {};
-    // paidData[year] = paidData[year] || {};
-    // paidData[year][week] = paid;
     
-    // await S3Utils.saveJson(s3, "paid.json", paidData);
-}
+    const s3 = new S3();
+    const bucket = Config.get().onCall.bucketName;
+    
+    const paidData = await S3Utils.loadJson<PaidData>(s3, bucket, "paid.json") || {};
+    paidData[year] = paidData[year] || {};
+    paidData[year][week] = paid;
+    
+    await S3Utils.saveJson(s3, bucket, "paid.json", paidData);
+};
+export const main = middyfy(updatePaidHandler);

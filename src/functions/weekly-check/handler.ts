@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import { OnCallEntry } from "../../types"
 import S3Utils from "@libs/s3-utils";
 import { middyfy } from "@libs/lambda";
+import Config from "src/app/config";
 
 /**
  * Schedule from Splunk
@@ -99,29 +100,27 @@ export const weeklyCheckHandler = async () => {
         throw new Error("No next week");
     }
 
-    //TODO: Saves JSON Data to the bucket
-
-    // const fileName = `${nextThursday.year}.json`;
-    // const s3 = new S3();
-
-    // const yearJson = (await S3Utils.loadJson<OnCallEntry[]>(s3, fileName)) || [];
+    const fileName = `${nextThursday.year}.json`;
+    const s3 = new S3();
+    const bucket = Config.get().onCall.bucketName;
+    const yearJson = (await S3Utils.loadJson<OnCallEntry[]>(s3, bucket, fileName)) || [];
     
-    // const index = yearJson.findIndex(entry => entry.Week == nextWeek.week);
-    // if (index > -1) {
-    //     yearJson[index].Person = nextWeek.user;
-    // } else {
-    //     yearJson.push({
-    //         Week: nextWeek.week,
-    //         Person: nextWeek.user
-    //     });
-    // }
+    const index = yearJson.findIndex(entry => entry.Week == nextWeek.week);
+    if (index > -1) {
+        yearJson[index].Person = nextWeek.user;
+    } else {
+        yearJson.push({
+            Week: nextWeek.week,
+            Person: nextWeek.user
+        });
+    }
 
-    // await S3Utils.saveJson(s3, fileName, yearJson);
+    await S3Utils.saveJson(s3, bucket, fileName, yearJson);
 
     return {
         statusCode: 200,
         body: JSON.stringify(nextWeek)
-      };
+    };
 };
 
 export const main = middyfy(weeklyCheckHandler);
