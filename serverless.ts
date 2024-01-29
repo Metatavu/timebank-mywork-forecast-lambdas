@@ -31,7 +31,7 @@ const serverlessConfiguration: AWS = {
       name: "${self:service}-${opt:stage}-deploy"
     },
     memorySize: 128,
-    timeout: 12,
+    timeout: 60,
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
