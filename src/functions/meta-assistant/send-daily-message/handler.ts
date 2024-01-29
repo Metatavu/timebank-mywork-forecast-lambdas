@@ -84,4 +84,4 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
   })
 );
 
-export const main = middyfy(sendDailyMessage);
+export const main = sendDailyMessage;
