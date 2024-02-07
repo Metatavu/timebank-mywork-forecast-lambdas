@@ -1,14 +1,23 @@
-import type { AWS } from "@serverless/typescript";
-
-import listAllocationsHandler from "@functions/list-allocations";
-import listProjectsHandler from "@functions/list-projects";
-import listTasksHandler from "@functions/list-tasks";
-import listTimeEntriesHandler from "@functions/list-time-entries";
-import listProjectSprintsHandler from "@functions/list-project-sprints";
-
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import { env } from "process";
+import type { AWS } from "@serverless/typescript";
+
+import listDealsHandler from "@functions/pipedrive/list-deals";
+import listLeadsHandler from "@functions/pipedrive/list-leads";
+import getLeadByIdHandler from "@functions/pipedrive/find-lead-by-id";
+import getDealByIdHandler from "@functions/pipedrive/find-deal-by-id";
+import addInterestToDealHandler from "@functions/pipedrive/add-interest-to-deal"
+import addInterestToLeadHandler from "@functions/pipedrive/add-interest-to-lead";
+import removeInterestFromDealHandler from "@functions/pipedrive/remove-interest-from-deal";
+import removeInterestFromLeadHandler from "@functions/pipedrive/remove-interest-from-lead";
+import listAllocationsHandler from "src/functions/forecast/list-allocations";
+import listProjectsHandler from "src/functions/forecast/list-projects";
+import listTasksHandler from "src/functions/forecast/list-tasks";
+import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
+import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
+import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
+import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -21,6 +30,8 @@ const serverlessConfiguration: AWS = {
     deploymentBucket: {
       name: "${self:service}-${opt:stage}-deploy"
     },
+    memorySize: 128,
+    timeout: 60,
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -38,14 +49,40 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      FORECAST_API_KEY: env.FORECAST_API_KEY,
+      AUTH_ISSUER: env.AUTH_ISSUER,
+      PIPEDRIVE_API_KEY: env.PIPEDRIVE_API_KEY,
+      PIPEDRIVE_API_URL: env.PIPEDRIVE_API_URL,
+      METATAVU_BOT_TOKEN: env.METATAVU_BOT_TOKEN,
+      TIMEBANK_BASE_URL: env.TIMEBANK_BASE_URL,
+      FORECAST_BASE_URL: env.FORECAST_BASE_URL,
+      KEYCLOAK_CLIENT_SECRET: env.KEYCLOAK_CLIENT_SECRET,
+      KEYCLOAK_BASE_URL: env.KEYCLOAK_BASE_URL,
+      KEYCLOAK_REALM: env.KEYCLOAK_REALM,
+      KEYCLOAK_USERNAME: env.KEYCLOAK_USERNAME,
+      KEYCLOAK_PASSWORD: env.KEYCLOAK_PASSWORD,
+      KEYCLOAK_CLIENT: env.KEYCLOAK_CLIENT,
+      SLACK_USER_OVERRIDE: env.SLACK_USER_OVERRIDE,
+      DAILY_SCHEDULE_TIMER: env.DAILY_SCHEDULE_TIMER,
+      WEEKLY_SCHEDULE_TIMER: env.WEEKLY_SCHEDULE_TIMER
     },
   },
   functions: {
+    listDealsHandler,
+    listLeadsHandler,
+    getLeadByIdHandler,
+    getDealByIdHandler,
+    addInterestToDealHandler,
+    addInterestToLeadHandler,
+    removeInterestFromDealHandler,
+    removeInterestFromLeadHandler,
     listAllocationsHandler,
     listProjectsHandler,
     listTasksHandler,
     listTimeEntriesHandler,
-    listProjectSprintsHandler
+    listProjectSprintsHandler,
+    sendDailyMessage,
+    sendWeeklyMessage
   },
   package: { individually: true },
   custom: {
