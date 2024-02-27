@@ -13,22 +13,19 @@ export namespace FilterUtilities {
     if (dateRange.start_date === null) {
       return false;
     }
-    const start_date = new Date(dateRange.start_date);
-    let end_date = new Date(dateRange.end_date);
-    if (dateRange.end_date === null) end_date = currentDate;
-    if (parameters.startDate) {
-      if (parameters.startDate <= start_date) {
-        return false;
-      }
-    } else if (currentDate <= start_date) {
+    const startDate = new Date(dateRange.start_date);
+    let endDate = new Date(dateRange.end_date);
+    
+    if (dateRange.end_date === null) endDate = currentDate;
+    if (parameters.startDate && parameters.startDate <= startDate) {
+      return false;
+    } else if (currentDate <= startDate) {
       return false;
     }
 
-    if (parameters.endDate) {
-        if (parameters.endDate >= end_date) {
-          return false;
-        }
-    } else if (currentDate >= end_date) {
+    if (parameters.endDate && parameters.endDate >= endDate) {
+      return false;
+    } else if (currentDate > endDate) {
       return false;
     }
 

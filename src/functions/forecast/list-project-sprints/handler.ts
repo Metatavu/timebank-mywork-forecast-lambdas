@@ -1,3 +1,4 @@
+// TODO: The related forecast endpoint is no longer used and so if this is still not needed when sprint view UI development is complete, it should be removed.
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
@@ -40,7 +41,7 @@ const listProjectSprints = async (api: ForecastApiService, parameters: ListProje
     };
   });
 }
-// TODO: The related forecast endpoint is no longer used and so if this is still not needed when sprint view UI development is complete,
+
 /**
  * Lambda for listing Forecast project sprints
  * 
