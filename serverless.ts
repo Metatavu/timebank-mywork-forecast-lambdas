@@ -1,6 +1,4 @@
 import type { AWS } from "@serverless/typescript";
-import loadOnCallDataHandler from "@functions/load-on-call-data";
-import weeklyCheckHandler from "@functions/weekly-check/";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import { env } from "process";
@@ -19,9 +17,9 @@ import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
 import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
 import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
 import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
-import updatePaidHandler from "src/functions/update-paid";
-
-
+import updatePaidHandler from "src/functions/on-call/update-paid";
+import loadOnCallDataHandler from "src/functions/on-call/load-on-call-data";
+import weeklyCheckHandler from "@functions/weekly-check/";
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',

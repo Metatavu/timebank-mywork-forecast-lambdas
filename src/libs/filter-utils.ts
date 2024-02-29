@@ -1,4 +1,4 @@
-import { DateRange } from "src/types";
+import { DateRange } from "src/types/on-call";
 
 export namespace FilterUtilities {
   /**
@@ -23,9 +23,9 @@ export namespace FilterUtilities {
     }
 
     if (parameters.endDate) {
-        if (parameters.endDate >= new Date(dateRange.end_date)) {
-          return false;
-        }
+      if (parameters.endDate >= new Date(dateRange.end_date)) {
+        return false;
+      }
     } else if (currentDate >= new Date(dateRange.end_date)) {
       return false;
     }
