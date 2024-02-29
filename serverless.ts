@@ -17,9 +17,9 @@ import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
 import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
 import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
 import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
-import updatePaidHandler from "src/functions/on-call/update-paid";
-import loadOnCallDataHandler from "src/functions/on-call/load-on-call-data";
-import weeklyCheckHandler from "@functions/weekly-check/";
+import updatePaidHandler from "@/functions/on-call/update-paid";
+import loadOnCallDataHandler from "@/functions/on-call/load-on-call-data";
+import weeklyCheckHandler from "@/functions/on-call/weekly-check";
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',
