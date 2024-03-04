@@ -1,5 +1,5 @@
 import { cleanEnv, str } from "envalid";
-import { Configuration } from "../types/on-call/index";
+import { Configuration } from "src/types";
 
 const env = cleanEnv(process.env, {
   FORECAST_API_KEY: str(),

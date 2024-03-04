@@ -13,6 +13,6 @@ export { default as listTimeEntriesHandler } from "./forecast/list-time-entries"
 export { default as listProjectSprintsHandler } from "./forecast/list-project-sprints";
 export { default as sendDailyMessage } from "./meta-assistant/send-daily-message";
 export { default as sendWeeklyMessage } from "./meta-assistant/send-weekly-message";
-export { default as loadOnCallData } from "./on-call/load-on-call-data"
-export { default as weeklyCheck } from "./on-call/weekly-check"
-export { default as updatePaid } from "./on-call/update-paid"
+export { default as listOnCallDataHandler } from "./on-call/list-on-call-data"
+export { default as weeklyCheckHandler } from "./on-call/weekly-check"
+export { default as updatePaidHandler } from "./on-call/update-paid"

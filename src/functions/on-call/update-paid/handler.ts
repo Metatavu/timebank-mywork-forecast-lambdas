@@ -3,14 +3,15 @@ import { PaidData, UpdatePaidRequestBody } from "../../../types/on-call"
 import S3Utils from "@libs/s3-utils";
 import Config from "src/app/config";
 import { middyfy } from "@libs/lambda";
+import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 /**
  * Lambda method for updating paid data
  * 
  * @param event event
  */
-export const updatePaidHandler = async (event: { body: UpdatePaidRequestBody }) => {
-  const { year, week, paid } = event.body;
+export const updatePaidHandler: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
+  const { year, week, paid } = event.body as UpdatePaidRequestBody;
 
   if (!year || year < 2020 || year > new Date().getFullYear()) {
     throw new Error("Invalid year");
@@ -32,5 +33,11 @@ export const updatePaidHandler = async (event: { body: UpdatePaidRequestBody }) 
   if (!paidData[year]) paidData[year] = {}
   paidData[year][week] = paid;
   await S3Utils.saveJson(s3, bucket, paidFile, paidData);
+
+  return {
+    statusCode: 200,
+    body: "Paid status updated"
+  };
+
 };
 export const main = middyfy(updatePaidHandler);

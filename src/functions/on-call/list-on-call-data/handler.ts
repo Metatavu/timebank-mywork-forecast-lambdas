@@ -3,13 +3,14 @@ import { OnCallEntry, PaidData } from "../../../types/on-call";
 import S3Utils from "@libs/s3-utils";
 import { middyfy } from "@libs/lambda";
 import Config from "../../../app/config";
+import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 /**
  * Lambda method for loading on-call data
  * 
  * @param event event
  */
-export const loadOnCallDataHandler = async (event: { queryStringParameters: { [key: string]: string } }) => {
+export const listOnCallDataHandler: ValidatedEventAPIGatewayProxyEvent<any> = async (event: { queryStringParameters: { [key: string]: string } }) => {
   const { queryStringParameters } = event;
 
   const year = parseInt(queryStringParameters.year);
@@ -44,4 +45,4 @@ export const loadOnCallDataHandler = async (event: { queryStringParameters: { [k
   };
 }
 
-export const main = middyfy(loadOnCallDataHandler);
+export const main = middyfy(listOnCallDataHandler);

@@ -5,6 +5,7 @@ import S3Utils from "@libs/s3-utils";
 import { middyfy } from "@libs/lambda";
 import Config from "src/app/config";
 import { OnCallEntry, SplunkSchedule } from "src/types/on-call";
+import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 /**
  * Resolve next week from schedule
@@ -35,7 +36,7 @@ const getNextWeekFromSchedule = (schedule: SplunkSchedule, nextThursday: DateTim
  * 
  * @param event event
  */
-export const weeklyCheckHandler = async () => {
+export const weeklyCheckHandler : ValidatedEventAPIGatewayProxyEvent<any> = async () => {
  
   const { apiId, apiKey, schedulePolicyName, teamOnCallUrl } = Config.get().splunkApi
 

@@ -1,4 +1,4 @@
-import { DateRange } from "src/types/on-call";
+import { DateRange } from "src/types";
 
 export namespace FilterUtilities {
   /**

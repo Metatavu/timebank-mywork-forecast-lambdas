@@ -1,6 +1,0 @@
-{
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "body": "{\"year\": 2019, \"week\": 1, \"paid\": true}"
-}
