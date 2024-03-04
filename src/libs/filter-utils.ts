@@ -10,23 +10,22 @@ export namespace FilterUtilities {
    * @returns If specified dates were null or not, if specified date parameters were between Forecast dates or if currentDate is between Forecast dates
    */
   export const filterByDate = (dateRange: DateRange, currentDate: Date, parameters: { startDate?: Date, endDate?: Date }): boolean => {
-    if (dateRange.start_date === null || dateRange.end_date === null) {
+    if (dateRange.start_date === null) {
+      return false;
+    }
+    const startDate = new Date(dateRange.start_date);
+    let endDate = new Date(dateRange.end_date);
+    
+    if (dateRange.end_date === null) endDate = currentDate;
+    if (parameters.startDate && parameters.startDate <= startDate) {
+      return false;
+    } else if (currentDate <= startDate) {
       return false;
     }
 
-    if (parameters.startDate) {
-      if (parameters.startDate <= new Date(dateRange.start_date)) {
-        return false;
-      }
-    } else if (currentDate <= new Date(dateRange.start_date)) {
+    if (parameters.endDate && parameters.endDate >= endDate) {
       return false;
-    }
-
-    if (parameters.endDate) {
-      if (parameters.endDate >= new Date(dateRange.end_date)) {
-        return false;
-      }
-    } else if (currentDate >= new Date(dateRange.end_date)) {
+    } else if (currentDate > endDate) {
       return false;
     }
 
