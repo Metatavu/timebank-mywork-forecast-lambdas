@@ -1,8 +1,7 @@
+import type { AWS } from "@serverless/typescript";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import { env } from "process";
-import type { AWS } from "@serverless/typescript";
-
 import listDealsHandler from "@functions/pipedrive/list-deals";
 import listLeadsHandler from "@functions/pipedrive/list-leads";
 import getLeadByIdHandler from "@functions/pipedrive/find-lead-by-id";
@@ -18,7 +17,9 @@ import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
 import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
 import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
 import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
-
+import updatePaidHandler from "@/functions/on-call/update-paid";
+import listOnCallDataHandler from "src/functions/on-call/list-on-call-data";
+import weeklyCheckHandler from "@/functions/on-call/weekly-check";
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',
@@ -44,11 +45,12 @@ const serverlessConfiguration: AWS = {
           issuerUrl: env.AUTH_ISSUER,
           audience: ["account"]
         }
-      }
+      },
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      ON_CALL_BUCKET_NAME: "${opt:stage}-on-call-data",
       FORECAST_API_KEY: env.FORECAST_API_KEY,
       AUTH_ISSUER: env.AUTH_ISSUER,
       PIPEDRIVE_API_KEY: env.PIPEDRIVE_API_KEY,
@@ -66,6 +68,27 @@ const serverlessConfiguration: AWS = {
       DAILY_SCHEDULE_TIMER: env.DAILY_SCHEDULE_TIMER,
       WEEKLY_SCHEDULE_TIMER: env.WEEKLY_SCHEDULE_TIMER
     },
+    s3: {
+      "on-call": {
+        bucketName: "${opt:stage}-on-call-data"
+      }
+    },
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: "Allow",
+            Action: ["s3:GetObject"],
+            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+          },
+          {
+            Effect: "Allow",
+            Action: ["s3:PutObject"],
+            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+          }
+        ]
+      }
+    }
   },
   functions: {
     listDealsHandler,
@@ -81,8 +104,11 @@ const serverlessConfiguration: AWS = {
     listTasksHandler,
     listTimeEntriesHandler,
     listProjectSprintsHandler,
+    listOnCallDataHandler,
+    weeklyCheckHandler,
     sendDailyMessage,
-    sendWeeklyMessage
+    sendWeeklyMessage,
+    updatePaidHandler
   },
   package: { individually: true },
   custom: {
