@@ -13,7 +13,7 @@ import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 export const listOnCallDataHandler: ValidatedEventAPIGatewayProxyEvent<any> = async (event: { queryStringParameters: { [key: string]: string } }) => {
   const { queryStringParameters } = event;
 
-  if (!queryStringParameters.year) {
+  if (!queryStringParameters || !queryStringParameters.year) {
     return {
       statusCode: 400,
       body: "Missing parameters"
