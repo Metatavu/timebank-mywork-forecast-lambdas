@@ -7,15 +7,25 @@ import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 /**
  * Lambda method for loading on-call data
- * 
+ *
  * @param event event
  */
 export const listOnCallDataHandler: ValidatedEventAPIGatewayProxyEvent<any> = async (event: { queryStringParameters: { [key: string]: string } }) => {
   const { queryStringParameters } = event;
 
-  const year = parseInt(queryStringParameters.year);
+  if (!queryStringParameters.year) {
+    return {
+      statusCode: 400,
+      body: "Missing parameters"
+    }
+  }
+
+  const year = parseInt(queryStringParameters.year)
   if (!year || year < 2020 || year > new Date().getFullYear()) {
-    throw new Error("Invalid year");
+    return {
+      statusCode: 400,
+      body: "Invalid year"
+    }
   }
 
   const s3 = new S3();
@@ -30,7 +40,10 @@ export const listOnCallDataHandler: ValidatedEventAPIGatewayProxyEvent<any> = as
   const paidData = await S3Utils.loadJson<PaidData>(s3, bucket, paidFile) || {};
 
   if (!data || !nameMap || !paidData) {
-    throw new Error("No data");
+    return {
+      statusCode: 204,
+      body: "No content"
+    }
   }
 
   return {
