@@ -43,8 +43,8 @@ namespace TimebankApi {
    */
   export const getDailyEntries = async (id: number, beforeDate: DateTime, afterDate: DateTime, accessToken: string): Promise<DailyEntry> => {
     try {
-      let before = beforeDate.toISODate();
-      let after = afterDate.toISODate();
+      const before = beforeDate.toISODate();
+      const after = afterDate.toISODate();
       if (!id) throw new Error("Invalid ID was given (expecting a number)");
 
       const request = await dailyEntriesClient.listDailyEntries(id, before, after, undefined, {
