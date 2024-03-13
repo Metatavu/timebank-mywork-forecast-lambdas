@@ -38,7 +38,7 @@ namespace ForecastApiUtilities {
    */
   export const getTimeRegistrations = async (dateTime: DateTime): Promise<TimeRegistrations[]> => {
     try {
-      let date = dateTime.toString();
+      let date = dateTime.toISODate();
       const dateUrl = date.replace(/[-]/g, "");
       const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dateUrl}`, { headers: headers });
       const result: any = await request.json();
