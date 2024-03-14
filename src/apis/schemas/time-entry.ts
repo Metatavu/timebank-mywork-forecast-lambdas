@@ -4,4 +4,5 @@ interface TimeEntry {
     project: number,
     task: number,
     time_registered: number,
+    date: string,
 }

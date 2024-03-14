@@ -5,4 +5,5 @@ export interface Project {
     end_date: string,
     status: string,
     stage: string,
+    color: string,
 }

@@ -1,12 +1,16 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { FilterUtilities } from "src/libs/filter-utils";
 
 /**
  * Parameters for lambda
  */
 export interface ListTimeEntriesParameters {
-  projectId: number
+  projectId: number,
+  startDate?: string,
+  endDate?: string, 
+  taskId?: string,
 }
 
 /**
@@ -17,7 +21,8 @@ export interface Response {
   person: number,
   project: number,
   task: number,
-  timeRegistered: number;
+  timeRegistered: number,
+  date: string,
 }
 
 /**
@@ -29,14 +34,21 @@ export interface Response {
  */
 const listTimeEntries = async (api: ForecastApiService, parameters: ListTimeEntriesParameters): Promise<Response[]> => {
   const timeEntries = await api.getTimeEntriesByProject(parameters.projectId);
+  const currentDate = new Date();
 
-  return timeEntries.map(timeEntry => {
+  const filteredTimeEntries = timeEntries.filter(timeEntry => {
+    return FilterUtilities.filterByDate({start_date: parameters.startDate, end_date: parameters.endDate}, currentDate, {startDate: new Date(timeEntry.date), endDate: new Date(timeEntry.date)})
+    && FilterUtilities.filterByTask(timeEntry.task, parameters.taskId);
+  });
+
+  return filteredTimeEntries.map(timeEntry => {
     return {
       id: timeEntry.id,
       person: timeEntry.person,
       project: timeEntry.project,
       task: timeEntry.task,
       timeRegistered: timeEntry.time_registered,
+      date: timeEntry.date,
     }
   });
 }
@@ -58,6 +70,9 @@ const listTimeEntriesHandler: ValidatedEventAPIGatewayProxyEvent<any> = async ev
   
   const timeEntries = await listTimeEntries(api, {
     projectId: parseInt(event.queryStringParameters.projectId),
+    startDate: event.queryStringParameters.startDate ? event.queryStringParameters.startDate : undefined,
+    endDate: event.queryStringParameters.endDate ? event.queryStringParameters.endDate : undefined,
+    taskId: event.queryStringParameters.taskId ? event.queryStringParameters.taskId : undefined,
   });
   
   return {

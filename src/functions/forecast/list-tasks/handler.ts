@@ -65,6 +65,12 @@ const listTasks = async (api: ForecastApiService, parameters: ListTasksParameter
  * @param event event
  */
 const listTasksHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
+  if (!event.queryStringParameters.projectId) {
+    return {
+      statusCode: 400,
+      body: "Invalid parameters"
+    };
+  }
   const api = CreateForecastApiService();
 
   const tasks = await listTasks(api, {

@@ -10,7 +10,7 @@ import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-
 export interface ListProjectsParameters {
   startDate?: Date,
   endDate?: Date,
-  projectId?: string
+  projectId?: string,
 }
 
 /**
@@ -22,7 +22,8 @@ export interface Response {
   startDate: string,
   endDate: string,
   status: string,
-  stage: string
+  stage: string,
+  color: string
 }
 
 /**
@@ -47,10 +48,32 @@ const listProjects = async (api: ForecastApiService, currentDate: Date, paramete
       startDate: project.start_date,
       endDate: project.end_date,
       status: project.status,
-      stage: project.stage
+      stage: project.stage,
+      color: project.color
     }
   })
 } 
+
+/**
+ * Gets project by id
+ * 
+ * @param api Instance of ForecastApiService
+ * @param parameters Parameters
+ * @returns A single project
+ */
+const listProject = async (api: ForecastApiService, parameters: ListProjectsParameters): Promise<Response> => {
+  const project = await api.getProject(parameters.projectId);
+  
+  return {
+    id: project.id,
+    name: project.name,
+    startDate: project.start_date,
+    endDate: project.end_date,
+    status: project.status,
+    stage: project.stage,
+    color: project.color
+  }
+}
 
 /**
  * Lambda for listing Forecast projects
@@ -59,10 +82,40 @@ const listProjects = async (api: ForecastApiService, currentDate: Date, paramete
  */
 const listProjectsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
+  let startDateParameter = new Date();
+  let endDateParameter = new Date();
 
+  if (event.queryStringParameters.projectId){
+    const project = await listProject(api, {projectId: event.queryStringParameters.projectId});
+    if (!project.id) {
+      return {
+        statusCode: 400,
+        body: "Invalid projectd"
+      };
+    }
+    return {
+      statusCode: 200,
+      body: JSON.stringify(project)
+    };
+  }
+
+  if (event.queryStringParameters.startDate){
+    try {
+      startDateParameter = new Date(event.queryStringParameters.startDate);
+    } catch {
+      startDateParameter = new Date();
+    }
+  }
+  if (event.queryStringParameters.endDate){
+    try {
+      endDateParameter = new Date(event.queryStringParameters.endDate);
+    } catch {
+      endDateParameter = new Date();
+    }
+  }
   const filteredProjects = await listProjects(api, new Date(), {
-    startDate: new Date(event.queryStringParameters.startDate),
-    endDate: new Date(event.queryStringParameters.endDate),
+    startDate: startDateParameter,
+    endDate: endDateParameter,
   })
   
   return {

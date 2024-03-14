@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 export interface ForecastApiService {
     getAllocations: () => Promise<Allocation[]>;
     getProjects: () => Promise<Project[]>;
+    getProject: (projectId: string) => Promise<Project>;
     getTasksByProject: (projectId: number) => Promise<Task[]>;
     getAllTasks: () => Promise<Task[]>;
     getProjectSprints: (projectId: number) => Promise<Sprint[]>;
@@ -37,6 +38,17 @@ export function CreateForecastApiService(): ForecastApiService {
          */
         async getProjects(): Promise<Project[]> {
             const response = await fetch("https://api.forecast.it/api/v1/projects", { headers: { "X-FORECAST-API-KEY": apiKey } });
+
+            return response.json();
+        },
+
+        /**
+         * Gets single project from the api
+         *
+         * @returns project by id
+         */
+        async getProject(projectId: string): Promise<Project> {
+            const response = await fetch(`https://api.forecast.it/api/v1/projects/${projectId}`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
             return response.json();
         },
