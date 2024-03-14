@@ -7,7 +7,7 @@ import { Task } from "src/apis/schemas/task";
  * Parameters for lambda
  */
 export interface ListTasksParameters {
-  projectId: number,
+  projectId?: number,
 }
 
 /**
@@ -65,16 +65,10 @@ const listTasks = async (api: ForecastApiService, parameters: ListTasksParameter
  * @param event event
  */
 const listTasksHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  if (!event.queryStringParameters.projectId) {
-    return {
-      statusCode: 400,
-      body: "Invalid parameters"
-    };
-  }
   const api = CreateForecastApiService();
 
   const tasks = await listTasks(api, {
-    projectId: parseInt(event.queryStringParameters.projectId),
+    projectId: event.queryStringParameters ? parseInt(event.queryStringParameters.projectId) : undefined,
   });
   
   return {
