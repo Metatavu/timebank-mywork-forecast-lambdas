@@ -6,7 +6,7 @@ import { FilterUtilities } from "src/libs/filter-utils";
 /**
  * Parameters for lambda
  */
-export interface ListTimeEntriesParameters {
+interface ListTimeEntriesParameters {
   projectId: number,
   startDate?: string,
   endDate?: string, 
@@ -16,7 +16,7 @@ export interface ListTimeEntriesParameters {
 /**
  * Response schema for lambda
  */
-export interface Response {
+interface Response {
   id: number,
   person: number,
   project: number,
@@ -37,8 +37,11 @@ const listTimeEntries = async (api: ForecastApiService, parameters: ListTimeEntr
   const currentDate = new Date();
 
   const filteredTimeEntries = timeEntries.filter(timeEntry => {
-    return FilterUtilities.filterByDate({start_date: parameters.startDate, end_date: parameters.endDate}, currentDate, {startDate: new Date(timeEntry.date), endDate: new Date(timeEntry.date)})
-    && FilterUtilities.filterByTask(timeEntry.task, parameters.taskId);
+    return FilterUtilities.filterByDate(
+      {start_date: parameters.startDate, end_date: parameters.endDate}, 
+      currentDate, 
+      {startDate: new Date(timeEntry.date), endDate: new Date(timeEntry.date)}
+      ) && FilterUtilities.filterByTask(timeEntry.task, parameters.taskId);
   });
 
   return filteredTimeEntries.map(timeEntry => {
@@ -48,7 +51,7 @@ const listTimeEntries = async (api: ForecastApiService, parameters: ListTimeEntr
       project: timeEntry.project,
       task: timeEntry.task,
       timeRegistered: timeEntry.time_registered,
-      date: timeEntry.date,
+      date: timeEntry.date
     }
   });
 }
@@ -59,20 +62,22 @@ const listTimeEntries = async (api: ForecastApiService, parameters: ListTimeEntr
  * @param event event
  */
 const listTimeEntriesHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
-  if (!event.queryStringParameters.projectId) {
+  const { queryStringParameters } = event;
+
+  if (!queryStringParameters && !queryStringParameters.projectId) {
     return {
       statusCode: 400,
-      body: "Invalid parameters"
+      body: "Missing parameters"
     };
   }
 
   const api = CreateForecastApiService();
   
   const timeEntries = await listTimeEntries(api, {
-    projectId: parseInt(event.queryStringParameters.projectId),
-    startDate: event.queryStringParameters.startDate ? event.queryStringParameters.startDate : undefined,
-    endDate: event.queryStringParameters.endDate ? event.queryStringParameters.endDate : undefined,
-    taskId: event.queryStringParameters.taskId ? event.queryStringParameters.taskId : undefined,
+    projectId: parseInt(queryStringParameters.projectId),
+    startDate: queryStringParameters.startDate,
+    endDate: queryStringParameters.endDate,
+    taskId: queryStringParameters.taskId,
   });
   
   return {

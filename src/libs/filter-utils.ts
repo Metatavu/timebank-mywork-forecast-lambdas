@@ -69,7 +69,7 @@ export namespace FilterUtilities {
    * @param taskId Task id to compare
    * @returns If two parameters match or task is null
    */
-  export const filterByTask = (task?: number, taskId?: string): boolean => {
+  export const filterByTask = (task?: number, taskId?: string) => {
     if (taskId && task.toString() !== taskId) return false;
     return true;
   }

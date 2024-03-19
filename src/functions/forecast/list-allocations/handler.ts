@@ -6,7 +6,7 @@ import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-
 /**
  * Parameters for lambda
  */
-export interface ListAllocationsParameters {
+interface ListAllocationsParameters {
   startDate?: Date,
   endDate?: Date,
   personId?: string,
@@ -16,7 +16,7 @@ export interface ListAllocationsParameters {
 /**
  * Response schema for lambda
  */
-export interface Response {
+interface Response {
   id: number,
   project: number,
   person: number,
@@ -72,29 +72,13 @@ const listAllocations = async (api: ForecastApiService, currentDate: Date, param
 const listAllocationsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
 
   const api = CreateForecastApiService();
-  let startDateParameter =  new Date();
-  let endDateParameter =  new Date();
-
-  if (event.queryStringParameters.startDate){
-    try {
-      startDateParameter = new Date(event.queryStringParameters.startDate);
-    } catch {
-      startDateParameter = new Date();
-    }
-  }
-  if (event.queryStringParameters.endDate){
-    try {
-      endDateParameter = new Date(event.queryStringParameters.endDate);
-    } catch {
-      endDateParameter = new Date();
-    }
-  }
+  const { queryStringParameters } = event;
 
   const allocations = await listAllocations(api, new Date(), {
-    startDate: startDateParameter,
-    endDate: endDateParameter,
-    personId: event.queryStringParameters.personId ? event.queryStringParameters.personId : undefined,
-    projectId: event.queryStringParameters.projectId ? event.queryStringParameters.projectId : undefined,
+    startDate: queryStringParameters && new Date(queryStringParameters.startDate),
+    endDate: queryStringParameters && new Date(queryStringParameters.endDate),
+    personId: queryStringParameters && queryStringParameters.personId,
+    projectId: queryStringParameters && queryStringParameters.projectId,
   });
 
   return {

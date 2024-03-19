@@ -6,14 +6,14 @@ import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-
 /**
  * Parameters for lambda
  */
-export interface ListProjectSprintsParameters {
+interface ListProjectSprintsParameters {
   projectId: number,
 }
 
 /**
  * Response schema for lambda
  */
-export interface Response {
+interface Response {
   id: number,
   name: string,
   startDate: string,

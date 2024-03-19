@@ -1,22 +1,21 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { FilterUtilities } from "@libs/filter-utils";
-// import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
 
 /**
  * Parameters for lambda
  */
-export interface ListProjectsParameters {
+interface ListProjectsParameters {
   startDate?: Date,
   endDate?: Date,
-  projectId?: string,
+  projectId?: string
 }
 
 /**
  * Response schema for lambda
  */
-export interface Response {
+interface Response {
   id: number,
   name: string,
   startDate: string,
@@ -82,15 +81,14 @@ const listProject = async (api: ForecastApiService, parameters: ListProjectsPara
  */
 const listProjectsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
-  let startDateParameter = new Date();
-  let endDateParameter = new Date();
+  const { queryStringParameters } = event;
 
-  if (event.queryStringParameters.projectId){
+  if (queryStringParameters && queryStringParameters.projectId){
     const project = await listProject(api, {projectId: event.queryStringParameters.projectId});
     if (!project.id) {
       return {
-        statusCode: 400,
-        body: "Invalid projectd"
+        statusCode: 204,
+        body: "Invalid projectId"
       };
     }
     return {
@@ -99,23 +97,9 @@ const listProjectsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event
     };
   }
 
-  if (event.queryStringParameters.startDate){
-    try {
-      startDateParameter = new Date(event.queryStringParameters.startDate);
-    } catch {
-      startDateParameter = new Date();
-    }
-  }
-  if (event.queryStringParameters.endDate){
-    try {
-      endDateParameter = new Date(event.queryStringParameters.endDate);
-    } catch {
-      endDateParameter = new Date();
-    }
-  }
   const filteredProjects = await listProjects(api, new Date(), {
-    startDate: startDateParameter,
-    endDate: endDateParameter,
+    startDate: queryStringParameters && new Date(queryStringParameters.startDate),
+    endDate: queryStringParameters && new Date(queryStringParameters.endDate)
   })
   
   return {
