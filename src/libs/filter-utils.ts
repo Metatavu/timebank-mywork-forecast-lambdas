@@ -61,4 +61,16 @@ export namespace FilterUtilities {
 
     return true;
   }
+
+  /**
+   * Compares Forecast task id to specified id
+   * 
+   * @param task Task id from Forecast
+   * @param taskId Task id to compare
+   * @returns If two parameters match or task is null
+   */
+  export const filterByTask = (task?: number, taskId?: string) => {
+    if (taskId && task.toString() !== taskId) return false;
+    return true;
+  }
 }
