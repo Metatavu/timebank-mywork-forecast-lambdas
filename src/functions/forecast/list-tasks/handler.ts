@@ -1,20 +1,19 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
-import { Task } from "src/apis/schemas/forecast/task";
+import { Task } from "src/apis/schemas/task";
 
 /**
  * Parameters for lambda
  */
-interface ListTasksParameters {
-  projectId?: number,
-  personId?: number
+export interface ListTasksParameters {
+  projectId: number,
 }
 
 /**
  * Response schema for lambda
  */
-interface Response {
+export interface Response {
   id: string,
   title: string,
   description: string,
@@ -42,7 +41,6 @@ const listTasks = async (api: ForecastApiService, parameters: ListTasksParameter
     filteredTasks = tasks.filter(task => task.project_id === parameters.projectId);
   } else {
     filteredTasks = await api.getAllTasks();
-    if (parameters.personId) filteredTasks = filteredTasks.filter((task => task.assigned_persons.includes(parameters.personId)));
   }
 
   return filteredTasks.map(task => {
@@ -68,11 +66,9 @@ const listTasks = async (api: ForecastApiService, parameters: ListTasksParameter
  */
 const listTasksHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
-  const { queryStringParameters } = event;
 
   const tasks = await listTasks(api, {
-    projectId: queryStringParameters && parseInt(queryStringParameters.projectId),
-    personId: queryStringParameters && parseInt(queryStringParameters.personId)
+    projectId: parseInt(event.queryStringParameters.projectId),
   });
   
   return {

@@ -1,12 +1,13 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { FilterUtilities } from "@libs/filter-utils";
+// import { parseBearerAuth } from '@libs/auth-utils';
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
 
 /**
  * Parameters for lambda
  */
-interface ListProjectsParameters {
+export interface ListProjectsParameters {
   startDate?: Date,
   endDate?: Date,
   projectId?: string
@@ -15,14 +16,13 @@ interface ListProjectsParameters {
 /**
  * Response schema for lambda
  */
-interface Response {
+export interface Response {
   id: number,
   name: string,
   startDate: string,
   endDate: string,
   status: string,
-  stage: string,
-  color: string
+  stage: string
 }
 
 /**
@@ -47,32 +47,10 @@ const listProjects = async (api: ForecastApiService, currentDate: Date, paramete
       startDate: project.start_date,
       endDate: project.end_date,
       status: project.status,
-      stage: project.stage,
-      color: project.color
+      stage: project.stage
     }
   })
 } 
-
-/**
- * Gets project by id
- * 
- * @param api Instance of ForecastApiService
- * @param parameters Parameters
- * @returns A single project
- */
-const listProject = async (api: ForecastApiService, parameters: ListProjectsParameters): Promise<Response> => {
-  const project = await api.getProject(parameters.projectId);
-  
-  return {
-    id: project.id,
-    name: project.name,
-    startDate: project.start_date,
-    endDate: project.end_date,
-    status: project.status,
-    stage: project.stage,
-    color: project.color
-  }
-}
 
 /**
  * Lambda for listing Forecast projects
@@ -81,25 +59,10 @@ const listProject = async (api: ForecastApiService, parameters: ListProjectsPara
  */
 const listProjectsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
-  const { queryStringParameters } = event;
-
-  if (queryStringParameters && queryStringParameters.projectId){
-    const project = await listProject(api, {projectId: event.queryStringParameters.projectId});
-    if (!project.id) {
-      return {
-        statusCode: 204,
-        body: "Invalid projectId"
-      };
-    }
-    return {
-      statusCode: 200,
-      body: JSON.stringify(project)
-    };
-  }
 
   const filteredProjects = await listProjects(api, new Date(), {
-    startDate: queryStringParameters && new Date(queryStringParameters.startDate),
-    endDate: queryStringParameters && new Date(queryStringParameters.endDate)
+    startDate: new Date(event.queryStringParameters.startDate),
+    endDate: new Date(event.queryStringParameters.endDate),
   })
   
   return {
