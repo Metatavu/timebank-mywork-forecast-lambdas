@@ -38,9 +38,9 @@ const listTimeEntries = async (api: ForecastApiService, parameters: ListTimeEntr
 
   const filteredTimeEntries = timeEntries.filter(timeEntry => {
     return FilterUtilities.filterByDate(
-      {start_date: parameters.startDate, end_date: parameters.endDate}, 
-      currentDate, 
-      {startDate: new Date(timeEntry.date), endDate: new Date(timeEntry.date)}
+        {start_date: parameters.startDate, end_date: parameters.endDate}, 
+        currentDate, 
+        {startDate: new Date(timeEntry.date), endDate: new Date(timeEntry.date)}
       ) && FilterUtilities.filterByTask(timeEntry.task, parameters.taskId);
   });
 
