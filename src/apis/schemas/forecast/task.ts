@@ -9,4 +9,5 @@ export interface Task {
 	end_date: string,
 	high_priority: boolean,
 	assigned_persons: number[],
+	workflow_column: number
 }
