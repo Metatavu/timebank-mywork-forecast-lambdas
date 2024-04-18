@@ -64,8 +64,8 @@ const listTasks = async (api: ForecastApiService, parameters: ListTasksParameter
       endDate: task.end_date,
       highPriority: task.high_priority,
       assignedPersons: task.assigned_persons,
-      status: status ? status.name : "",
-      statusCategory: status ? status.category : ""
+      status: status?.name || "",
+      statusCategory: status?.category || ""
     }
   });
 }
