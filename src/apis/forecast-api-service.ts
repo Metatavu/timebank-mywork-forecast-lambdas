@@ -1,6 +1,7 @@
 import { Allocation } from "./schemas/forecast/allocation";
 import { Project } from "./schemas/forecast/project";
 import { Task } from "./schemas/forecast/task";
+import { Workflow } from "./schemas/forecast/workflow";
 import fetch from "node-fetch";
 
 export interface ForecastApiService {
@@ -9,6 +10,7 @@ export interface ForecastApiService {
 	getProject: (projectId: string) => Promise<Project>;
 	getTasksByProject: (projectId: number) => Promise<Task[]>;
 	getAllTasks: () => Promise<Task[]>;
+	getWorkflowStatusByProject: (projectId: number) => Promise<Workflow[]>
 	getProjectSprints: (projectId: number) => Promise<Sprint[]>;
 	getTimeEntriesByProject: (projectId: number) => Promise<TimeEntry[]>;
 }
@@ -72,6 +74,18 @@ export function CreateForecastApiService(): ForecastApiService {
 		 */
 		async getAllTasks(): Promise<Task[]> {
 			const response = await fetch("https://api.forecast.it/api/v3/tasks", { headers: { "X-FORECAST-API-KEY": apiKey } });
+
+			return response.json();
+		},
+
+		/**
+		 * Gets all workflow columns from the api filtered by project id
+		 *
+		 * @param projectId Id of project
+		 * @returns List of workflow columns
+		 */
+		async getWorkflowStatusByProject(projectId: number): Promise<Workflow[]> {
+			const response = await fetch(`https://api.forecast.it/api/v1/projects/${projectId}/workflow_columns`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
 			return response.json();
 		},
