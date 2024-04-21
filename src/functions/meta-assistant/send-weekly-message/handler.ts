@@ -8,6 +8,7 @@ import TimebankUtilities from "src/meta-assistant/timebank/timebank-utils";
 import schema, { WeeklyCombinedData } from "src/types/meta-assistant/index";
 import { Timespan } from "src/generated/client/api";
 import Auth from "src/meta-assistant/auth/auth-provider";
+import { DateTime } from "luxon";
 
 /**
  * Handler for sendWeeklyMessage
@@ -24,16 +25,16 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
 
+    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates(DateTime.fromISO(dayBeforeYesterday));
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackUtilities.getSlackUsers();
-    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
+    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(weekStartDate.toISODate());
     const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!timebankUsers) {
       throw new Error("No persons retrieved from Timebank");
     }
 
-    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates();
     const personTotalTimes: WeeklyCombinedData[] = [];
 
     for (const timebankUser of timebankUsers) {

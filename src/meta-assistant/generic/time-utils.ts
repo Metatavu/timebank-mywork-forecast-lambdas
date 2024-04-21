@@ -24,9 +24,11 @@ namespace TimeUtilities {
    *
    * @returns various date formats/ numbers for start and end of previous week
    */
-  export const getlastWeeksDates = (): Dates => {
-    const startOfWeek = DateTime.now().startOf("week");
-
+  export const getlastWeeksDates = (date?: DateTime): Dates => {
+    let startOfWeek = DateTime.now().startOf("week");
+    if (date) {
+      startOfWeek = date.startOf("week");
+    }
     const weekStartDate = startOfWeek.minus({ weeks: 1 });
     const weekEndDate = startOfWeek.minus({ days: 1 });
 
@@ -62,6 +64,32 @@ namespace TimeUtilities {
   };
 
   /**
+   * Checks if user has vacation periods in time allocation
+   *
+   * @param user data from timebank
+   * @returns human friendly time formats
+   */
+  export const checkIfVacationCaseExists = (
+    personId: number,
+    timeRegistrations: TimeRegistrations[],
+    nonProjectTimes: NonProjectTime[],
+    startDate: DateTime,
+    endDate: DateTime
+  ) => {  
+
+    let total_non_project_time = 0;
+    timeRegistrations.forEach((registration) => {
+      const { date, time_registered, non_project_time, person } = registration;
+      if (personId=== person && nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(non_project_time)) {
+        if (DateTime.fromISO(date) >= startDate && DateTime.fromISO(date) <= endDate){
+          total_non_project_time += time_registered;
+        }    
+      }
+    });
+    return total_non_project_time;
+  }; 
+
+  /**
    * Checks if user should receive message, not if off or is first day back
    *
    * @param timeRegistrations All timeregistrations after the day before yesterday
@@ -84,7 +112,9 @@ namespace TimeUtilities {
       && timeRegistration.time_registered === expected
     );
 
-    if (!personsTimeRegistration) return false;
+    if (!personsTimeRegistration) {
+      return false;
+    }
 
     return nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(personsTimeRegistration.non_project_time);
   };
