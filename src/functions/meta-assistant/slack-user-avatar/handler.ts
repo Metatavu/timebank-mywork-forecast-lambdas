@@ -36,9 +36,9 @@ const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async event 
   const slackUsers = await SlackUtilities.getSlackUsers();
 	const selectedUser = slackUsers.find((user) => user.name === queryStringParameters.email.split("@")[0])
   const response : Response = {
-    image_original: selectedUser && selectedUser.profile.image_original,
-    image_24: selectedUser && selectedUser.profile.image_24,
-    image_32: selectedUser && selectedUser.profile.image_32
+    image_original: selectedUser?.profile?.image_original,
+    image_24: selectedUser?.profile?.image_24,
+    image_32: selectedUser?.profile?.image_32
   }
 
   return {
