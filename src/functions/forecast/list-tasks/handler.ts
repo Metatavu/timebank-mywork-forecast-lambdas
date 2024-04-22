@@ -2,6 +2,7 @@ import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
 import { Task } from "src/apis/schemas/forecast/task";
+import { Workflow } from "src/apis/schemas/forecast/workflow";
 
 /**
  * Parameters for lambda
@@ -25,6 +26,8 @@ interface Response {
   endDate: string,
   highPriority: boolean,
   assignedPersons: number[],
+  status: string,
+  statusCategory: string
 }
 
 /**
@@ -36,16 +39,20 @@ interface Response {
  */
 const listTasks = async (api: ForecastApiService, parameters: ListTasksParameters): Promise<Response[]> => {
   let filteredTasks: Task[];
-
+  let workflowStatuses: Workflow[];
   if (parameters.projectId) {
     const tasks = await api.getTasksByProject(parameters.projectId);
-    filteredTasks = tasks.filter(task => task.project_id === parameters.projectId);
+    workflowStatuses = await api.getWorkflowStatusByProject(parameters.projectId);
+    filteredTasks = tasks;
+    if (parameters.personId) filteredTasks = filteredTasks.filter((task => task.assigned_persons.includes(parameters.personId)));
   } else {
     filteredTasks = await api.getAllTasks();
     if (parameters.personId) filteredTasks = filteredTasks.filter((task => task.assigned_persons.includes(parameters.personId)));
   }
 
   return filteredTasks.map(task => {
+    let status: Workflow;
+    if (workflowStatuses && workflowStatuses.length>0) status = workflowStatuses.find((status)=>{return status.id === task.workflow_column});
     return {
       id: task.id,
       title: task.title,
@@ -57,6 +64,8 @@ const listTasks = async (api: ForecastApiService, parameters: ListTasksParameter
       endDate: task.end_date,
       highPriority: task.high_priority,
       assignedPersons: task.assigned_persons,
+      status: status?.name || "",
+      statusCategory: status?.category || ""
     }
   });
 }
