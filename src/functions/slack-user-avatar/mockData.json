@@ -3,5 +3,5 @@
     "Content-Type": "application/json"
   },
   "body": "{\"name\": \"Frederic\"}",
-  "queryStringParameters": { "email": "antti.leppa@metatavu.fi" }
+  "queryStringParameters": {}
 }

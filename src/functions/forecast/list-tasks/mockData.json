@@ -1,0 +1,7 @@
+{
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"name\": \"Frederic\"}",
+    "queryStringParameters": { "projectId": "339074", "personId": "548411" }
+}
