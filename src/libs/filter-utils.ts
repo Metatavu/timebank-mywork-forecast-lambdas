@@ -17,15 +17,15 @@ export namespace FilterUtilities {
     let endDate = new Date(dateRange.end_date);
     
     if (dateRange.end_date === null) endDate = currentDate;
-    if (parameters.startDate && parameters.startDate <= startDate) {
+    if (parameters.startDate && parameters.startDate < startDate) {
       return false;
-    } else if (currentDate <= startDate) {
+    } else if (!parameters.startDate && currentDate <= startDate) {
       return false;
     }
 
-    if (parameters.endDate && parameters.endDate >= endDate) {
+    if (parameters.endDate && parameters.endDate > endDate) {
       return false;
-    } else if (currentDate > endDate) {
+    } else if (!parameters.endDate && currentDate > endDate) {
       return false;
     }
 
