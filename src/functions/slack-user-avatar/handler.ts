@@ -19,26 +19,33 @@ const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async () => 
   if (!accessToken) {
     throw new Error("Timebank authentication failed");
   }
-
-  const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
-  if (!timebankUsers) {
-    throw new Error("No persons retrieved from Timebank");
-  }
-
-  const slackUsers = await SlackUtilities.getSlackUsers();
-  const images: Response[] = [];
-
-  for (const timebankUser of timebankUsers) {
-    const image = slackUsers.find((user) => user.name === timebankUser.email.split("@")[0]);
-    if (image) {
-      images.push({personId: timebankUser.id, image_original: image.profile.image_original});
+  
+  try {
+    const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
+    if (!timebankUsers) {
+      throw new Error("No persons retrieved from Timebank");
     }
-  }
+    const slackUsers = await SlackUtilities.getSlackUsers();
+    const images: Response[] = [];
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(images)
-  };
+    for (const timebankUser of timebankUsers) {
+      const image = slackUsers.find((user) => user.name === timebankUser.email.split("@")[0]);
+      if (image) {
+        images.push({personId: timebankUser.id, image_original: image.profile.image_original});
+      }
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(images)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      message: `Error while receiving users data: ${error}`,
+      body: JSON.stringify([])
+    };
+  } 
 }
 
 export const main = getSlackUserAvatar;
