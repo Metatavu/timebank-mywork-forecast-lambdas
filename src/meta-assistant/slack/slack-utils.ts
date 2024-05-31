@@ -150,6 +150,18 @@ Have a great week!
   );
 
   /**
+   * Check if the person was not supposed to work and there is no record of his activity.
+   * 
+   * @param expected expected number of minutes
+   * @param logged logged minutes
+   * @returns true if user's expected and logged were 0
+   */
+  const checkIfHoliday = (expected: number, logged: number) => {
+    if (expected === 0 && logged === 0) return true;
+    return false;
+  };
+
+  /**
    * Post a daily slack message to users
    *
    * @param dailyCombinedData list of combined timebank and slack user data
@@ -167,14 +179,15 @@ Have a great week!
 
     let messageResults: DailyMessageResult[] = [];
     for (const userData of dailyCombinedData) {
-      const { slackId, personId, expected } = userData;
+      const { slackId, personId, expected, logged } = userData;
 
       const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today, nonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const firstDayBack = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
+      const holiday = checkIfHoliday(expected, logged);
       const message = constructDailyMessage(userData, numberOfToday);
 
-      if (!isAway && !firstDayBack) {
+      if (!isAway && !firstDayBack && !holiday) {
         if (!slackOverride) {
           messageResults.push({
             message: message,
