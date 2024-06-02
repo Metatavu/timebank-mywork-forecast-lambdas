@@ -6,7 +6,7 @@ import listDealsHandler from "@functions/pipedrive/list-deals";
 import listLeadsHandler from "@functions/pipedrive/list-leads";
 import getLeadByIdHandler from "@functions/pipedrive/find-lead-by-id";
 import getDealByIdHandler from "@functions/pipedrive/find-deal-by-id";
-import addInterestToDealHandler from "@functions/pipedrive/add-interest-to-deal"
+import addInterestToDealHandler from "@functions/pipedrive/add-interest-to-deal";
 import addInterestToLeadHandler from "@functions/pipedrive/add-interest-to-lead";
 import removeInterestFromDealHandler from "@functions/pipedrive/remove-interest-from-deal";
 import removeInterestFromLeadHandler from "@functions/pipedrive/remove-interest-from-lead";
@@ -21,10 +21,16 @@ import updatePaidHandler from "@/functions/on-call/update-paid";
 import listOnCallDataHandler from "src/functions/on-call/list-on-call-data";
 import weeklyCheckHandler from "@/functions/on-call/weekly-check";
 import getSlackUserAvatar from "src/functions/slack-user-avatar";
+import createSoftwareHandler from "@/functions/software-registry/create-software";
+import getSoftwareHandler from "@/functions/software-registry/get-software";
+import listSoftwareHandler from "@/functions/software-registry/list-software";
+import updateSoftwareHandler from "@/functions/software-registry/update-software";
+import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
+
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-deployment-bucket'],
+  plugins: ['serverless-esbuild', 'serverless-deployment-bucket', 'serverless-offline', 'serverless-dynamodb'],
   provider: {
     name: 'aws',
     runtime: 'nodejs16.x',
@@ -73,6 +79,7 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
+      DYNAMODB_TABLE: 'SoftwareRegistry',
     },
     s3: {
       "on-call": {
@@ -91,6 +98,19 @@ const serverlessConfiguration: AWS = {
             Effect: "Allow",
             Action: ["s3:PutObject"],
             Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+          },
+          {
+            Effect: "Allow",
+            Action: [
+              "dynamodb:DescribeTable",
+              "dynamodb:Query",
+              "dynamodb:Scan",
+              "dynamodb:GetItem",
+              "dynamodb:PutItem",
+              "dynamodb:UpdateItem",
+              "dynamodb:DeleteItem",
+            ],
+            Resource: "arn:aws:dynamodb:us-east-1:*:table/SoftwareRegistry"
           }
         ]
       }
@@ -115,7 +135,12 @@ const serverlessConfiguration: AWS = {
     sendDailyMessage,
     sendWeeklyMessage,
     updatePaidHandler,
-    getSlackUserAvatar
+    getSlackUserAvatar,
+    createSoftwareHandler,
+    getSoftwareHandler,
+    listSoftwareHandler,
+    updateSoftwareHandler,
+    deleteSoftwareHandler
   },
   package: { individually: true },
   custom: {

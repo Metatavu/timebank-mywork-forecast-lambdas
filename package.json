@@ -19,10 +19,14 @@
     "@slack/web-api": "^6.7.0",
     "dotenv": "^16.3.1",
     "envalid": "^7.3.1",
+    "install": "^0.13.0",
     "luxon": "^2.4.0",
     "moment": "^2.29.4",
     "node-fetch": "^2.6.9",
-    "request": "^2.88.2"
+    "plugin": "^0.3.3",
+    "request": "^2.88.2",
+    "serverless-dynamodb": "^0.2.53",
+    "serverless-offline": "^13.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -44,7 +48,7 @@
     "jest": "^27.5.1",
     "json-schema-to-ts": "^1.5.0",
     "keycloak-mock": "^1.0.10",
-    "serverless": "^3.27.0",
+    "serverless": "^3.38.0",
     "serverless-deployment-bucket": "^1.6.0",
     "serverless-esbuild": "^1.23.3",
     "ts-jest": "^27.1.5",
