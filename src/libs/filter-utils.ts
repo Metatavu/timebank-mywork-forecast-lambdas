@@ -70,7 +70,7 @@ export namespace FilterUtilities {
    * @returns If two parameters match or task is null
    */
   export const filterByTask = (task?: number, taskId?: string) => {
-    if (taskId && task.toString() !== taskId) return false;
+    if (taskId && task && task.toString() !== taskId || !task) return false;
     return true;
   }
 }
