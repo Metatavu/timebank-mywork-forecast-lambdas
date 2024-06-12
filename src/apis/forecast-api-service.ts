@@ -6,10 +6,12 @@ import fetch from "node-fetch";
 
 export interface ForecastApiService {
 	getAllocations: () => Promise<Allocation[]>;
+  getAllocation: (allocationId: string) => Promise<Allocation>;
 	getProjects: () => Promise<Project[]>;
 	getProject: (projectId: string) => Promise<Project>;
 	getTasksByProject: (projectId: number) => Promise<Task[]>;
 	getAllTasks: () => Promise<Task[]>;
+  getTask: (taskId: string) => Promise<Task>;
 	getWorkflowStatusByProject: (projectId: number) => Promise<Workflow[]>
 	getProjectSprints: (projectId: number) => Promise<Sprint[]>;
 	getTimeEntriesByProject: (projectId: number) => Promise<TimeEntry[]>;
@@ -33,6 +35,17 @@ export function CreateForecastApiService(): ForecastApiService {
 			return response.json();
 		},
 
+    /**
+		 * Gets single allocation by id from the api
+		 *
+		 * @returns allocation
+		 */
+		async getAllocation(allocationId: string): Promise<Allocation> {
+			const response = await fetch(`https://api.forecast.it/api/v1/allocations/${allocationId}`, { headers: { "X-FORECAST-API-KEY": apiKey } });
+
+			return response.json();
+		},
+
 		/**
 		 * Gets all projects from the api
 		 *
@@ -45,7 +58,7 @@ export function CreateForecastApiService(): ForecastApiService {
 		},
 
 		/**
-		 * Gets single project from the api
+		 * Gets single project by id from the api
 		 *
 		 * @returns project by id
 		 */
@@ -74,6 +87,17 @@ export function CreateForecastApiService(): ForecastApiService {
 		 */
 		async getAllTasks(): Promise<Task[]> {
 			const response = await fetch("https://api.forecast.it/api/v3/tasks", { headers: { "X-FORECAST-API-KEY": apiKey } });
+
+			return response.json();
+		},
+
+    /**
+		 * Gets single task by id from the api
+		 *
+		 * @returns task
+		 */
+		async getTask(taskId: string): Promise<Task> {
+			const response = await fetch(`https://api.forecast.it/api/v3/tasks/${taskId}`, { headers: { "X-FORECAST-API-KEY": apiKey } });
 
 			return response.json();
 		},

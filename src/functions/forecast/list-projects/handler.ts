@@ -9,7 +9,6 @@ import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-
 interface ListProjectsParameters {
   startDate?: Date,
   endDate?: Date,
-  projectId?: string
 }
 
 /**
@@ -54,27 +53,6 @@ const listProjects = async (api: ForecastApiService, currentDate: Date, paramete
 } 
 
 /**
- * Gets project by id
- * 
- * @param api Instance of ForecastApiService
- * @param parameters Parameters
- * @returns A single project
- */
-const listProject = async (api: ForecastApiService, parameters: ListProjectsParameters): Promise<Response> => {
-  const project = await api.getProject(parameters.projectId);
-  
-  return {
-    id: project.id,
-    name: project.name,
-    startDate: project.start_date,
-    endDate: project.end_date,
-    status: project.status,
-    stage: project.stage,
-    color: project.color
-  }
-}
-
-/**
  * Lambda for listing Forecast projects
  * 
  * @param event event
@@ -82,20 +60,6 @@ const listProject = async (api: ForecastApiService, parameters: ListProjectsPara
 const listProjectsHandler: ValidatedEventAPIGatewayProxyEvent<any> = async event => {
   const api = CreateForecastApiService();
   const { queryStringParameters } = event;
-
-  if (queryStringParameters && queryStringParameters.projectId){
-    const project = await listProject(api, {projectId: event.queryStringParameters.projectId});
-    if (!project.id) {
-      return {
-        statusCode: 204,
-        body: "Invalid projectId"
-      };
-    }
-    return {
-      statusCode: 200,
-      body: JSON.stringify([project])
-    };
-  }
 
   const filteredProjects = await listProjects(api, new Date(), {
     startDate: queryStringParameters && new Date(queryStringParameters.startDate),

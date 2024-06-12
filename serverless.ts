@@ -2,25 +2,32 @@ import type { AWS } from "@serverless/typescript";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 import { env } from "process";
-import listDealsHandler from "@functions/pipedrive/list-deals";
-import listLeadsHandler from "@functions/pipedrive/list-leads";
-import getLeadByIdHandler from "@functions/pipedrive/find-lead-by-id";
-import getDealByIdHandler from "@functions/pipedrive/find-deal-by-id";
-import addInterestToDealHandler from "@functions/pipedrive/add-interest-to-deal"
-import addInterestToLeadHandler from "@functions/pipedrive/add-interest-to-lead";
-import removeInterestFromDealHandler from "@functions/pipedrive/remove-interest-from-deal";
-import removeInterestFromLeadHandler from "@functions/pipedrive/remove-interest-from-lead";
-import listAllocationsHandler from "src/functions/forecast/list-allocations";
-import listProjectsHandler from "src/functions/forecast/list-projects";
-import listTasksHandler from "src/functions/forecast/list-tasks";
-import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
-import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
-import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
-import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
-import updatePaidHandler from "@/functions/on-call/update-paid";
-import listOnCallDataHandler from "src/functions/on-call/list-on-call-data";
-import weeklyCheckHandler from "@/functions/on-call/weekly-check";
-import getSlackUserAvatar from "src/functions/slack-user-avatar";
+
+import { 
+  listDealsHandler, 
+  listLeadsHandler, 
+  getLeadByIdHandler, 
+  getDealByIdHandler, 
+  addInterestToDealHandler, 
+  addInterestToLeadHandler, 
+  removeInterestFromDealHandler, 
+  removeInterestFromLeadHandler,  
+  listAllocationsHandler,
+  listProjectsHandler,
+  listTasksHandler,
+  listTimeEntriesHandler,
+  listProjectSprintsHandler,
+  getAllocationHandler,
+  getProjectHandler,
+  getTaskHandler,
+  sendDailyMessage,
+  sendWeeklyMessage,
+  updatePaidHandler,
+  listOnCallDataHandler,
+  weeklyCheckHandler,
+  getSlackUserAvatar
+} from "src/functions";
+
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',
@@ -111,6 +118,9 @@ const serverlessConfiguration: AWS = {
     listTimeEntriesHandler,
     listProjectSprintsHandler,
     listOnCallDataHandler,
+    getAllocationHandler,
+    getProjectHandler,
+    getTaskHandler,
     weeklyCheckHandler,
     sendDailyMessage,
     sendWeeklyMessage,
