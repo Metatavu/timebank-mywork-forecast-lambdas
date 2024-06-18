@@ -1,14 +1,13 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, WeeklyHandlerResponse } from "src/libs/api-gateway";
-import { middyfy } from "src/libs/lambda";
+import { type ValidatedAPIGatewayProxyEvent, type ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, type WeeklyHandlerResponse } from "src/libs/api-gateway";
 import ForecastApiUtilities from "src/meta-assistant/forecastapi/forecast-api";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
 import TimebankUtilities from "src/meta-assistant/timebank/timebank-utils";
-import schema, { WeeklyCombinedData } from "src/types/meta-assistant/index";
+import type schema from "src/types/meta-assistant/index";
+import type { WeeklyCombinedData } from "src/types/meta-assistant/index";
 import { Timespan } from "src/generated/client/api";
 import Auth from "src/meta-assistant/auth/auth-provider";
-import { DateTime } from "luxon";
 
 /**
  * Handler for sendWeeklyMessage
