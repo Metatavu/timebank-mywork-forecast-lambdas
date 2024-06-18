@@ -170,8 +170,8 @@ Have a great week!
     for (const userData of dailyCombinedData) {
       const { slackId, personId, expected } = userData;
 
-      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today, nonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISODate(), nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISODate(), nonProjectTimes);
 
       const message = constructDailyMessage(userData, numberOfToday);
 
@@ -217,8 +217,8 @@ Have a great week!
     for (const userData of weeklyCombinedData) {
       const { slackId, personId, expected } = userData;
       const vacation_time = TimeUtilities.checkIfVacationCaseExists(personId, timeRegistrations, nonProjectTimes, weekStartDate, weekEndDate);
-      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today, nonProjectTimes);
-      const firstDayBack = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISO(), nonProjectTimes);
+      const firstDayBack = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISO(), nonProjectTimes);
 
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate(), vacation_time);
 
