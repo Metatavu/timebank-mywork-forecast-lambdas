@@ -25,10 +25,10 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
 
-    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates(DateTime.fromISO(dayBeforeYesterday));
+    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates(dayBeforeYesterday);
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackUtilities.getSlackUsers();
-    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(weekStartDate.toISODate());
+    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(weekStartDate);
     const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!timebankUsers) {

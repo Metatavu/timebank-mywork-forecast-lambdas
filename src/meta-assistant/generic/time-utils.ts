@@ -1,6 +1,6 @@
-import { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
+import type { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
 import { DateTime, Duration } from "luxon";
-import { PersonTotalTime } from "src/generated/client/api";
+import type { PersonTotalTime } from "src/generated/client/api";
 
 /**
  * Namespace for time utilities
@@ -22,6 +22,7 @@ namespace TimeUtilities {
   /**
    * Generates dates and numbers for previous week
    *
+   * @param date needed to specify week
    * @returns various date formats/ numbers for start and end of previous week
    */
   export const getlastWeeksDates = (date?: DateTime): Dates => {
@@ -77,16 +78,17 @@ namespace TimeUtilities {
     endDate: DateTime
   ) => {  
 
-    let total_non_project_time = 0;
+    let totalNonProjectTime = 0;
+    // Calculates total registered time allocated to non-project activities within the specified date range. Checks if the user has any non-project time.
     timeRegistrations.forEach((registration) => {
       const { date, time_registered, non_project_time, person } = registration;
-      if (personId=== person && nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(non_project_time)) {
+      if (personId === person && nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(non_project_time)) {
         if (DateTime.fromISO(date) >= startDate && DateTime.fromISO(date) <= endDate){
-          total_non_project_time += time_registered;
+          totalNonProjectTime += time_registered;
         }    
       }
     });
-    return total_non_project_time;
+    return totalNonProjectTime;
   }; 
 
   /**

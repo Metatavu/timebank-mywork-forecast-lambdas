@@ -150,6 +150,7 @@ export const forecastMockVacationTypes: TimeRegistrations[] = [
     approval_status: "APPROVED"
   }
 ];
+
 export const mockNonProjectTimes: NonProjectTime[] = [
   {
     id: 280316,
@@ -163,7 +164,7 @@ export const mockNonProjectTimes: NonProjectTime[] = [
   },
   {
     id: 280335,
-    name: "payed off vacation",
+    name: "paid off vacation",
     is_internal_time: false
   },
   {

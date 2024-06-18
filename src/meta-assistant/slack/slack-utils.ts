@@ -1,6 +1,6 @@
-import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/types/meta-assistant/index";
-import { ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
-import { Member } from "@slack/web-api/dist/response/UsersListResponse";
+import type { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/types/meta-assistant/index";
+import { type ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
+import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
 import MessageUtilities from "../generic/message-utils";
@@ -86,9 +86,9 @@ Have a great rest of the day!
    * @param weekEnd date for data
    * @returns message
    */
-  const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string, vacation_time: number): WeeklyMessageData => {
+  const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string, vacationTime: number): WeeklyMessageData => {
     const { name, firstName } = user;
-    user.selectedWeek.expected -= vacation_time;
+    user.selectedWeek.expected -= vacationTime;
     const week = Number(user.selectedWeek.timePeriod.split(",")[2]);
     // TODO: minimumBillableRate should come from the user but this needs to be updated on the back end for most users, so using this for now
     const minimumBillableRate = 75;
@@ -216,11 +216,11 @@ Have a great week!
 
     for (const userData of weeklyCombinedData) {
       const { slackId, personId, expected } = userData;
-      const vacation_time = TimeUtilities.checkIfVacationCaseExists(personId, timeRegistrations, nonProjectTimes, weekStartDate, weekEndDate);
+      const vacationTime = TimeUtilities.checkIfVacationCaseExists(personId, timeRegistrations, nonProjectTimes, weekStartDate, weekEndDate);
       const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISO(), nonProjectTimes);
       const firstDayBack = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISO(), nonProjectTimes);
 
-      const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate(), vacation_time);
+      const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate(), vacationTime);
 
       if (!isAway && !firstDayBack) {
         if (!slackOverride) {
