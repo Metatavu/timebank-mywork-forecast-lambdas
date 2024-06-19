@@ -127,8 +127,8 @@ namespace TimeUtilities {
    * @returns two previous workdays
    */
   export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
-    let today = DateTime.now();
-    let dayOfWeek = new Date().getDay();
+    const today = DateTime.now();
+    const dayOfWeek = new Date().getDay();
 
     let previousWorkDay = today.minus({ days: 1 });
     let dayBeforePreviousWorkDay = today.minus({ days: 2 });
