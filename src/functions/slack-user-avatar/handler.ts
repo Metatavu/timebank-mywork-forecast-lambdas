@@ -17,7 +17,6 @@ export interface Response {
  */
 let slackUsersCache: { users: Member[], expiresAt: number } | null = null;
 
-
 /**
  * Exponential backoff function
  * 
