@@ -1,4 +1,5 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import Auth from "src/meta-assistant/auth/auth-provider";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
@@ -14,10 +15,14 @@ export interface Response {
 /**
  * Cache for Slack users data
  */
-let slackUsersCache: { users: any[], expiresAt: number } | null = null;
+let slackUsersCache: { users: Member[], expiresAt: number } | null = null;
+
 
 /**
  * Exponential backoff function
+ * 
+ * @param ms - Number of milliseconds to sleep
+ * @returns A promise that resolves after the specified delay
  */
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -59,12 +64,20 @@ const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async () => 
       throw new Error("No persons retrieved from Timebank");
     }
 
-    const cacheTTL = 3600 * 1000;
+    const cacheTimeToExpire = 3600 * 1000;
     const currentTime = Date.now();
+
+    if (!slackUsersCache) {
+      console.log("Slack users cache is null. Fetching new data...");
+    } else if (slackUsersCache.expiresAt < currentTime) {
+      console.log("Slack users cache is expired. Fetching new data...");
+    } else {
+      console.log("Using cached Slack users data.");
+    }
 
     if (!slackUsersCache || slackUsersCache.expiresAt < currentTime) {
       const slackUsers = await fetchSlackUsersWithRetry();
-      slackUsersCache = { users: slackUsers, expiresAt: currentTime + cacheTTL };
+      slackUsersCache = { users: slackUsers, expiresAt: currentTime + cacheTimeToExpire };
     }
 
     const images: Response[] = [];
