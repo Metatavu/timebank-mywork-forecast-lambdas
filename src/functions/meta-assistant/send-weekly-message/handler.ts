@@ -1,11 +1,11 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, WeeklyHandlerResponse } from "src/libs/api-gateway";
-import { middyfy } from "src/libs/lambda";
+import { type ValidatedAPIGatewayProxyEvent, type ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, type WeeklyHandlerResponse } from "src/libs/api-gateway";
 import ForecastApiUtilities from "src/meta-assistant/forecastapi/forecast-api";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
 import TimebankUtilities from "src/meta-assistant/timebank/timebank-utils";
-import schema, { WeeklyCombinedData } from "src/types/meta-assistant/index";
+import type schema from "src/types/meta-assistant/index";
+import type { WeeklyCombinedData } from "src/types/meta-assistant/index";
 import { Timespan } from "src/generated/client/api";
 import Auth from "src/meta-assistant/auth/auth-provider";
 
@@ -24,16 +24,16 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
 
+    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates(dayBeforeYesterday);
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackUtilities.getSlackUsers();
-    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
+    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(weekStartDate);
     const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!timebankUsers) {
       throw new Error("No persons retrieved from Timebank");
     }
 
-    const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates();
     const personTotalTimes: WeeklyCombinedData[] = [];
 
     for (const timebankUser of timebankUsers) {
