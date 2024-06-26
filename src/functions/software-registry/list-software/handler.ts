@@ -1,23 +1,23 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { DynamoDB } from 'aws-sdk';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import SoftwareService from 'src/apis/software-service';
 import { middyfy } from 'src/libs/lambda';
 
-const dynamoDb = new DynamoDB.DocumentClient();
-const tableName = process.env.DYNAMODB_TABLE;
+const dynamoDb = new DocumentClient();
+const softwareService = new SoftwareService(dynamoDb);
 
+/**
+ * Handler for listing all software entries from DynamoDB.
+ * @returns Response object with status code and body.
+ */
 export const listSoftwareHandler: APIGatewayProxyHandler = async () => {
-  const params = {
-    TableName: tableName,
-  };
-
   try {
-    const result = await dynamoDb.scan(params).promise();
+    const items = await softwareService.listSoftware();
     return {
       statusCode: 200,
-      body: JSON.stringify(result.Items),
+      body: JSON.stringify(items),
     };
   } catch (error) {
-    console.error('DynamoDB error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Could not retrieve items' }),

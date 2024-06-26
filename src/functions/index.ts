@@ -17,7 +17,7 @@ export { default as listOnCallDataHandler } from "./on-call/list-on-call-data"
 export { default as weeklyCheckHandler } from "./on-call/weekly-check"
 export { default as updatePaidHandler } from "./on-call/update-paid"
 export { default as createSoftwareHandler } from "./software-registry/create-software";
-export { default as getSoftwareHandler } from "./software-registry/get-software";
+export { default as findSoftwareHandler } from "./software-registry/find-software";
 export { default as listSoftwareHandler } from "./software-registry/list-software";
 export { default as updateSoftwareHandler } from "./software-registry/update-software";
 export { default as deleteSoftwareHandler } from "./software-registry/delete-software";

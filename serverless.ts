@@ -22,7 +22,7 @@ import listOnCallDataHandler from "src/functions/on-call/list-on-call-data";
 import weeklyCheckHandler from "@/functions/on-call/weekly-check";
 import getSlackUserAvatar from "src/functions/slack-user-avatar";
 import createSoftwareHandler from "@/functions/software-registry/create-software";
-import getSoftwareHandler from "@/functions/software-registry/get-software";
+import findSoftwareHandler from "@/functions/software-registry/find-software";
 import listSoftwareHandler from "@/functions/software-registry/list-software";
 import updateSoftwareHandler from "@/functions/software-registry/update-software";
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
@@ -79,7 +79,7 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
-      DYNAMODB_TABLE: 'SoftwareRegistry',
+      DYNAMODB_TABLE: env.DYNAMODB_TABLE,
     },
     s3: {
       "on-call": {
@@ -137,7 +137,7 @@ const serverlessConfiguration: AWS = {
     updatePaidHandler,
     getSlackUserAvatar,
     createSoftwareHandler,
-    getSoftwareHandler,
+    findSoftwareHandler,
     listSoftwareHandler,
     updateSoftwareHandler,
     deleteSoftwareHandler

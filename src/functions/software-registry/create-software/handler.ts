@@ -1,41 +1,36 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { DynamoDB } from 'aws-sdk';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import SoftwareService from 'src/apis/software-service';
 import { middyfy } from 'src/libs/lambda';
-import { v4 as uuidv4 } from 'uuid';
+import { SoftwareModel } from 'src/apis/schemas/software-registry/software';
 
-const dynamoDb = new DynamoDB.DocumentClient();
-const tableName = process.env.DYNAMODB_TABLE;
+const dynamoDb = new DocumentClient();
+const softwareService = new SoftwareService(dynamoDb);
 
-export const createSoftwareHandler: APIGatewayProxyHandler = async (event) => {
-  const data = JSON.parse(event.body);
-
-  const params = {
-      TableName: tableName,
-      Item: {
-          id: uuidv4(),
-          name: data.name,
-          description: data.description,
-          url: data.url,
-          image: data.image,
-          status: 'PENDING',
-          createdBy: data.createdBy,
-          createdAt: new Date().toISOString(),
-          lastUpdatedBy: data.createdBy,
-          lastUpdatedAt: new Date().toISOString(),
-      },
-  };
-
+/**
+ * Handler for creating a new software entry in DynamoDB.
+ * @param event - API Gateway event containing the request body.
+ * @returns Response object with status code and body.
+ */
+export const createSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-      await dynamoDb.put(params).promise();
+    const data: Omit<SoftwareModel, "id" | "status" | "createdAt" | "lastUpdatedAt"> = JSON.parse(event.body);
+    if (!data.name || !data.url) {
       return {
-          statusCode: 201,
-          body: JSON.stringify(params.Item),
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Name and URL are required fields.' }),
       };
+    }
+    const newSoftware = await softwareService.createSoftware(data);
+    return {
+      statusCode: 201,
+      body: JSON.stringify(newSoftware),
+    };
   } catch (error) {
-      return {
-          statusCode: 500,
-          body: JSON.stringify(error),
-      };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Failed to create software entry.' }),
+    };
   }
 };
 

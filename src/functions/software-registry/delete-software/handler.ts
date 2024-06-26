@@ -1,31 +1,45 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { DynamoDB } from 'aws-sdk';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { middyfy } from 'src/libs/lambda';
+import SoftwareService from 'src/apis/software-service';
 
-const dynamoDb = new DynamoDB.DocumentClient();
-const tableName = process.env.DYNAMODB_TABLE;
+const dynamoDb = new DocumentClient();
+const softwareService = new SoftwareService(dynamoDb);
 
-export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event) => {
-    const { id } = event.pathParameters;
+/**
+ * Handler for deleting a software entry in DynamoDB.
+ * @returns Response object with status code and body.
+ */
+export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+  const { id } = event.pathParameters || {};
 
-    const params = {
-        TableName: tableName,
-        Key: { id },
+  if (!id) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Id is required.' }),
     };
+  }
 
-    try {
-        await dynamoDb.delete(params).promise();
-        return {
-            statusCode: 204,
-            body: null,
-        };
-    } catch (error) {
-        console.error('DynamoDB delete error:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Could not delete item' }),
-        };
+  try {
+    const existingSoftware = await softwareService.findSoftware(id);
+    if (!existingSoftware) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Item not found.' }),
+      };
     }
+
+    await softwareService.deleteSoftware(id);
+    return {
+      statusCode: 204,
+      body: null,
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Could not delete item', error: error.message }),
+    };
+  }
 };
 
 export const main = middyfy(deleteSoftwareHandler);
