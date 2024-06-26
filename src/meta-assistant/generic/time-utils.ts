@@ -1,6 +1,6 @@
-import { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
+import type { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
 import { DateTime, Duration } from "luxon";
-import { PersonTotalTime } from "src/generated/client/api";
+import type { PersonTotalTime } from "src/generated/client/api";
 
 /**
  * Namespace for time utilities
@@ -16,17 +16,20 @@ namespace TimeUtilities {
   export const timeConversion = (duration: number): string => {
     const dur = Duration.fromObject({ minutes: duration });
     const time = dur.shiftTo("hours", "minutes");
-    return `${time.hours}h ${time.minutes} minutes`;
+    return time.toHuman();
   };
 
   /**
    * Generates dates and numbers for previous week
    *
+   * @param date needed to specify week
    * @returns various date formats/ numbers for start and end of previous week
    */
-  export const getlastWeeksDates = (): Dates => {
-    const startOfWeek = DateTime.now().startOf("week");
-
+  export const getlastWeeksDates = (date?: DateTime): Dates => {
+    let startOfWeek = DateTime.now().startOf("week");
+    if (date) {
+      startOfWeek = date.startOf("week");
+    }
     const weekStartDate = startOfWeek.minus({ weeks: 1 });
     const weekEndDate = startOfWeek.minus({ days: 1 });
 
@@ -62,6 +65,33 @@ namespace TimeUtilities {
   };
 
   /**
+   * Checks if user has vacation periods in time allocation
+   *
+   * @param user data from timebank
+   * @returns human friendly time formats
+   */
+  export const checkIfVacationCaseExists = (
+    personId: number,
+    timeRegistrations: TimeRegistrations[],
+    nonProjectTimes: NonProjectTime[],
+    startDate: DateTime,
+    endDate: DateTime
+  ) => {  
+
+    let totalNonProjectTime = 0;
+    // Calculates total registered time allocated to non-project activities within the specified date range. Checks if the user has any non-project time.
+    timeRegistrations.forEach((registration) => {
+      const { date, time_registered, non_project_time, person } = registration;
+      if (personId === person && nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(non_project_time)) {
+        if (DateTime.fromISO(date) >= startDate && DateTime.fromISO(date) <= endDate){
+          totalNonProjectTime += time_registered;
+        }    
+      }
+    });
+    return totalNonProjectTime;
+  }; 
+
+  /**
    * Checks if user should receive message, not if off or is first day back
    *
    * @param timeRegistrations All timeregistrations after the day before yesterday
@@ -84,7 +114,9 @@ namespace TimeUtilities {
       && timeRegistration.time_registered === expected
     );
 
-    if (!personsTimeRegistration) return false;
+    if (!personsTimeRegistration) {
+      return false;
+    }
 
     return nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(personsTimeRegistration.non_project_time);
   };
@@ -95,19 +127,19 @@ namespace TimeUtilities {
    * @returns two previous workdays
    */
   export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
-    let today = DateTime.now();
-    let dayOfWeek = new Date().getDay();
+    const today = DateTime.now();
+    const dayOfWeek = new Date().getDay();
 
-    let previousWorkDay = today.minus({ days: 1 }).toISODate();
-    let dayBeforePreviousWorkDay = today.minus({ days: 2 }).toISODate();
+    let previousWorkDay = today.minus({ days: 1 });
+    let dayBeforePreviousWorkDay = today.minus({ days: 2 });
 
     if (dayOfWeek === 1) {
-      previousWorkDay = today.minus({ days: 3 }).toISODate();
-      dayBeforePreviousWorkDay = today.minus({ days: 4 }).toISODate();
+      previousWorkDay = today.minus({ days: 3 });
+      dayBeforePreviousWorkDay = today.minus({ days: 4 });
     }
 
     return {
-      today: today.toISODate(),
+      today: today,
       yesterday: previousWorkDay,
       numberOfToday: dayOfWeek,
       dayBeforeYesterday: dayBeforePreviousWorkDay
