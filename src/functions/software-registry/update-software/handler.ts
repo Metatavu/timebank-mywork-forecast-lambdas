@@ -1,8 +1,8 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { middyfy } from 'src/libs/lambda';
-import { SoftwareModel } from 'src/apis/schemas/software-registry/software';
-import SoftwareService from 'src/apis/software-service';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import SoftwareService from "src/apis/software-service";
+import { middyfy } from "src/libs/lambda";
+import { SoftwareModel } from "src/apis/schemas/software-registry/software";
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
@@ -15,7 +15,7 @@ const softwareService = new SoftwareService(dynamoDb);
  */
 export const updateSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const { id } = event.pathParameters || {};
-  const data: Partial<SoftwareModel> = JSON.parse(event.body);
+  const data: SoftwareModel = JSON.parse(event.body);
 
   if (!id) {
     return {
@@ -27,10 +27,10 @@ export const updateSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
   try {
     const updatedSoftware = await softwareService.updateSoftware(id, data);
 
-    if (!updatedSoftware || !Object.keys(updatedSoftware).length) {
+    if (!updatedSoftware) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: 'Item not found or no attributes updated' }),
+        body: JSON.stringify({ error: 'Software not found or no attributes updated' }),
       };
     }
 
@@ -42,7 +42,7 @@ export const updateSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     console.error('DynamoDB update error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Could not update item' }),
+      body: JSON.stringify({ error: 'Failed to update software.', details: error.message }),
     };
   }
 };

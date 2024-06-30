@@ -1,17 +1,19 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
-import { DynamoDB } from 'aws-sdk';
-import { middyfy } from 'src/libs/lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import SoftwareService from "src/apis/software-service";
+import { middyfy } from "src/libs/lambda";
 
-const dynamoDb = new DynamoDB.DocumentClient();
-const tableName = process.env.DYNAMODB_TABLE;
+const dynamoDb = new DocumentClient();
+const softwareService = new SoftwareService(dynamoDb);
 
 /**
  * Handler for retrieving a software entry from DynamoDB.
+ * 
  * @param event - API Gateway event containing the path parameters.
  * @returns Response object with status code and body.
  */
 export const findSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
-  const { id } = event.pathParameters;
+  const { id } = event.pathParameters || {};
 
   if (!id) {
     return {
@@ -20,29 +22,25 @@ export const findSoftwareHandler: APIGatewayProxyHandler = async (event: APIGate
     };
   }
 
-  const params = {
-    TableName: tableName,
-    Key: { id },
-  };
-
   try {
-    const result = await dynamoDb.get(params).promise();
-    if (result.Item) {
+    const software = await softwareService.findSoftware(id);
+
+    if (software) {
       return {
         statusCode: 200,
-        body: JSON.stringify(result.Item),
+        body: JSON.stringify(software),
       };
     } else {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: 'Item not found' }),
+        body: JSON.stringify({ error: 'Software not found' }),
       };
     }
   } catch (error) {
-    console.error('DynamoDB error finding item:', error);
+    console.error('DynamoDB error finding software:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Could not retrieve item' }),
+      body: JSON.stringify({ error: 'Failed to retrieve software.', details: error.message }),
     };
   }
 };

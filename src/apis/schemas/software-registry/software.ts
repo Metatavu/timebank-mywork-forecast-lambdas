@@ -13,14 +13,14 @@ export enum Status {
  * Interface for a software.
  */
 export interface SoftwareModel {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   url: string;
   image: string;
-  status: Status;
+  status?: Status;
   createdBy: string;
-  createdAt: string;
+  createdAt?: string;
   lastUpdatedBy: string;
-  lastUpdatedAt: string;
+  lastUpdatedAt?: string;
 }

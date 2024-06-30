@@ -1,6 +1,6 @@
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { v4 as uuidv4 } from 'uuid';
-import { SoftwareModel, Status } from './schemas/software-registry/software';
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import { v4 as uuidv4 } from "uuid";
+import { SoftwareModel, Status } from "./schemas/software-registry/software";
 
 const tableName = process.env.DYNAMODB_TABLE;
 
@@ -17,10 +17,11 @@ class SoftwareService {
 
   /**
    * Creates a software entry
+   * 
    * @param software software entry
    * @returns created software entry
    */
-  public async createSoftware(software: Omit<SoftwareModel, 'id' | 'status' | 'createdAt' | 'lastUpdatedAt'>): Promise<SoftwareModel> {
+  public async createSoftware(software: SoftwareModel): Promise<SoftwareModel> {
     const newSoftware: SoftwareModel = {
       ...software,
       id: uuidv4(),
@@ -32,12 +33,13 @@ class SoftwareService {
       TableName: tableName,
       Item: newSoftware,
     }).promise();
-
+  
     return newSoftware;
   }
 
   /**
    * Finds a single software entry
+   * 
    * @param id software id
    * @returns software entry or null if not found
    */
@@ -66,20 +68,22 @@ class SoftwareService {
    * @param software software entry to be updated
    * @returns updated software entry
    */
-  public async updateSoftware(id: string, updatedFields: Partial<SoftwareModel>): Promise<SoftwareModel | null> {
+  public async updateSoftware(id: string, updatedFields: SoftwareModel): Promise<SoftwareModel | null> {
     const updateExpression = [];
-    const expressionAttributeNames = {};
-    const expressionAttributeValues = {};
-
+    const expressionAttributeNames: { [key: string]: string } = {};
+    const expressionAttributeValues: { [key: string]: any } = {};
+  
     Object.keys(updatedFields).forEach((key) => {
-      updateExpression.push(`#${key} = :${key}`);
-      expressionAttributeNames[`#${key}`] = key;
-      expressionAttributeValues[`:${key}`] = (updatedFields as any)[key];
+      if (updatedFields[key] !== undefined) {
+        updateExpression.push(`#${key} = :${key}`);
+        expressionAttributeNames[`#${key}`] = key;
+        expressionAttributeValues[`:${key}`] = updatedFields[key];
+      }
     });
-
+  
     expressionAttributeNames['#lastUpdatedAt'] = 'lastUpdatedAt';
     expressionAttributeValues[':lastUpdatedAt'] = new Date().toISOString();
-
+  
     const params = {
       TableName: tableName,
       Key: { id },
@@ -88,7 +92,7 @@ class SoftwareService {
       ExpressionAttributeValues: expressionAttributeValues,
       ReturnValues: 'ALL_NEW',
     };
-
+  
     const result = await this.docClient.update(params).promise();
     return result.Attributes as SoftwareModel;
   }

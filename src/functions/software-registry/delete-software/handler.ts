@@ -1,13 +1,14 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { middyfy } from 'src/libs/lambda';
-import SoftwareService from 'src/apis/software-service';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import SoftwareService from "src/apis/software-service";
+import { middyfy } from "src/libs/lambda";
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
 
 /**
  * Handler for deleting a software entry in DynamoDB.
+ * 
  * @returns Response object with status code and body.
  */
 export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
@@ -16,7 +17,7 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
   if (!id) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'Id is required.' }),
+      body: JSON.stringify({ error: 'Id is required.' }),
     };
   }
 
@@ -25,7 +26,7 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     if (!existingSoftware) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: 'Item not found.' }),
+        body: JSON.stringify({ error: 'Software not found.' }),
       };
     }
 
@@ -37,7 +38,7 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Could not delete item', error: error.message }),
+      body: JSON.stringify({ error: 'Failed to delete software.', details: error.message }),
     };
   }
 };
