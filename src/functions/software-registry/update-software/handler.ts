@@ -25,6 +25,14 @@ export const updateSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
   }
 
   try {
+    const existingSoftware = await softwareService.findSoftware(id);
+    if (!existingSoftware) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: 'Software not found' }),
+      };
+    }
+
     const updatedSoftware = await softwareService.updateSoftware(id, data);
 
     if (!updatedSoftware) {
