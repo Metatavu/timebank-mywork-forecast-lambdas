@@ -15,7 +15,12 @@ const softwareService = new SoftwareService(dynamoDb);
  */
 export const updateSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const { id } = event.pathParameters || {};
-  const data: SoftwareModel = JSON.parse(event.body);
+  let data: SoftwareModel;
+  if (typeof event.body === 'string') {
+    data = JSON.parse(event.body);
+  } else {
+    data = event.body as SoftwareModel;
+  }
 
   if (!id) {
     return {

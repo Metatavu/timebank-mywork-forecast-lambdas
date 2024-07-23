@@ -29,12 +29,16 @@ class SoftwareService {
       createdAt: new Date().toISOString(),
       lastUpdatedAt: new Date().toISOString(),
     };
-    await this.docClient.put({
-      TableName: tableName,
-      Item: newSoftware,
-    }).promise();
-  
-    return newSoftware;
+    try {
+      await this.docClient.put({
+        TableName: tableName,
+        Item: newSoftware,
+      }).promise();
+      return newSoftware;
+    } catch (error) {
+      console.error('Error in createSoftware:', error);
+      throw new Error(`Unable to create software entry: ${error.message}`);
+    }
   }
 
   /**
@@ -72,7 +76,7 @@ class SoftwareService {
     const updateExpression = [];
     const expressionAttributeNames: { [key: string]: string } = {};
     const expressionAttributeValues: { [key: string]: any } = {};
-  
+
     Object.keys(updatedFields).forEach((key) => {
       if (updatedFields[key] !== undefined) {
         updateExpression.push(`#${key} = :${key}`);
@@ -80,10 +84,10 @@ class SoftwareService {
         expressionAttributeValues[`:${key}`] = updatedFields[key];
       }
     });
-  
+
     expressionAttributeNames['#lastUpdatedAt'] = 'lastUpdatedAt';
     expressionAttributeValues[':lastUpdatedAt'] = new Date().toISOString();
-  
+
     const params = {
       TableName: tableName,
       Key: { id },
@@ -92,7 +96,7 @@ class SoftwareService {
       ExpressionAttributeValues: expressionAttributeValues,
       ReturnValues: 'ALL_NEW',
     };
-  
+
     const result = await this.docClient.update(params).promise();
     return result.Attributes as SoftwareModel;
   }

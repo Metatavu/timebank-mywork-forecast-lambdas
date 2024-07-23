@@ -15,13 +15,27 @@ const softwareService = new SoftwareService(dynamoDb);
  */
 export const createSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-    const data: SoftwareModel = JSON.parse(event.body);
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Request body is required.' }),
+      };
+    }
+
+    let data: SoftwareModel;
+    if (typeof event.body === 'string') {
+      data = JSON.parse(event.body);
+    } else {
+      data = event.body as SoftwareModel;
+    }
+
     if (!data.name || !data.url) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Name and URL are required fields.' }),
       };
     }
+
     const newSoftware = await softwareService.createSoftware(data);
     return {
       statusCode: 201,
