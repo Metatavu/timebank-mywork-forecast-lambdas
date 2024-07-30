@@ -110,7 +110,7 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: "arn:aws:dynamodb:us-east-1:*:table/SoftwareRegistry"
+            Resource: "arn:aws:dynamodb:${env.AWS_DEFAULT_REGION}:*:table/SoftwareRegistry"
           }
         ]
       }

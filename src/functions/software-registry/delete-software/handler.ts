@@ -21,6 +21,16 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     };
   }
 
+  const userRoles = event.requestContext.authorizer?.claims?.roles || [];
+  const isAdmin = userRoles.includes('admin');
+
+  if (!isAdmin) {
+    return {
+      statusCode: 403,
+      body: JSON.stringify({ error: 'User does not have permission to delete software.' }),
+    };
+  }
+
   try {
     const existingSoftware = await softwareService.findSoftware(id);
     if (!existingSoftware) {

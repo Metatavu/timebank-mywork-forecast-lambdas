@@ -2,7 +2,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/apis/software-service";
 import { middyfy } from "src/libs/lambda";
-import { SoftwareModel } from "src/apis/schemas/software-registry/software";
+import { SoftwareModel, Status } from "src/apis/schemas/software-registry/software";
+import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
@@ -13,7 +14,7 @@ const softwareService = new SoftwareService(dynamoDb);
  * @param event - API Gateway event containing the request body.
  * @returns Response object with status code and body.
  */
-export const createSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareModel> = async (event) => {
   try {
     if (!event.body) {
       return {
@@ -36,10 +37,35 @@ export const createSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
       };
     }
 
-    const newSoftware = await softwareService.createSoftware(data);
+    const loggedUserId = event.requestContext.authorizer?.claims?.sub;
+    
+    if (!loggedUserId) {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({ error: 'User is not authenticated.' }),
+      };
+    }
+
+    const newSoftware: SoftwareModel = {
+      name: data.name,
+      url: data.url,
+      image: data.image,
+      description: data.description,
+      review: data.review,
+      recommend: data.recommend,
+      tags: data.tags,
+      status: Status.PENDING,
+      createdAt: new Date().toISOString(),
+      lastUpdatedAt: new Date().toISOString(),
+      createdBy: loggedUserId,
+      lastUpdatedBy: loggedUserId,
+    };
+
+    const createdSoftware = await softwareService.createSoftware(newSoftware);
+
     return {
       statusCode: 201,
-      body: JSON.stringify(newSoftware),
+      body: JSON.stringify(createdSoftware),
     };
   } catch (error) {
     return {

@@ -3,6 +3,7 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/apis/software-service";
 import { middyfy } from "src/libs/lambda";
 import { SoftwareModel } from "src/apis/schemas/software-registry/software";
+import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
@@ -13,23 +14,40 @@ const softwareService = new SoftwareService(dynamoDb);
  * @param event - API Gateway event containing the request body and path parameters
  * @returns Response object with status code and body
  */
-export const updateSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
-  const { id } = event.pathParameters || {};
-  let data: SoftwareModel;
-  if (typeof event.body === 'string') {
-    data = JSON.parse(event.body);
-  } else {
-    data = event.body as SoftwareModel;
-  }
-
-  if (!id) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Missing path parameter: id' }),
-    };
-  }
-
+export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareModel> = async (event) => {
   try {
+    const { id } = event.pathParameters || {};
+
+    if (!id) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Missing path parameter: id' }),
+      };
+    }
+
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Request body is required.' }),
+      };
+    }
+
+    let data: SoftwareModel;
+    if (typeof event.body === 'string') {
+      data = JSON.parse(event.body);
+    } else {
+      data = event.body as SoftwareModel;
+    }
+
+    const loggedUserId = event.requestContext.authorizer?.claims?.sub;
+    
+    if (!loggedUserId) {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({ error: 'User is not authenticated.' }),
+      };
+    }
+
     const existingSoftware = await softwareService.findSoftware(id);
     if (!existingSoftware) {
       return {
@@ -38,7 +56,20 @@ export const updateSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
       };
     }
 
-    const updatedSoftware = await softwareService.updateSoftware(id, data);
+    const updatedSoftwareData: SoftwareModel = {
+      name: data.name,
+      url: data.url,
+      image: data.image,
+      description: data.description,
+      review: data.review,
+      recommend: data.recommend,
+      tags: data.tags,
+      lastUpdatedAt: new Date().toISOString(),
+      lastUpdatedBy: loggedUserId,
+      createdBy: existingSoftware.createdBy
+    };
+
+    const updatedSoftware = await softwareService.updateSoftware(id, updatedSoftwareData);
 
     if (!updatedSoftware) {
       return {
