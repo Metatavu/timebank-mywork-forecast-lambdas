@@ -26,4 +26,5 @@ export interface SoftwareModel {
   lastUpdatedAt?: string;
   recommend?: string[];
   tags?: string[];
+  users?: string[];
 }

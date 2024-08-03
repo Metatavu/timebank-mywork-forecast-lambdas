@@ -64,6 +64,7 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       review: data.review,
       recommend: data.recommend,
       tags: data.tags,
+      users: data.users,
       lastUpdatedAt: new Date().toISOString(),
       lastUpdatedBy: loggedUserId,
       createdBy: existingSoftware.createdBy

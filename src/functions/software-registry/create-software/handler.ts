@@ -54,6 +54,7 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       review: data.review,
       recommend: data.recommend,
       tags: data.tags,
+      users: data.users,
       status: Status.PENDING,
       createdAt: new Date().toISOString(),
       lastUpdatedAt: new Date().toISOString(),
