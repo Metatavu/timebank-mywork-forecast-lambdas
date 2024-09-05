@@ -8,7 +8,7 @@ export interface KeycloakApiService {
  * Creates KeycloakApiService
  */
 export function CreateKeycloakApiService(): KeycloakApiService {
-    const baseUrl: string = process.env.KEYCLOAK_BASE_URL;
+    const baseUrl: string = process.env.KEYCLOAK_BASE_URL
     const realm: string = process.env.KEYCLOAK_REALM
 
     return {
@@ -22,5 +22,29 @@ export function CreateKeycloakApiService(): KeycloakApiService {
 
             return response.json();
         },
+    }
+}
+
+async function getAccessToken(): Promise<string> {
+    const baseUrl: string = `${process.env.KEYCLOAK_BASE_URL}/protocol/openid-connect/token`
+    const requestBody = {
+        client_id: process.env.KEYCLOAK_CLIENT_ID,
+        client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
+        username: process.env.KEYCLOAK_ADMIN_USERNAME,
+        password: process.env.KEYCLOAK_ADMIN_PASSWORD,
+        grant_type: "client_credentials"
+    };
+
+    try {
+        const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+        const jsonResponse = await response.json()
+
+        return jsonResponse.access_token
     }
 }
