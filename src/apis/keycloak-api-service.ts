@@ -52,5 +52,7 @@ async function getAccessToken(): Promise<string> {
         const jsonResponse = await response.json()
 
         return jsonResponse.access_token
+    } catch (error) {
+        throw error(error)
     }
 }
