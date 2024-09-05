@@ -32,7 +32,7 @@ export function CreateKeycloakApiService(): KeycloakApiService {
 }
 
 async function getAccessToken(): Promise<string> {
-    const baseUrl: string = `${process.env.KEYCLOAK_BASE_URL}/protocol/openid-connect/token`
+    const url: string = `${process.env.KEYCLOAK_BASE_URL}/protocol/openid-connect/token`
     const requestBody = {
         client_id: process.env.KEYCLOAK_CLIENT_ID,
         client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
@@ -42,7 +42,7 @@ async function getAccessToken(): Promise<string> {
     };
 
     try {
-        const response = await fetch(baseUrl, {
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

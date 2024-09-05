@@ -1,8 +1,6 @@
-import { FilterUtilities } from "@libs/filter-utils";
 import { middyfy } from "@libs/lambda";
-import { APIGatewayProxyHandler } from "aws-lambda";
+import type { APIGatewayProxyHandler } from "aws-lambda";
 import { CreateKeycloakApiService, type KeycloakApiService } from "src/apis/keycloak-api-service";
-import type { ValidatedAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 
 /**

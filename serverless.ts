@@ -26,6 +26,7 @@ import findSoftwareHandler from "@/functions/software-registry/find-software";
 import listSoftwareHandler from "@/functions/software-registry/list-software";
 import updateSoftwareHandler from "@/functions/software-registry/update-software";
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
+import listUsersHandler from "@/functions/keycloak/list-users"
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -140,7 +141,8 @@ const serverlessConfiguration: AWS = {
     findSoftwareHandler,
     listSoftwareHandler,
     updateSoftwareHandler,
-    deleteSoftwareHandler
+    deleteSoftwareHandler,
+    listUsersHandler
   },
   package: { individually: true },
   custom: {
