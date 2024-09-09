@@ -2,7 +2,7 @@ import type { User } from "./schemas/keycloak/user";
 
 export interface KeycloakApiService {
     getUsers: () => Promise<User[]>,
-    findUser: (userId: string) => Promise<User[]>
+    findUser: (id: string) => Promise<User[]>
 }
 
 /**
@@ -40,16 +40,22 @@ export function CreateKeycloakApiService(): KeycloakApiService {
          * 
          * @returns user by Id
          */
-        async findUser(userId: string): Promise<User[]> {
-            const response = await fetch(`${baseUrl}/realms/${realm}/users/${userId}`, {
+        async findUser(id: string): Promise<User[]> {
+            const response = await fetch(`${baseUrl}/auth/realms/${realm}/users/${id}`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
-                    // 'Authorization': `Bearer ${getAccessToken()}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAccessToken()}`
                 } 
             })
 
-            return response.json();
+            if (!response.ok) {
+                throw new Error(`Failed to find user with id: ${id}`);
+            }
+
+            const userData = await response.json();
+
+            return userData;
         },
 
     }

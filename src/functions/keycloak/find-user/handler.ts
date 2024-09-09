@@ -19,23 +19,15 @@ interface Response {
  * Gets user from keycloak
  *
  * @param api
- * @param userId
+ * @param id
  * @returns user information by Id
  */
-const findUser = async (api: KeycloakApiService, userId: string): Promise<Response[]> => {
-  const user = await api.findUser(userId);
-
-  return user.map(user => {
-    return {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      isActive: user.isActive,
-      severaGuid: user.severaGuid,
-      forecastId: user.forecastId
-    };
-  });
+const findUser = async (api: KeycloakApiService, id: string): Promise<Response[]> => {
+  const user = await api.findUser(id);
+  if (!user) {
+    throw new Error('Cannot find user from Api');
+}
+  return user;
 };
 
 /** 
@@ -45,9 +37,9 @@ const findUser = async (api: KeycloakApiService, userId: string): Promise<Respon
  * @returns user information as string
  */
 
-const findUserHandler: APIGatewayProxyHandler = async (_event: APIGatewayProxyEvent) => {
+const findUserHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const api = CreateKeycloakApiService();
-  const { queryStringParameters } = _event;
+  const { queryStringParameters } = event;
 
   // Ensure queryStringParameters and id are present
   if (!queryStringParameters || !queryStringParameters.id) {
@@ -62,26 +54,24 @@ const findUserHandler: APIGatewayProxyHandler = async (_event: APIGatewayProxyEv
 
   try {
     const userById = await findUser(api, queryStringParameters.id);
-
-    if (userById && userById.length > 0) {
+        if (!userById) {
       return {
         headers:{
           "Content-Type": "application/json"
         },
-        statusCode: 200,
-        body: JSON.stringify(userById)
-      };
+        statusCode: 404,
+        body: JSON.stringify({ error: "User not found" })
+    };
     }
     return {
       headers:{
         "Content-Type": "application/json"
       },
-      statusCode: 404,
-      body: JSON.stringify({ error: "User not found" })
+      statusCode: 200,
+      body: JSON.stringify(userById)
     };
   } catch (error) {
-    console.error("Error finding user from KeyCloak:", error);
-    console.error("Full error details:", error.stack);
+    console.log("query string parameters:", queryStringParameters);
     return {
       headers:{
         "Content-Type": "application/json"
