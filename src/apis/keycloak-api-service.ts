@@ -41,11 +41,11 @@ export function CreateKeycloakApiService(): KeycloakApiService {
          * @returns user by Id
          */
         async findUser(id: string): Promise<User[]> {
-            const response = await fetch(`${baseUrl}/auth/realms/${realm}/users/${id}`, {
+            const response = await fetch(`${baseUrl}/admin/realms/${realm}/users/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getAccessToken()}`
+                    'Authorization': `Bearer ${await getAccessToken()}`
                 } 
             })
 
@@ -81,7 +81,6 @@ async function getAccessToken(): Promise<string> {
             body: requestBody.toString()
         })
         const jsonResponse = await response.json()
-        //console.log(`Json response: ${jsonResponse.access_token}`)
 
         return jsonResponse.access_token
     } catch (error) {
