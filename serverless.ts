@@ -28,6 +28,7 @@ import updateSoftwareHandler from "@/functions/software-registry/update-software
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
 import listUsersHandler from "@/functions/keycloak/list-users"
 import findUserHandler from "src/functions/keycloak/find-user";
+import testFunctions from "src/functions/test"
 
 
 const serverlessConfiguration: AWS = {
@@ -145,7 +146,8 @@ const serverlessConfiguration: AWS = {
     updateSoftwareHandler,
     deleteSoftwareHandler,
     listUsersHandler,
-    findUserHandler
+    findUserHandler,
+    testFunctions
   },
   package: { individually: true },
   custom: {

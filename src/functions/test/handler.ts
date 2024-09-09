@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { middyfy } from "src/libs/lambda";
-import mockData from '/home/aleksi-jurvanen/Asiakirjat/metatavu-HomeLambdas/home-lambdas/src/functions/test/mock-data.json'; 
+import mockData from 'src/functions/test/mock-data.json'; 
 
 
 const testFunctions: APIGatewayProxyHandler = async () => {

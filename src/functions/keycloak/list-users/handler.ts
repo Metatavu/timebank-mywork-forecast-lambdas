@@ -23,19 +23,23 @@ interface Response {
  * @returns Array of users 
  */
 const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
-    const users = api.getUsers()
+    try {
+        const users = await api.getUsers()
 
-    return (await users).map(user => {
-        return {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            isActive: user.isActive,
-            severaGuid: user.severaGuid,
-            forecastId: user.forecastId
-        }
+        return users.map(user => {
+            return {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                isActive: user.isActive,
+                severaGuid: user.severaGuid,
+                forecastId: user.forecastId
+            }
     })
+    } catch (error) {
+        throw error()
+    }
 }
 
 /**
@@ -44,12 +48,26 @@ const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
  * @param _event event
  */
 const listUsersHandler: APIGatewayProxyHandler = async (_event) => {
-    const api = CreateKeycloakApiService();
-    const users = await listUsers(api)
+    try {
+        const api = CreateKeycloakApiService();
+        const users = await listUsers(api)
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify(users)
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(users)
+        }
+    } catch (error){
+    
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: error }),
+        };
     }
 }
 
