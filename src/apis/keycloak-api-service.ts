@@ -38,8 +38,8 @@ export function CreateKeycloakApiService(): KeycloakApiService {
             const response = await fetch(`${baseUrl}/realms/${realm}/users/${userId}`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getAccessToken()}`
+                    'Content-Type': 'application/json'
+                    // 'Authorization': `Bearer ${getAccessToken()}`
                 } 
             })
 

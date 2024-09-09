@@ -1,0 +1,10 @@
+{
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "[{\"id\": \"123\", \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john.doe@example.com\", \"isActive\": true, \"severaGuid\": \"some-guid\", \"forecastId\": 456}]",
+    "queryStringParameters": {
+      "id": "123"
+    }
+  }
+  
