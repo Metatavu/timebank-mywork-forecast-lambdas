@@ -26,7 +26,7 @@ const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
     try {
         const users = await api.getUsers()
 
-        return users.map(user => {
+        return users.map((user) => {
             return {
                 id: user.id,
                 firstName: user.firstName,
@@ -54,19 +54,12 @@ const listUsersHandler: APIGatewayProxyHandler = async (_event) => {
 
         return {
             statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(users)
+            body: JSON.stringify({ users })
         }
-    } catch (error){
-    
+    } catch (_error){
         return {
             statusCode: 500,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ message: error }),
+            body: JSON.stringify({ message: "very sad" }),
         };
     }
 }
