@@ -38,6 +38,13 @@ const findUser = async (api: KeycloakApiService, userId: string): Promise<Respon
   });
 };
 
+/** 
+ * Lambda for finding user
+ * 
+ * @param _event event
+ * @returns user information as string
+ */
+
 const findUserHandler: APIGatewayProxyHandler = async (_event: APIGatewayProxyEvent) => {
   const api = CreateKeycloakApiService();
   const { queryStringParameters } = _event;
