@@ -25,7 +25,7 @@ interface Response {
 const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
     try {
         const users = await api.getUsers()
-
+        console.log(users)
         return users.map(user => {
             return {
                 id: user.id,
