@@ -10,7 +10,7 @@ export const findUsersHandler: APIGatewayProxyHandler = async (event: APIGateway
   if (!id) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Missing or invalid path parameter: id' }),
+      body: JSON.stringify({ error: "Missing or invalid path parameter: id" }),
     };
   }
 
@@ -32,7 +32,7 @@ export const findUsersHandler: APIGatewayProxyHandler = async (event: APIGateway
     console.error('DynamoDB error finding software:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to retrieve software.', details: error.message }),
+      body: JSON.stringify({ error: "Failed to retrieve software.", details: error.message }),
     };
   }
 };
