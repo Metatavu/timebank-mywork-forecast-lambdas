@@ -38,7 +38,7 @@ const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
             }
     })
     } catch (error) {
-        throw error()
+        throw error("listUsers(): Error when listing users")
     }
 }
 
