@@ -57,6 +57,11 @@ export function CreateKeycloakApiService(): KeycloakApiService {
     }
 }
 
+/**
+ * Requests an access token from keycloak API
+ * 
+ * @returns access token as string
+ */
 async function getAccessToken(): Promise<string> {
     const realm: string = process.env.KEYCLOAK_REALM
     const url: string = `${process.env.KEYCLOAK_BASE_URL}/realms/${realm}/protocol/openid-connect/token`
