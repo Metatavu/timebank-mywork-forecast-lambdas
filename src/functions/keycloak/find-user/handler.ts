@@ -25,7 +25,7 @@ interface Response {
 const findUser = async (api: KeycloakApiService, id: string): Promise<Response[]> => {
   const user = await api.findUser(id);
   if (!user) {
-    throw new Error('Cannot find user from Api');
+    throw new Error("Cannot find user from Api");
 }
   return user;
 };
