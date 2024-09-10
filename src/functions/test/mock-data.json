@@ -1,7 +1,0 @@
-{
-    "user_id": "666",
-    "user_name": "Aleksi",
-    "user_email": "",
-    "user_message": "This thing works, when you run it locally via npx sls invoke local -f testFunctions -s staging --path src/functions/forecast/list-allocations/mockData.json"
-}
-
