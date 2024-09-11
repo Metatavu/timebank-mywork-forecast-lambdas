@@ -12,8 +12,6 @@ export interface KeycloakApiService {
 /**
  * Creates KeycloakApiService
  */
-// 
-
 export const CreateKeycloakApiService = (): KeycloakApiService => {
     const baseUrl: string = process.env.KEYCLOAK_BASE_URL;
     const realm: string = process.env.KEYCLOAK_REALM;
