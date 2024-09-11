@@ -1,0 +1,4 @@
+{
+    "body":
+    "{\n  \"id\": 1,\n  \"title\": \"Customer Satisfaction Survey\",\n  \"description\": \"A survey to measure customer satisfaction.\",\n  \"questions\": [\n    {\n      \"id\": 1,\n      \"question\": \"How satisfied are you with our service?\",\n      \"type\": \"rating\",\n      \"options\": [\n        \"Very Satisfied\",\n        \"Satisfied\",\n        \"Neutral\",\n        \"Dissatisfied\",\n        \"Very Dissatisfied\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"question\": \"What can we improve?\",\n      \"type\": \"text\",\n      \"options\": []\n    }\n  ]\n}"
+}

@@ -80,6 +80,7 @@ const serverlessConfiguration: AWS = {
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
       DYNAMODB_TABLE: env.DYNAMODB_TABLE,
+      QUESTIONNAIRE_TABLE: env.QUESTIONNAIRE_TABLE,
     },
     s3: {
       "on-call": {
@@ -110,7 +111,11 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
+            Resource: [ 
+              "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaire"
+            ]
+            
           }
         ]
       }
@@ -140,7 +145,19 @@ const serverlessConfiguration: AWS = {
     findSoftwareHandler,
     listSoftwareHandler,
     updateSoftwareHandler,
-    deleteSoftwareHandler
+    deleteSoftwareHandler,
+    deleteQuizhandler:{
+      handler: "src/functions/questionnaire/delete-quiz/handler.deleteQuizHandler",
+      events: [
+        {
+          http: {
+            method: "delete",
+            path: "questionnaire/delete-quiz",
+            authorizer: "timebankKeycloakAuthorizer"
+          }
+        }
+      ]
+    },
   },
   package: { individually: true },
   custom: {
