@@ -70,10 +70,10 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
  * 
  * @returns access token as string
  */
-async function getAccessToken(): Promise<string> {
+const getAccessToken = async (): Promise<string> => {
     const realm: string = process.env.KEYCLOAK_REALM
     const url: string = `${process.env.KEYCLOAK_BASE_URL}/realms/${realm}/protocol/openid-connect/token`
-    const requestBody = new URLSearchParams ({
+    const requestBody = new URLSearchParams({
         "client_id": process.env.KEYCLOAK_CLIENT_ID,
         "client_secret": process.env.KEYCLOAK_CLIENT_SECRET,
         "username": process.env.KEYCLOAK_ADMIN_USERNAME,
@@ -83,9 +83,9 @@ async function getAccessToken(): Promise<string> {
 
     try {
         const response = await fetch(url, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                "Content-Type": "application/x-www-form-urlencoded"
             },
             body: requestBody.toString()
         })
