@@ -17,15 +17,11 @@ interface Response {
 }
 
 /**
- * Gets all users
- * 
- * @param api
- * @returns Array of users 
+ * Lambda for listing users
  */
-const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
-    try {
-        const users = await api.getUsers()
-
+const listUsersHandler: APIGatewayProxyHandler = async () => {
+    const api = CreateKeycloakApiService();
+    const users = await api.getUsers().then((users) => {
         return users.map(user => {
             return {
                 id: user.id,
@@ -35,32 +31,14 @@ const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
                 isActive: user.isActive,
                 severaGuid: user.severaGuid,
                 forecastId: user.forecastId
-            }
-    })
-    } catch (error) {
-        throw error("Error when listing users")
-    }
-}
+            };
+        });
+    });
 
-/**
- * Lambda for listing users
- */
-const listUsersHandler: APIGatewayProxyHandler = async () => {
-    try {
-        const api = CreateKeycloakApiService();
-        const users = await listUsers(api)
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ users })
-        }
-    } catch (_error){
-        console.log(error)
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: "Error when listing users" }),
-        };
-    }
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ users })
+    };
 }
 
 export const main = middyfy(listUsersHandler)
