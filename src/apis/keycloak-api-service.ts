@@ -25,12 +25,10 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
          * @returns List of users
          */
         getUsers: async (): Promise<User[]> => {
-            const accessToken = await getAccessToken();
-
             const response = await fetch(`${baseUrl}/admin/realms/${realm}/users`, {
-                method: 'GET',
+                method: "GET",
                 headers: {
-                    'Authorization': `Bearer ${await getAccessToken()}`
+                    "Authorization": `Bearer ${await getAccessToken()}`
                 }
             });
 
@@ -49,9 +47,9 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
          */
         findUser: async (id: string): Promise<User[]> => {
             const response = await fetch(`${baseUrl}/admin/realms/${realm}/users/${id}`, {
-                method: 'GET',
+                method: "GET",
                 headers: {
-                    'Authorization': `Bearer ${await getAccessToken()}`
+                    "Authorization": `Bearer ${await getAccessToken()}`
                 }
             });
 
