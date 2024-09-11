@@ -55,9 +55,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
                 throw new Error(`Failed to find user with id: ${id}`);
             }
 
-            const userData = await response.json();
-
-            return userData;
+            return response.json();
         },
     };
 };
