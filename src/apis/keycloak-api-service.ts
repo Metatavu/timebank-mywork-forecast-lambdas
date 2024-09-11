@@ -1,5 +1,9 @@
 import type { User } from "./schemas/keycloak/user";
 
+/**
+ * Interface for a KeycloakApiService.
+ * SOMETHING ELSE ?
+ */
 export interface KeycloakApiService {
     getUsers: () => Promise<User[]>,
     findUser: (id: string) => Promise<User[]>
@@ -8,9 +12,11 @@ export interface KeycloakApiService {
 /**
  * Creates KeycloakApiService
  */
-export function CreateKeycloakApiService(): KeycloakApiService {
-    const baseUrl: string = process.env.KEYCLOAK_BASE_URL
-    const realm: string = process.env.KEYCLOAK_REALM
+// 
+
+export const CreateKeycloakApiService = (): KeycloakApiService => {
+    const baseUrl: string = process.env.KEYCLOAK_BASE_URL;
+    const realm: string = process.env.KEYCLOAK_REALM;
 
     return {
         /**
@@ -18,18 +24,18 @@ export function CreateKeycloakApiService(): KeycloakApiService {
          * 
          * @returns List of users
          */
-        async getUsers(): Promise<User[]> {
-            const accessToken = await getAccessToken()
+        getUsers: async (): Promise<User[]> => {
+            const accessToken = await getAccessToken();
 
             const response = await fetch(`${baseUrl}/admin/realms/${realm}/users`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
-            })
+            });
 
             if (!response.ok) {
-                console.log(`Failed to fetch users: ${response.status} - ${response.statusText}`);
+                throw new Error(`Failed to fetch users: ${response.status} - ${response.statusText}`);
             }
 
             return response.json();
@@ -39,15 +45,16 @@ export function CreateKeycloakApiService(): KeycloakApiService {
          * Find user from keycloak
          * 
          * @returns user by Id
+         * @param id from user  
          */
-        async findUser(id: string): Promise<User[]> {
+        findUser: async (id: string): Promise<User[]> => {
             const response = await fetch(`${baseUrl}/admin/realms/${realm}/users/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${await getAccessToken()}`
-                } 
-            })
+                }
+            });
 
             if (!response.ok) {
                 throw new Error(`Failed to find user with id: ${id}`);
@@ -57,19 +64,19 @@ export function CreateKeycloakApiService(): KeycloakApiService {
 
             return userData;
         },
+    };
+};
 
-    }
-}
 
 async function getAccessToken(): Promise<string> {
     const realm: string = process.env.KEYCLOAK_REALM
     const url: string = `${process.env.KEYCLOAK_BASE_URL}/realms/${realm}/protocol/openid-connect/token`
     const requestBody = new URLSearchParams ({
-        'client_id': process.env.KEYCLOAK_CLIENT_ID,
-        'client_secret': process.env.KEYCLOAK_CLIENT_SECRET,
-        'username': process.env.KEYCLOAK_ADMIN_USERNAME,
-        'password': process.env.KEYCLOAK_ADMIN_PASSWORD,
-        'grant_type': "client_credentials"
+        "client_id": process.env.KEYCLOAK_CLIENT_ID,
+        "client_secret": process.env.KEYCLOAK_CLIENT_SECRET,
+        "username": process.env.KEYCLOAK_ADMIN_USERNAME,
+        "password": process.env.KEYCLOAK_ADMIN_PASSWORD,
+        "grant_type": "client_credentials"
     });
 
     try {
