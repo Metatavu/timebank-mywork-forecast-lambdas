@@ -42,8 +42,8 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         /**
          * Find user from keycloak
          * 
+         * @param id string
          * @returns user by Id
-         * @param id from user  
          */
         findUser: async (id: string): Promise<User[]> => {
             const response = await fetch(`${baseUrl}/admin/realms/${realm}/users/${id}`, {
