@@ -5,11 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: 'get',
-        path: 'questionnaire/{id}',
-        authorizer: {
-          name: "timebankKeycloakAuthorizer"
-        }
+        method: "get",
+        path: "/questionnaire/{id}",
       },
     },
   ],
