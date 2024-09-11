@@ -23,63 +23,42 @@ interface Response {
  * @returns user information by Id
  */
 const findUser = async (api: KeycloakApiService, id: string): Promise<Response[]> => {
-  const user = await api.findUser(id);
-  if (!user) {
-    throw new Error("Cannot find user from Api");
-}
-  return user;
+  return await api.findUser(id);
 };
 
 /** 
  * Lambda for finding user
  * 
- * @param _event event
+ * @param event event
  * @returns user information as string
  */
 
 const findUserHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
-  const api = CreateKeycloakApiService();
-  const { queryStringParameters } = event;
-
-  // Ensure queryStringParameters and id are present
-  if (!queryStringParameters || !queryStringParameters.id) {
-    return {
-      headers:{
-        "Content-Type": "application/json"
-      },
-      statusCode: 400,
-      body: JSON.stringify({ error: "Missing or invalid path parameter: id" })
-    };
-  }
+  let apiResponse;
 
   try {
-    const userById = await findUser(api, queryStringParameters.id);
-        if (!userById) {
-      return {
-        headers:{
-          "Content-Type": "application/json"
-        },
-        statusCode: 404,
-        body: JSON.stringify({ error: "User not found" })
-    };
+    const { queryStringParameters } = event;
+
+    // Ensure queryStringParameters and id are present before making the API call
+    if (!queryStringParameters || !queryStringParameters.id) {
+      throw new Error("Missing or invalid path parameter: id");
     }
-    return {
-      headers:{
-        "Content-Type": "application/json"
-      },
+    const api = CreateKeycloakApiService();
+    const userById = await findUser(api, queryStringParameters.id);
+
+    apiResponse = {
       statusCode: 200,
-      body: JSON.stringify(userById)
+      body: JSON.stringify(userById),
     };
+
   } catch (error) {
-    console.log("query string parameters:", queryStringParameters);
-    return {
-      headers:{
-        "Content-Type": "application/json"
-      },
+    apiResponse = {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to retrieve user.", details: error.message })
+      body: JSON.stringify({ error: error.message }),
     };
   }
+
+  return apiResponse;
 };
 
 export const main = middyfy(findUserHandler);
