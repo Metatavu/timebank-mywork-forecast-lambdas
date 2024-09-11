@@ -30,7 +30,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
             const response = await fetch(`${baseUrl}/admin/realms/${realm}/users`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`
+                    'Authorization': `Bearer ${await getAccessToken()}`
                 }
             });
 
@@ -51,7 +51,6 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
             const response = await fetch(`${baseUrl}/admin/realms/${realm}/users/${id}`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${await getAccessToken()}`
                 }
             });
@@ -68,6 +67,11 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
 };
 
 
+/**
+ * Requests an access token from keycloak API
+ * 
+ * @returns access token as string
+ */
 async function getAccessToken(): Promise<string> {
     const realm: string = process.env.KEYCLOAK_REALM
     const url: string = `${process.env.KEYCLOAK_BASE_URL}/realms/${realm}/protocol/openid-connect/token`

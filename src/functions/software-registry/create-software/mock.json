@@ -1,6 +1,0 @@
-{
-  "headers": {
-    "Content-Type": "application/json"
-  },
-  "body": "{\"name\": \"Figma\", \"description\": \"Figma is a web-based interface design and prototyping tool. It allows multiple designers to collaborate in real-time on the same project. Figma is known for its user-friendly interface and powerful features, including vector tools, prototyping, and developer handoff. It operates on a freemium model.\", \"review\": \"Figma is a top choice for design collaboration. Its real-time collaboration features and powerful design tools make it ideal for teams working on UI/UX projects.\", \"url\": \"https://www.figma.com/\", \"image\": \"https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg\", \"createdBy\": \"mock user\", \"recommend\": [\"user13\", \"user14\"], \"tags\": [\"design\", \"prototyping\", \"collaboration\"]}"
-}
