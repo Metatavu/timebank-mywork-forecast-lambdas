@@ -1,19 +1,19 @@
 import { middyfy } from "@libs/lambda";
 import type { APIGatewayProxyHandler } from "aws-lambda";
+import { error } from "console";
 import { CreateKeycloakApiService, type KeycloakApiService } from "src/apis/keycloak-api-service";
-
 
 /**
  * Response schema for lambda
  */
 interface Response {
-    id: string
-    firstName: string
-    lastName: string
-    email: string
-    isActive: boolean
-    severaGuid: string
-    forecastId: number
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    isActive: boolean;
+    severaGuid: string;
+    forecastId: number;
 }
 
 /**
@@ -38,16 +38,14 @@ const listUsers = async (api: KeycloakApiService): Promise<Response[]> => {
             }
     })
     } catch (error) {
-        throw error("listUsers(): Error when listing users")
+        throw error("Error when listing users")
     }
 }
 
 /**
  * Lambda for listing users
- * 
- * @param _event event
  */
-const listUsersHandler: APIGatewayProxyHandler = async (_event) => {
+const listUsersHandler: APIGatewayProxyHandler = async () => {
     try {
         const api = CreateKeycloakApiService();
         const users = await listUsers(api)
@@ -57,6 +55,7 @@ const listUsersHandler: APIGatewayProxyHandler = async (_event) => {
             body: JSON.stringify({ users })
         }
     } catch (_error){
+        console.log(error)
         return {
             statusCode: 500,
             body: JSON.stringify({ message: "Error when listing users" }),
