@@ -10,7 +10,7 @@ const questionnaireService = new QuestionnaireService(dynamoDb);
  * 
  * @returns Response object with status code and body.
  */
-export const listQuestionnairesHandler: APIGatewayProxyHandler = async () => {
+export const listQuizHandler: APIGatewayProxyHandler = async () => {
   try {
     const questionnaireList = await questionnaireService.listQuestionnaires();
     return {
@@ -25,4 +25,4 @@ export const listQuestionnairesHandler: APIGatewayProxyHandler = async () => {
   }
 };
 
-export const main = middyfy(listQuestionnairesHandler);
+export const main = middyfy(listQuizHandler);

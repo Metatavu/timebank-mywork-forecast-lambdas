@@ -27,6 +27,7 @@ import listSoftwareHandler from "@/functions/software-registry/list-software";
 import updateSoftwareHandler from "@/functions/software-registry/update-software";
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
 import findQuizHandler from "@/functions/questionnaire/find-quiz";
+import { listQuizHandler } from "src/functions/questionnaire/list-quiz/handler";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -112,11 +113,11 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: [ 
+            Resource: [
               "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry",
               "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaire"
             ]
-            
+
           }
         ]
       }
@@ -148,7 +149,8 @@ const serverlessConfiguration: AWS = {
     updateSoftwareHandler,
     deleteSoftwareHandler,
     findQuizHandler,
-    deleteQuizhandler:{
+    listQuizHandler,
+    deleteQuizhandler: {
       handler: "src/functions/questionnaire/delete-quiz/handler.deleteQuizHandler",
       events: [
         {
