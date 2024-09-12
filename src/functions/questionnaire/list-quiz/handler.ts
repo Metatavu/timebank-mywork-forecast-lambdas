@@ -1,6 +1,7 @@
 import QuestionnaireService from "src/apis/quiz-api-service";
 import { middyfy } from "src/libs/lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import { APIGatewayProxyHandler } from "aws-lambda/trigger/api-gateway-proxy";
 
 const dynamoDb = new DocumentClient();
 const questionnaireService = new QuestionnaireService(dynamoDb);
