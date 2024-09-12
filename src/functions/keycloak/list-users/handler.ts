@@ -1,6 +1,5 @@
 import { middyfy } from "@libs/lambda";
 import type { APIGatewayProxyHandler } from "aws-lambda";
-import { error } from "console";
 import { CreateKeycloakApiService, type KeycloakApiService } from "src/apis/keycloak-api-service";
 
 /**
