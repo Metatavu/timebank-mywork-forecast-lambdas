@@ -1,19 +1,19 @@
 import QuestionnaireService from "src/apis/quiz-api-service";
 import { middyfy } from "src/libs/lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
-import { APIGatewayProxyHandler } from "aws-lambda/trigger/api-gateway-proxy";
-
-const dynamoDb = new DocumentClient();
-const questionnaireService = new QuestionnaireService(dynamoDb);
+import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 /**
  * Handler for listing all questionnaire entries from DynamoDB.
  * 
  * @returns Response object with status code and body.
  */
-export const listQuizHandler: APIGatewayProxyHandler = async () => {
+const listQuizHandler: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
   try {
+    const dynamoDb = new DocumentClient();
+    const questionnaireService = new QuestionnaireService(dynamoDb);
     const questionnaireList = await questionnaireService.listQuestionnaires();
+
     return {
       statusCode: 200,
       body: JSON.stringify(questionnaireList),

@@ -27,7 +27,7 @@ import listSoftwareHandler from "@/functions/software-registry/list-software";
 import updateSoftwareHandler from "@/functions/software-registry/update-software";
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
 import findQuizHandler from "@/functions/questionnaire/find-quiz";
-import { listQuizHandler } from "src/functions/questionnaire/list-quiz/handler";
+import listQuizHandler from "@/functions/questionnaire/list-quiz";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
