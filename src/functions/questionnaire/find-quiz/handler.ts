@@ -11,7 +11,7 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
  * @returns quiz information as string
  */
 
-const findQuiz: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
+const findQuizHandler: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
   const { pathParameters } = event;
 
   try {
@@ -62,4 +62,4 @@ const findQuiz: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
   }
 };
 
-export const main = middyfy(findQuiz);
+export const main = middyfy(findQuizHandler);
