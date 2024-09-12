@@ -4,9 +4,12 @@ export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
-      http: {
+      httpApi: {
         method: 'put',
-        path: 'software/{id}',
+        path: '/software/{id}',
+        authorizer: {
+          name: "timebankKeycloakAuthorizer"
+        }
       },
     },
   ],

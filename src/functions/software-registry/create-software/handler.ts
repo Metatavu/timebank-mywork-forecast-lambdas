@@ -1,4 +1,3 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/apis/software-service";
 import { middyfy } from "src/libs/lambda";
@@ -55,9 +54,6 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       recommend: data.recommend,
       tags: data.tags,
       users: data.users,
-      status: Status.PENDING,
-      createdAt: new Date().toISOString(),
-      lastUpdatedAt: new Date().toISOString(),
       createdBy: loggedUserId,
       lastUpdatedBy: loggedUserId,
     };
