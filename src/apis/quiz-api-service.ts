@@ -71,7 +71,7 @@ class QuestionnaireService {
    * @param software questionnaire to be updated
    * @returns updated questionnaire
    */
-  public updateCuration = async (questionnaire: QuestionnaireModel): Promise<QuestionnaireModel> => {
+  public updateQuestionnaire = async (questionnaire: QuestionnaireModel): Promise<QuestionnaireModel> => {
     await this.docClient
       .put({
         TableName: tableName,

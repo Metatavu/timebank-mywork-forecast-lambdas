@@ -28,6 +28,7 @@ import updateSoftwareHandler from "@/functions/software-registry/update-software
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
 import findQuizHandler from "@/functions/questionnaire/find-quiz";
 import listQuizHandler from "@/functions/questionnaire/list-quiz";
+import updateQuizHandler from "@/functions/questionnaire/update-quiz";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -150,6 +151,7 @@ const serverlessConfiguration: AWS = {
     deleteSoftwareHandler,
     findQuizHandler,
     listQuizHandler,
+    updateQuizHandler,
     deleteQuizhandler: {
       handler: "src/functions/questionnaire/delete-quiz/handler.deleteQuizHandler",
       events: [
