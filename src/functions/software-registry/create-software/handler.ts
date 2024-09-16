@@ -1,7 +1,7 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/apis/software-service";
 import { middyfy } from "src/libs/lambda";
-import { SoftwareModel, Status } from "src/apis/schemas/software-registry/software";
+import { SoftwareModel, Status } from "src/database/schemas/software-registry/software";
 import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
 const dynamoDb = new DocumentClient();
