@@ -68,7 +68,7 @@ class QuestionnaireService {
   /**
    * Updates a questionnaire
    *
-   * @param software questionnaire to be updated
+   * @param questionnaire questionnaire to be updated
    * @returns updated questionnaire
    */
   public updateQuestionnaire = async (questionnaire: QuestionnaireModel): Promise<QuestionnaireModel> => {
