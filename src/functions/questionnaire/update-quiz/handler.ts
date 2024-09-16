@@ -1,8 +1,8 @@
-import QuestionnaireService from "src/apis/quiz-api-service";
+import QuestionnaireService from "src/database/services/quiz-api-service";
 import { middyfy } from "src/libs/lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
-import { QuestionnaireModel } from "src/apis/schemas/questionnaire/questionnaire";
+import { QuestionnaireModel } from "src/database/schemas/questionnaire/questionnaire";
 
 /**
  * Handler for updating a questionnaire entry in DynamoDB.

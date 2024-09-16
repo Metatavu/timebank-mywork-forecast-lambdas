@@ -1,7 +1,7 @@
-import { Deal } from "./schemas/pipedrive/deal";
-import { Lead } from "./schemas/pipedrive/lead";
-import { Interest } from "./schemas/pipedrive/interest";
-import Config from "../app/config";
+import { Deal } from "../schemas/pipedrive/deal";
+import { Lead } from "../schemas/pipedrive/lead";
+import { Interest } from "../schemas/pipedrive/interest";
+import Config from "../../app/config";
 import fetch from "node-fetch";
 /**
  * Holds all PipedriveApiService functions used to interact with Pipedrive API 

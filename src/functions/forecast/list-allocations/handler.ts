@@ -1,7 +1,7 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { FilterUtilities } from "@libs/filter-utils";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { CreateForecastApiService, ForecastApiService } from "src/database/services/forecast-api-service";
 
 /**
  * Parameters for lambda

@@ -1,4 +1,4 @@
-import QuestionnaireService from "src/apis/quiz-api-service";
+import QuestionnaireService from "src/database/services/quiz-api-service";
 import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 // import { CreateKeycloakApiService, type KeycloakApiService } from "src/apis/keycloak-api-service";
 import { middyfy } from "src/libs/lambda";
