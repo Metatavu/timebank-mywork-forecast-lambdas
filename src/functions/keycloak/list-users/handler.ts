@@ -1,18 +1,21 @@
 import { middyfy } from "@libs/lambda";
 import type { APIGatewayProxyHandler } from "aws-lambda";
-import { CreateKeycloakApiService, type KeycloakApiService } from "src/apis/keycloak-api-service";
+import {
+  CreateKeycloakApiService,
+  type KeycloakApiService,
+} from "src/apis/keycloak-api-service";
 
 /**
  * Response schema for lambda
  */
 interface Response {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	isActive: boolean;
-	severaGuid: string;
-	forecastId: number;
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive: boolean;
+  severaGuid: string;
+  forecastId: number;
 }
 
 /**
@@ -20,34 +23,34 @@ interface Response {
  */
 const listUsersHandler: APIGatewayProxyHandler = async () => {
   try {
-	  const api = CreateKeycloakApiService();
-		
-	  const users: Response[] = await api.getUsers().then((users) => {
-		  return users.map(user => {
-			  const responseUser: Response = {
-				  id: user.id,
-				  firstName: user.firstName,
-				  lastName: user.lastName,
-				  email: user.email,
-				  isActive: user.isActive,
-				  severaGuid: user.severaGuid,
-				  forecastId: user.forecastId
-			  };
-			  return responseUser;
-		  });
-	  });
+    const api = CreateKeycloakApiService();
 
-		return {
-			statusCode: 200,
-			body: JSON.stringify({ users })
-		};
+    const users = await api.getUsers();
+
+    const mappedUsers: Response[] = users.map((user) => {
+      const responseUser: Response = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        isActive: user.isActive,
+        severaGuid: user.severaGuid,
+        forecastId: user.forecastId,
+      };
+      return responseUser;
+    });
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(mappedUsers),
+    };
   } catch (error) {
-	  console.log(error);
-	  return {
-		  statusCode: 500,
-		  body: JSON.stringify({ message: "Error when listing users" }),
-	  };
+    console.log(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Error when listing users" }),
+    };
   }
 };
 
-export const main = middyfy(listUsersHandler)
+export const main = middyfy(listUsersHandler);
