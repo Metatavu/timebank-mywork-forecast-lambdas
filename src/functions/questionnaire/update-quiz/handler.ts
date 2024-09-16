@@ -11,21 +11,21 @@ import { QuestionnaireModel } from "src/apis/schemas/questionnaire/questionnaire
  * @returns Response object with status code and body.
  */
 const updateQuizHandler: ValidatedEventAPIGatewayProxyEvent<QuestionnaireModel> = async (event) => {
-    try {
-        const dynamoDb = new DocumentClient();
-        const questionnaireService = new QuestionnaireService(dynamoDb);
-        const updatedQuestionnaire = await questionnaireService.updateQuestionnaire(event.body as QuestionnaireModel);
+  try {
+    const dynamoDb = new DocumentClient();
+    const questionnaireService = new QuestionnaireService(dynamoDb);
+    const updatedQuestionnaire = await questionnaireService.updateQuestionnaire(event.body as QuestionnaireModel);
 
-        return {
-        statusCode: 200,
-        body: JSON.stringify(updatedQuestionnaire),
-        };
-    } catch (error) {
-        return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to update questionnaire.', details: error.message }),
-        };
-    }
+    return {
+    statusCode: 200,
+    body: JSON.stringify(updatedQuestionnaire),
+    };
+  } catch (error) {
+      return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Failed to update questionnaire.", details: error.message }),
+      };
+  }
 };
 
 export const main = middyfy(updateQuizHandler);

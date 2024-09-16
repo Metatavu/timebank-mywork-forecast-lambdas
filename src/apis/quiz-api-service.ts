@@ -1,6 +1,6 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { v4 as uuidv4 } from "uuid";
-import { QuestionnaireModel, Question } from "./schemas/questionnaire/questionnaire";
+import { QuestionnaireModel } from "./schemas/questionnaire/questionnaire";
 
 const tableName = process.env.QUESTIONNAIRE_TABLE;
 
