@@ -45,7 +45,7 @@ const listUsersHandler: APIGatewayProxyHandler = async () => {
       body: JSON.stringify(mappedUsers),
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: "Error when listing users" }),
