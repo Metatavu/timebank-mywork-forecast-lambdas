@@ -3,6 +3,7 @@ import SoftwareService from "src/apis/software-service";
 import { middyfy } from "src/libs/lambda";
 import { SoftwareModel, Status } from "src/apis/schemas/software-registry/software";
 import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
+import { getUserIdFromToken } from "src/libs/auth-utils";
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
@@ -14,8 +15,10 @@ const softwareService = new SoftwareService(dynamoDb);
  * @returns Response object with status code and body.
  */
 export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareModel> = async (event) => {
+  console.log('Received event:', JSON.stringify(event));
   try {
     if (!event.body) {
+      console.log('Request body is missing');
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Request body is required.' }),
@@ -28,17 +31,26 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
     } else {
       data = event.body as SoftwareModel;
     }
+    console.log('Parsed request body:', data);
 
     if (!data.name || !data.url) {
+      console.log('Missing required fields: name or url');
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Name and URL are required fields.' }),
       };
     }
 
-    const loggedUserId = event.requestContext.authorizer?.claims?.sub;
-    
+    console.log('Authorizer claims:', event.requestContext.authorizer);
+    let loggedUserId = event.requestContext.authorizer?.claims?.sub;
+    console.log('Logged User ID (sub claim):', loggedUserId);
+
     if (!loggedUserId) {
+      loggedUserId = getUserIdFromToken(event);
+    }
+
+    if (!loggedUserId) {
+      console.log('User is not authenticated');
       return {
         statusCode: 403,
         body: JSON.stringify({ error: 'User is not authenticated.' }),
@@ -57,14 +69,17 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       createdBy: loggedUserId,
       lastUpdatedBy: loggedUserId,
     };
+    console.log('Creating new software with data:', newSoftware);
 
     const createdSoftware = await softwareService.createSoftware(newSoftware);
+    console.log('Software created successfully:', createdSoftware);
 
     return {
       statusCode: 201,
       body: JSON.stringify(createdSoftware),
     };
   } catch (error) {
+    console.error('Error creating software:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to create software entry.', details: error.message }),

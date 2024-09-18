@@ -1,6 +1,7 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/apis/software-service";
 import { middyfy } from "src/libs/lambda";
+import { getUserIdFromToken } from "src/libs/auth-utils"
 import { SoftwareModel } from "src/apis/schemas/software-registry/software";
 import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 
@@ -14,8 +15,11 @@ const softwareService = new SoftwareService(dynamoDb);
  * @returns Response object with status code and body
  */
 export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareModel> = async (event) => {
+  console.log('Received event:', JSON.stringify(event));
+
   try {
     const { id } = event.pathParameters || {};
+    console.log('Path parameter (id):', id);
 
     if (!id) {
       return {
@@ -37,9 +41,17 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
     } else {
       data = event.body as SoftwareModel;
     }
+    console.log('Parsed request body:', data);
 
-    const loggedUserId = event.requestContext.authorizer?.claims?.sub;
-    
+    console.log('Authorizer claims:', event.requestContext.authorizer);
+
+    let loggedUserId = event.requestContext.authorizer?.claims?.sub;
+    console.log('Logged User ID (sub claim):', loggedUserId);
+
+    if (!loggedUserId) {
+      loggedUserId = getUserIdFromToken(event);
+    }
+
     if (!loggedUserId) {
       return {
         statusCode: 403,
@@ -47,6 +59,7 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       };
     }
 
+    console.log('Looking up existing software by id:', id);
     const existingSoftware = await softwareService.findSoftware(id);
     if (!existingSoftware) {
       return {
@@ -54,6 +67,7 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
         body: JSON.stringify({ error: 'Software not found' }),
       };
     }
+    console.log('Existing software found:', existingSoftware);
 
     const updatedSoftwareData: SoftwareModel = {
       name: data.name,
@@ -68,16 +82,19 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       lastUpdatedBy: loggedUserId,
       createdBy: existingSoftware.createdBy
     };
+    console.log('Updating software with data:', updatedSoftwareData);
 
     const updatedSoftware = await softwareService.updateSoftware(id, updatedSoftwareData);
 
     if (!updatedSoftware) {
+      console.log('Failed to update software for id:', id);
       return {
         statusCode: 404,
         body: JSON.stringify({ error: 'Software not found or no attributes updated' }),
       };
     }
 
+    console.log('Software updated successfully:', updatedSoftware);
     return {
       statusCode: 200,
       body: JSON.stringify(updatedSoftware),

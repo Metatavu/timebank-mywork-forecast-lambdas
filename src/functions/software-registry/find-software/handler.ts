@@ -13,9 +13,13 @@ const softwareService = new SoftwareService(dynamoDb);
  * @returns Response object with status code and body.
  */
 export const findSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+  console.log('Received event:', JSON.stringify(event));
+
   const { id } = event.pathParameters || {};
+  console.log('Path parameter (id):', id);
 
   if (!id) {
+    console.log('Missing or invalid path parameter: id');
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Missing or invalid path parameter: id' }),
@@ -23,14 +27,17 @@ export const findSoftwareHandler: APIGatewayProxyHandler = async (event: APIGate
   }
 
   try {
+    console.log('Finding software with id:', id);
     const software = await softwareService.findSoftware(id);
 
     if (software) {
+      console.log('Software found:', software);
       return {
         statusCode: 200,
         body: JSON.stringify(software),
       };
     } else {
+      console.log('Software not found for id:', id);
       return {
         statusCode: 404,
         body: JSON.stringify({ error: 'Software not found' }),

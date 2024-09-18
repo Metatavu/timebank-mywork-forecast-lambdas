@@ -12,9 +12,13 @@ const softwareService = new SoftwareService(dynamoDb);
  * @returns Response object with status code and body.
  */
 export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+  console.log('Received event:', JSON.stringify(event));
+
   const { id } = event.pathParameters || {};
+  console.log('Path parameter (id):', id);
 
   if (!id) {
+    console.log('Missing ID in path parameters.');
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Id is required.' }),
@@ -22,6 +26,8 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
   }
 
   const userRoles = event.requestContext.authorizer?.claims?.roles || [];
+  console.log('User roles:', userRoles);
+
   const isAdmin = userRoles.includes('admin');
 
   if (!isAdmin) {
@@ -32,7 +38,9 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
   }
 
   try {
+    console.log('Looking up existing software with id:', id);
     const existingSoftware = await softwareService.findSoftware(id);
+
     if (!existingSoftware) {
       return {
         statusCode: 404,
@@ -41,11 +49,13 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     }
 
     await softwareService.deleteSoftware(id);
+
     return {
       statusCode: 204,
       body: null,
     };
   } catch (error) {
+    console.error('Error deleting software with id: ${id}', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to delete software.', details: error.message }),
