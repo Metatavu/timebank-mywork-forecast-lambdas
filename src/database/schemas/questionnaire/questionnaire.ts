@@ -1,3 +1,7 @@
+/**
+ * DynamoDB schema for Questionnaire
+ */
+
 export interface QuestionnaireModel {
   id: number;
   title: string;
@@ -8,10 +12,18 @@ export interface QuestionnaireModel {
   passScore: number;
 }
 
+/**
+ * DynamoDB schema for Question
+ */
+
 export interface Question {
   question: string;
   options: Option[];
 }
+
+/**
+ * DynamoDB schema for Option
+ */
 
 export interface Option {
   label: string;

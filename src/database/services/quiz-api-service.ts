@@ -1,7 +1,7 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { QuestionnaireModel } from "../schemas/questionnaire/questionnaire";
 
-const tableName = process.env.QUESTIONNAIRE_TABLE;
+const TABLE_NAME = "questionnaires";
 
 /**
  * Database service for questionnaires
@@ -23,7 +23,7 @@ class QuestionnaireService {
   public createQuestionnaire = async (questionnaire: QuestionnaireModel): Promise<QuestionnaireModel> => {
     await this.docClient
       .put({
-        TableName: tableName,
+        TableName: TABLE_NAME,
         Item: questionnaire
       })
       .promise();
@@ -40,7 +40,7 @@ class QuestionnaireService {
   public findQuestionnaire = async (id: string): Promise<QuestionnaireModel | null> => {
     const result = await this.docClient
       .get({
-        TableName: tableName,
+        TableName: TABLE_NAME,
         Key: {
           id: id
         },
@@ -58,7 +58,7 @@ class QuestionnaireService {
   public listQuestionnaires = async (): Promise<QuestionnaireModel[]> => {
     const result = await this.docClient
       .scan({
-        TableName: tableName
+        TableName: TABLE_NAME
       })
       .promise();
 
@@ -73,7 +73,7 @@ class QuestionnaireService {
   public updateQuestionnaire = async (questionnaire: QuestionnaireModel): Promise<QuestionnaireModel> => {
     await this.docClient
       .put({
-        TableName: tableName,
+        TableName: TABLE_NAME,
         Item: questionnaire
       })
       .promise();
@@ -89,7 +89,7 @@ class QuestionnaireService {
   public deleteQuestionnaire = async (id: string) => {
     return this.docClient
       .delete({
-        TableName: tableName,
+        TableName: TABLE_NAME,
         Key: {
           id: id
         },
