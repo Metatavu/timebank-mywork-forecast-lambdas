@@ -1,6 +1,6 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { CreateForecastApiService, ForecastApiService } from "src/database/services/forecast-api-service";
 import { Task } from "src/database/schemas/forecast/task";
 import { Workflow } from "src/database/schemas/forecast/workflow";
 
