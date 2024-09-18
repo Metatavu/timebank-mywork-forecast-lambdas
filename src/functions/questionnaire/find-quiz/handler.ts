@@ -1,22 +1,26 @@
-import QuestionnaireService from "src/apis/quiz-api-service";
-import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
+import QuestionnaireService from "src/database/services/quiz-api-service";
 // import { CreateKeycloakApiService, type KeycloakApiService } from "src/apis/keycloak-api-service";
 import { middyfy } from "src/libs/lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+
+const dynamoDb = new DocumentClient();
+const questionnaireService = new QuestionnaireService(dynamoDb);
 
 /**
- * Lambda for finding quiz
+ * Lambda for finding quiz entry from DynamoDB.
  *
  * @param event event
- * @returns quiz information as string
+ * @returns quiz information as object
  */
 
-const findQuizHandler: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
-	const { pathParameters } = event;
+const findQuizHandler: APIGatewayProxyHandler = async (
+  event: APIGatewayProxyEvent,
+) => {
+  const { id } = event.pathParameters || {};
 
   try {
-    // Ensure pathParameters and id are present before calling findQuestionnaire
-    if (!pathParameters || !pathParameters.id) {
+    if (!id) {
       return {
         headers: {
           "Content-Type": "application/json",
@@ -28,16 +32,7 @@ const findQuizHandler: ValidatedEventAPIGatewayProxyEvent<any> = async (event) =
       };
     }
 
-    // Create an instance of DocumentClient
-    const documentClient = new DocumentClient();
-
-    // Create an instance of QuestionnaireService
-    const questionnaireService = new QuestionnaireService(documentClient);
-
-    // Call the findQuestionnaire method
-    const quizById = await questionnaireService.findQuestionnaire(
-      pathParameters.id,
-    );
+    const quizById = await questionnaireService.findQuestionnaire(id);
 
     if (!quizById) throw new Error("Quiz not found");
 
