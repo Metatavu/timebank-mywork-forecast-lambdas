@@ -1,7 +1,7 @@
 // TODO: The related forecast endpoint is no longer used and so if this is still not needed when sprint view UI development is complete, it should be removed.
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { CreateForecastApiService, ForecastApiService } from "src/apis/forecast-api-service";
+import { CreateForecastApiService, ForecastApiService } from "src/database/services/forecast-api-service";
 
 /**
  * Parameters for lambda

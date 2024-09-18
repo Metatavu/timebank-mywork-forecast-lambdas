@@ -51,6 +51,12 @@ curl --location --request POST 'https://myApiEndpoint/dev/hello' \
 }'
 ```
 
+### Serverless-offline
+
+To run serverless-offline plugin run the following command:
+- `npx serverless offline --noAuth --stage dev`
+Ensure that you have the correct Lambda functions defined and added in your serverless.ts file for them to show up. You can test the endpoints using Postman.
+
 ## Template features
 
 ### Project structure

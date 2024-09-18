@@ -1,4 +1,4 @@
-import type { User } from "./schemas/keycloak/user";
+import type { User } from "../schemas/keycloak/user";
 
 /**
  * Interface for a KeycloakApiService.
