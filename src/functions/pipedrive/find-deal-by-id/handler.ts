@@ -1,7 +1,7 @@
 import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { CreatePipedriveApiService, PipedriveApiService } from "src/apis/pipedrive-api-service";
-import { Deal } from "src/apis/schemas/pipedrive/deal";
+import { Deal } from "src/database/schemas/pipedrive/deal";
 
 /**
  * Response interface for a deal

@@ -3,7 +3,7 @@ import type { APIGatewayProxyHandler } from "aws-lambda";
 import {
   CreateKeycloakApiService,
   type KeycloakApiService,
-} from "src/apis/keycloak-api-service";
+} from "src/database/services/keycloak-api-service";
 
 /**
  * Response schema for lambda

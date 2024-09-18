@@ -1,5 +1,5 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-import { CreateKeycloakApiService } from "src/apis/keycloak-api-service";
+import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
 import { middyfy } from "src/libs/lambda";
 
 /**
