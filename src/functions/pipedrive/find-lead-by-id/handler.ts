@@ -1,6 +1,6 @@
 import { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
-import { CreatePipedriveApiService, PipedriveApiService } from 'src/apis/pipedrive-api-service';
+import { CreatePipedriveApiService, PipedriveApiService } from 'src/database/services/pipedrive-api-service';
 import { Lead } from 'src/database/schemas/pipedrive/lead';
 
 /**
