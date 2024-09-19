@@ -11,7 +11,9 @@ import type QuestionnaireModel from "src/database/models/questionnaire";
  * @param event - API Gateway event containing the request body.
  * @returns Response object with status code
  */
-export const createQuizHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+import type { APIGatewayProxyEvent } from "aws-lambda";
+
+export const createQuizHandler = async (event: APIGatewayProxyEvent) => {
   if (!event.body) {
     return {
       statusCode: 400,
