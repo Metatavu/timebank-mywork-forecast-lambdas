@@ -28,8 +28,8 @@ import updateSoftwareHandler from "@/functions/software-registry/update-software
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
 import listUsersHandler from "@/functions/keycloak/list-users";
 import findUserHandler from "src/functions/keycloak/find-user";
-import createQuizHandler from "src/functions/questionnaire/create-quiz";
-import findQuizHandler from "src/functions/questionnaire/find-quiz";
+import createQuestionnaireHandler from "src/functions/questionnaire/create-questionnaire";
+import findQuestionnaireHandler from "src/functions/questionnaire/find-questionnaire";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -147,8 +147,8 @@ const serverlessConfiguration: AWS = {
     deleteSoftwareHandler,
     listUsersHandler,
     findUserHandler,
-    createQuizHandler,
-    findQuizHandler,
+    createQuestionnaireHandler,
+    findQuestionnaireHandler,
   },
   package: { individually: true },
   custom: {

@@ -1,11 +1,8 @@
 import QuestionnaireService from "src/database/services/quiz-api-service";
-// import { CreateKeycloakApiService, type KeycloakApiService } from "src/apis/keycloak-api-service";
 import { middyfy } from "src/libs/lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-
-const dynamoDb = new DocumentClient();
-const questionnaireService = new QuestionnaireService(dynamoDb);
+import { questionnaireService } from "src/database/services";
 
 /**
  * Lambda for finding quiz entry from DynamoDB.
@@ -22,9 +19,6 @@ const findQuizHandler: APIGatewayProxyHandler = async (
   try {
     if (!id) {
       return {
-        headers: {
-          "Content-Type": "application/json",
-        },
         statusCode: 400,
         body: JSON.stringify({
           error: "Missing or invalid path parameter: id",
@@ -34,20 +28,21 @@ const findQuizHandler: APIGatewayProxyHandler = async (
 
     const quizById = await questionnaireService.findQuestionnaire(id);
 
-    if (!quizById) throw new Error("Quiz not found");
+    if (!quizById) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          error: "Quiz not found",
+        }),
+      };
+    };
 
     return {
-      headers: {
-        "Content-Type": "application/json",
-      },
       statusCode: 200,
       body: JSON.stringify(quizById),
     };
   } catch (error) {
     return {
-      headers: {
-        "Content-Type": "application/json",
-      },
       statusCode: 500,
       body: JSON.stringify({
         error: "Failed to retrieve quiz.",

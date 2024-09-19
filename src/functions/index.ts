@@ -23,5 +23,5 @@ export { default as updateSoftwareHandler } from "./software-registry/update-sof
 export { default as deleteSoftwareHandler } from "./software-registry/delete-software";
 export { default as listUsersHandler } from "./keycloak/list-users";
 export { default as findUserHandler } from "./keycloak/find-user";
-export { default as createQuizHandler } from "./questionnaire/create-quiz";
-export { default as findQuizHandler } from "./questionnaire/find-quiz";
+export { default as createQuestionnaireHandler } from "./questionnaire/create-questionnaire";
+export { default as findQuestionnaireHandler } from "./questionnaire/find-questionnaire";
