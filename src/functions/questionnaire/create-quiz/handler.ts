@@ -13,9 +13,7 @@ const questionnaireService = new QuestionnaireService(dynamoDb);
  * @param event - API Gateway event containing the request body.
  * @returns Response object with status code and body.
  */
-export const createQuizHandler: ValidatedEventAPIGatewayProxyEvent<QuestionnaireModel> = async (
-  event
-) => {
+export const createQuizHandler: ValidatedEventAPIGatewayProxyEvent<QuestionnaireModel> = async (event) => {
   try {
     if (!event.body) {
       return {
