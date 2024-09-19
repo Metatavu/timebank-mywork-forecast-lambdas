@@ -1,34 +1,11 @@
 {
-  "id": 1,
-  "title": "General Knowledge Quiz",
-  "description": "Test your general knowledge with this short quiz.",
-  "options": [
-    {
-      "question": "What is the capital of France?",
-      "options": [
-        { "label": "Paris", "value": true },
-        { "label": "Berlin", "value": false },
-        { "label": "Madrid", "value": false }
-      ]
-    },
-    {
-      "question": "Which planet is known as the Red Planet?",
-      "options": [
-        { "label": "Earth", "value": false },
-        { "label": "Mars", "value": true },
-        { "label": "Jupiter", "value": false }
-      ]
-    },
-    {
-      "question": "Who wrote 'Hamlet'?",
-      "options": [
-        { "label": "Charles Dickens", "value": false },
-        { "label": "William Shakespeare", "value": true },
-        { "label": "Mark Twain", "value": false }
-      ]
-    }
-  ],
-  "tags": ["general knowledge", "quiz"],
-  "passedUsers": [101, 102, 103],
-  "passScore": 2
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"id\":1,\"title\":\"General Knowledge Quiz\",\"description\":\"Test your general knowledge with this short quiz.\",\"options\":[{\"question\":\"What is the capital of France?\",\"options\":[{\"label\":\"Paris\",\"value\":true},{\"label\":\"Berlin\",\"value\":false},{\"label\":\"Madrid\",\"value\":false}]},{\"question\":\"Which planet is known as the Red Planet?\",\"options\":[{\"label\":\"Earth\",\"value\":false},{\"label\":\"Mars\",\"value\":true},{\"label\":\"Jupiter\",\"value\":false}]},{\"question\":\"Who wrote 'Hamlet'?\",\"options\":[{\"label\":\"Charles Dickens\",\"value\":false},{\"label\":\"William Shakespeare\",\"value\":true},{\"label\":\"Mark Twain\",\"value\":false}]}],\"tags\":[\"general knowledge\",\"quiz\"],\"passedUsers\":[101,102,103],\"passScore\":2}",
+  "queryStringParameters": {
+    "id": "1",
+    "startDate": "2023-11-03",
+    "endDate": "2021-11-03"
+  }
 }

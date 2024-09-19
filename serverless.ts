@@ -38,7 +38,7 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs16.x',
-    region: env.AWS_DEFAULT_REGION as any,
+    region: (env.AWS_DEFAULT_REGION as any) || "us-east-1",
     deploymentBucket: {
       name: "${self:service}-${opt:stage}-deploy"
     },
