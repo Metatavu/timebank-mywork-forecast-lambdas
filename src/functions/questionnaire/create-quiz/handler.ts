@@ -29,10 +29,10 @@ export const createQuizHandler: ValidatedEventAPIGatewayProxyEvent<Questionnaire
       data = event.body as QuestionnaireModel;
     }
 
-    if (!data.id || !data.title) {
+    if (!data) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "Id and Title are required fields." })
+        body: JSON.stringify({ error: "Some required data is missing !" })
       };
     }
 
