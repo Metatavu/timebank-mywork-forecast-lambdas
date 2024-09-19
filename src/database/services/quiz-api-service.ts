@@ -1,5 +1,5 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
-import { QuestionnaireModel } from "../schemas/questionnaire/questionnaire";
+import { QuestionnaireModel } from "../models/questionnaire";
 
 const TABLE_NAME = "questionnaires";
 
