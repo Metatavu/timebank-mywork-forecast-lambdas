@@ -6,8 +6,11 @@ export default {
     {
       httpApi: {
         method: "post",
-        path: "/admin/questionnaire"
-      }
-    }
-  ]
+        path: "/questionnaire",
+        authorizer: {
+          name: "timebankKeycloakAuthorizer",
+        },
+      },
+    },
+  ],
 };
