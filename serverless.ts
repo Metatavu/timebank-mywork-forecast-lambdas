@@ -81,7 +81,6 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
-      DYNAMODB_TABLE: env.DYNAMODB_TABLE,
     },
     s3: {
       "on-call": {
@@ -173,6 +172,29 @@ const serverlessConfiguration: AWS = {
             WriteCapacityUnits: 1
           },
         }
+      },
+      Software: {
+        Type: 'AWS::DynamoDB::Table',
+        DeletionPolicy: 'Delete',
+        Properties: {
+          TableName: 'SoftwareRegistry',
+          AttributeDefinitions: [
+            {
+              AttributeName: 'id',
+              AttributeType: 'S',
+            },
+          ],
+          KeySchema: [
+            {
+              AttributeName: 'id',
+              KeyType: 'HASH',
+            },
+          ],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
+        },
       },
     },
   },
