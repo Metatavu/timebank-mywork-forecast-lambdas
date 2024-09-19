@@ -19,7 +19,7 @@ export const findSoftwareHandler: APIGatewayProxyHandler = async (event: APIGate
   console.log('Path parameter (id):', id);
 
   if (!id) {
-    console.log('Missing or invalid path parameter: id');
+    console.log("Missing or invalid path parameter: id");
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Missing or invalid path parameter: id' }),
@@ -37,7 +37,7 @@ export const findSoftwareHandler: APIGatewayProxyHandler = async (event: APIGate
         body: JSON.stringify(software),
       };
     } else {
-      console.log('Software not found for id:', id);
+      console.error("Software not found for id:", id);
       return {
         statusCode: 404,
         body: JSON.stringify({ error: 'Software not found' }),

@@ -24,7 +24,7 @@ export const listSoftwareHandler: APIGatewayProxyHandler = async () => {
       body: JSON.stringify(softwareList),
     };
   } catch (error) {
-    console.error('Error retrieving software list from DynamoDB:', error);
+    console.error("Error retrieving software list from DynamoDB:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to retrieve software list.', details: error.message }),

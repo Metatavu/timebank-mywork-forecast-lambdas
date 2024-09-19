@@ -41,13 +41,8 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       };
     }
 
-    console.log('Authorizer claims:', event.requestContext.authorizer);
-    let loggedUserId = event.requestContext.authorizer?.claims?.sub;
-    console.log('Logged User ID (sub claim):', loggedUserId);
-
-    if (!loggedUserId) {
-      loggedUserId = getUserIdFromToken(event);
-    }
+    let loggedUserId = getUserIdFromToken(event);
+    console.log('Logged User ID getUserIdFromToken (sub claim):', loggedUserId);
 
     if (!loggedUserId) {
       console.log('User is not authenticated');
@@ -79,7 +74,7 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       body: JSON.stringify(createdSoftware),
     };
   } catch (error) {
-    console.error('Error creating software:', error);
+    console.error("Error creating software:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to create software entry.', details: error.message }),

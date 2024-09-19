@@ -1,6 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/database/services/software-service";
+import { getUserIdFromToken } from "src/libs/auth-utils";
 import { middyfy } from "src/libs/lambda";
 
 const dynamoDb = new DocumentClient();
@@ -25,6 +26,7 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     };
   }
 
+  let loggedUserId = getUserIdFromToken(event);
   const userRoles = event.requestContext.authorizer?.claims?.roles || [];
   console.log('User roles:', userRoles);
 
@@ -55,7 +57,7 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
       body: null,
     };
   } catch (error) {
-    console.error('Error deleting software with id: ${id}', error);
+    console.error("Error deleting software with id: ${id}", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to delete software.', details: error.message }),

@@ -173,7 +173,7 @@ const serverlessConfiguration: AWS = {
           },
         }
       },
-      SoftwareTable: {
+      Software: {
         Type: 'AWS::DynamoDB::Table',
         DeletionPolicy: 'Delete',
         Properties: {

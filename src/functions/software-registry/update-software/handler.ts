@@ -43,14 +43,7 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
     }
     console.log('Parsed request body:', data);
 
-    console.log('Authorizer claims:', event.requestContext.authorizer);
-
-    let loggedUserId = event.requestContext.authorizer?.claims?.sub;
-    console.log('Logged User ID (sub claim):', loggedUserId);
-
-    if (!loggedUserId) {
-      loggedUserId = getUserIdFromToken(event);
-    }
+    let loggedUserId = getUserIdFromToken(event);
 
     if (!loggedUserId) {
       return {
@@ -87,7 +80,7 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
     const updatedSoftware = await softwareService.updateSoftware(id, updatedSoftwareData);
 
     if (!updatedSoftware) {
-      console.log('Failed to update software for id:', id);
+      console.error("Failed to update software for id:", id);
       return {
         statusCode: 404,
         body: JSON.stringify({ error: 'Software not found or no attributes updated' }),

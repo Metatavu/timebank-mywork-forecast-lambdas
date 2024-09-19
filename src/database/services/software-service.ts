@@ -2,7 +2,7 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import { SoftwareModel, Status } from "../schemas/software-registry/software";
 
-const tableName = 'SoftwareRegistry';
+const tableName = "SoftwareRegistry";
 
 /**
  * Database service for software entries

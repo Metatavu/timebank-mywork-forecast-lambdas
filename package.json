@@ -21,7 +21,6 @@
     "envalid": "^7.3.1",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^2.4.0",
-    "metatavu-home-lambdas": "file:",
     "moment": "^2.29.4",
     "node-fetch": "^2.6.9",
     "request": "^2.88.2",

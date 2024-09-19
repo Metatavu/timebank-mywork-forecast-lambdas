@@ -10,7 +10,7 @@ export const getUserIdFromToken = (event: { headers: APIGatewayProxyEvent['heade
   try {
     const authHeader = event.headers.Authorization || event.headers.authorization;
     if (!authHeader) {
-      console.log('Missing Authorization header.');
+      console.error("Missing Authorization header.");
       return null;
     }
 
@@ -18,7 +18,7 @@ export const getUserIdFromToken = (event: { headers: APIGatewayProxyEvent['heade
     const decodedToken = jwt.decode(token);
 
     if (!decodedToken || typeof decodedToken === 'string') {
-      console.log('Invalid token.');
+      console.error("Invalid token.");
       return null;
     }
 
