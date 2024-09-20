@@ -9,9 +9,7 @@ import { questionnaireService } from "src/database/services";
  * @returns quiz information as object
  */
 
-const findQuestionHandler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEvent,
-) => {
+const findQuestionHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const { id } = event.pathParameters || {};
 
   try {
