@@ -10,8 +10,7 @@ import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
  * @param event - API Gateway event containing the request body.
  * @returns Response object with status code
  */
-
-const createQuestionHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+export const createQuizHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   if (!event.body) {
     return {
       statusCode: 400,
