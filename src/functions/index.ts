@@ -21,3 +21,4 @@ export { default as findSoftwareHandler } from "./software-registry/find-softwar
 export { default as listSoftwareHandler } from "./software-registry/list-software";
 export { default as updateSoftwareHandler } from "./software-registry/update-software";
 export { default as deleteSoftwareHandler } from "./software-registry/delete-software";
+export { default as updateQuestionnaireHandler } from "./questionnaire/update-questionnaire";
