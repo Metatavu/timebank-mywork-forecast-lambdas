@@ -1,6 +1,4 @@
-import QuestionnaireService from "src/database/services/quiz-api-service";
 import { middyfy } from "src/libs/lambda";
-import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { questionnaireService } from "src/database/services";
 
@@ -11,7 +9,7 @@ import { questionnaireService } from "src/database/services";
  * @returns quiz information as object
  */
 
-const findQuizHandler: APIGatewayProxyHandler = async (
+const findQuestionHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
 ) => {
   const { id } = event.pathParameters || {};
@@ -52,4 +50,4 @@ const findQuizHandler: APIGatewayProxyHandler = async (
   }
 };
 
-export const main = middyfy(findQuizHandler);
+export const main = middyfy(findQuestionHandler);

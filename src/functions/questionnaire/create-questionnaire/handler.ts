@@ -1,9 +1,8 @@
 import { middyfy } from "src/libs/lambda";
-import type schema from "src/schema/questionnaire";
-import type { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
 import { questionnaireService } from "src/database/services";
 import { v4 as uuidv4 } from "uuid";
 import type QuestionnaireModel from "src/database/models/questionnaire";
+import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 
 /**
  * Handler for creating a new questionnaire entry in DynamoDB.
@@ -11,7 +10,8 @@ import type QuestionnaireModel from "src/database/models/questionnaire";
  * @param event - API Gateway event containing the request body.
  * @returns Response object with status code
  */
-export const createQuizHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+
+const createQuestionHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   if (!event.body) {
     return {
       statusCode: 400,
@@ -56,4 +56,4 @@ export const createQuizHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema
   }
 };
 
-export const main = middyfy(createQuizHandler);
+export const main = middyfy(createQuestionHandler);
