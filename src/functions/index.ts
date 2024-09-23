@@ -25,3 +25,4 @@ export { default as listUsersHandler } from "./keycloak/list-users";
 export { default as findUserHandler } from "./keycloak/find-user";
 export { default as createQuestionnaireHandler } from "./questionnaire/create-questionnaire";
 export { default as findQuestionnaireHandler } from "./questionnaire/find-questionnaire";
+export { default as deleteQuestionnaire } from "./questionnaire/delete-questionnaire";
