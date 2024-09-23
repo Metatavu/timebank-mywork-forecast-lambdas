@@ -9,7 +9,7 @@ import { questionnaireService } from "src/database/services";
  * @returns quiz information as object
  */
 
-const findQuestionHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+const findQuestionnaireHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const { id } = event.pathParameters || {};
 
   try {
@@ -48,4 +48,4 @@ const findQuestionHandler: APIGatewayProxyHandler = async (event: APIGatewayProx
   }
 };
 
-export const main = middyfy(findQuestionHandler);
+export const main = middyfy(findQuestionnaireHandler);

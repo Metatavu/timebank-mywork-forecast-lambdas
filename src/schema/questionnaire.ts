@@ -1,8 +1,8 @@
 import { Type } from "@sinclair/typebox";
+
 /**
  * Schema for the Questionnaire table
  */
-
 const questionnaireSchema = Type.Object({
   title: Type.String(),
   description: Type.String(),

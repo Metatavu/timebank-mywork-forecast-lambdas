@@ -170,7 +170,7 @@ const serverlessConfiguration: AWS = {
         DeletionPolicy: "Delete",
         Properties: {
           TableName: "questionnaires",
-          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
+          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "N" }],
           KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,

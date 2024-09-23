@@ -10,7 +10,7 @@ import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
  * @param event - API Gateway event containing the request body.
  * @returns Response object with status code
  */
-export const createQuestionHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+export const createQuestionnaireHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   if (!event.body) {
     return {
       statusCode: 400,
@@ -27,7 +27,7 @@ export const createQuestionHandler: APIGatewayProxyHandler = async (event: APIGa
     };
   }
 
-  const newQuestionnaireId: string | undefined = uuidv4();
+  const newQuestionnaireId: string = uuidv4();
   let questionnaireResponse: QuestionnaireModel | undefined = undefined;
 
   try {
@@ -55,4 +55,4 @@ export const createQuestionHandler: APIGatewayProxyHandler = async (event: APIGa
   }
 };
 
-export const main = middyfy(createQuestionHandler);
+export const main = middyfy(createQuestionnaireHandler);
