@@ -1,8 +1,8 @@
 /**
- * DynamoDB schema for Questionnaire
+ * DynamoDB model for Questionnaire
  */
-export interface QuestionnaireModel {
-  id: number;
+interface QuestionnaireModel {
+  id: string;
   title: string;
   description: string;
   options: Question[];
@@ -12,17 +12,19 @@ export interface QuestionnaireModel {
 }
 
 /**
- * DynamoDB schema for Question
+ * DynamoDB model for Question
  */
-export interface Question {
+interface Question {
   question: string;
   options: Option[];
 }
 
 /**
- * DynamoDB schema for Option
+ * DynamoDB model for Option
  */
-export interface Option {
+interface Option {
   label: string;
   value: boolean;
 }
+
+export default QuestionnaireModel;
