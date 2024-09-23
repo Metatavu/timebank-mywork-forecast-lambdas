@@ -1,7 +1,7 @@
-import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { questionnaireService } from "src/database/services";
-import QuestionnaireModel from "src/database/schemas/questionnaire/questionnaire";
+import type QuestionnaireModel from "src/database/models/questionnaire";
 
 /**
  * Lambda function to update a questionnaire
