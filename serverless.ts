@@ -27,7 +27,9 @@ import listSoftwareHandler from "@/functions/software-registry/list-software";
 import updateSoftwareHandler from "@/functions/software-registry/update-software";
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
 import listUsersHandler from "@/functions/keycloak/list-users";
-import findUserHandler from "src/functions/keycloak/find-user";
+import findUserHandler from "@/functions/keycloak/find-user";
+import createQuestionnaireHandler from "@/functions/questionnaire/create-questionnaire";
+import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnaire";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -36,7 +38,7 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs16.x',
-    region: env.AWS_DEFAULT_REGION as any,
+    region: (env.AWS_DEFAULT_REGION as any) || "us-east-1",
     deploymentBucket: {
       name: "${self:service}-${opt:stage}-deploy"
     },
@@ -81,7 +83,6 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
-      DYNAMODB_TABLE: env.DYNAMODB_TABLE,
     },
     s3: {
       "on-call": {
@@ -144,7 +145,9 @@ const serverlessConfiguration: AWS = {
     updateSoftwareHandler,
     deleteSoftwareHandler,
     listUsersHandler,
-    findUserHandler
+    findUserHandler,
+    createQuestionnaireHandler,
+    findQuestionnaireHandler,
   },
   package: { individually: true },
   custom: {
@@ -166,13 +169,36 @@ const serverlessConfiguration: AWS = {
         DeletionPolicy: "Delete",
         Properties: {
           TableName: "questionnaires",
-          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
+          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "N" }],
           KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,
             WriteCapacityUnits: 1
           },
         }
+      },
+      Software: {
+        Type: 'AWS::DynamoDB::Table',
+        DeletionPolicy: 'Delete',
+        Properties: {
+          TableName: 'SoftwareRegistry',
+          AttributeDefinitions: [
+            {
+              AttributeName: 'id',
+              AttributeType: 'S',
+            },
+          ],
+          KeySchema: [
+            {
+              AttributeName: 'id',
+              KeyType: 'HASH',
+            },
+          ],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
+        },
       },
     },
   },
