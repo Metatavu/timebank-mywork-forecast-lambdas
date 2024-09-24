@@ -1,4 +1,5 @@
 import type { User } from "../schemas/keycloak/user";
+import fetch from "node-fetch";
 
 /**
  * Interface for a KeycloakApiService.
