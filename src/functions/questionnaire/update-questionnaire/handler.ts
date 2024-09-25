@@ -9,14 +9,14 @@ import type questionnaireSchema from "src/schema/questionnaire";
  *
  * @param event event
  */
-const updateQuestionnaire: ValidatedEventAPIGatewayProxyEvent<typeof questionnaireSchema> = async event => {
-  const { pathParameters, body, } = event;
+const updateQuestionnaireHandler: ValidatedEventAPIGatewayProxyEvent<typeof questionnaireSchema> = async event => {
+  const { pathParameters, body } = event;
   const id = pathParameters?.id;
 
   if (!id) {
     return {
       statusCode: 400,
-      body: "Bad request"
+      body: "Bad request, missing id"
     };
   }
 
@@ -29,8 +29,13 @@ const updateQuestionnaire: ValidatedEventAPIGatewayProxyEvent<typeof questionnai
   }
 
   const questionnaireUpdates: QuestionnaireModel = {
-    ...existingQuestionnaire,
-    ...body
+    id: existingQuestionnaire.id,
+    title: existingQuestionnaire.title,
+    description: existingQuestionnaire.description,
+    options: existingQuestionnaire.options,
+    tags: existingQuestionnaire.tags,
+    passedUsers: existingQuestionnaire.passedUsers,
+    passScore: existingQuestionnaire.passScore,
   };
 
   try {
@@ -47,4 +52,4 @@ const updateQuestionnaire: ValidatedEventAPIGatewayProxyEvent<typeof questionnai
   }
 };
 
-export const main = middyfy(updateQuestionnaire);
+export const main = middyfy(updateQuestionnaireHandler);
