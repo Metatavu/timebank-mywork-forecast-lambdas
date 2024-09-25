@@ -30,7 +30,7 @@ import listUsersHandler from "@/functions/keycloak/list-users";
 import findUserHandler from "@/functions/keycloak/find-user";
 import createQuestionnaireHandler from "@/functions/questionnaire/create-questionnaire";
 import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnaire";
-import deleteQuestionnaire from "src/functions/questionnaire/delete-questionnaire";
+import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -149,7 +149,7 @@ const serverlessConfiguration: AWS = {
     findUserHandler,
     createQuestionnaireHandler,
     findQuestionnaireHandler,
-    deleteQuestionnaire
+    deleteQuestionnaireHandler
   },
   package: { individually: true },
   custom: {
