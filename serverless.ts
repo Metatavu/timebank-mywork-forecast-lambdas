@@ -30,6 +30,7 @@ import listUsersHandler from "@/functions/keycloak/list-users";
 import findUserHandler from "@/functions/keycloak/find-user";
 import createQuestionnaireHandler from "@/functions/questionnaire/create-questionnaire";
 import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnaire";
+import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -148,6 +149,7 @@ const serverlessConfiguration: AWS = {
     findUserHandler,
     createQuestionnaireHandler,
     findQuestionnaireHandler,
+    updateQuestionnaireHandler,
   },
   package: { individually: true },
   custom: {
@@ -169,7 +171,7 @@ const serverlessConfiguration: AWS = {
         DeletionPolicy: "Delete",
         Properties: {
           TableName: "Questionnaires",
-          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "N" }],
+          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
           KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,
