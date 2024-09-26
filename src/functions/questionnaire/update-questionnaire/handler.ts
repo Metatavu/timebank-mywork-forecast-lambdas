@@ -21,7 +21,6 @@ const updateQuestionnaireHandler: ValidatedEventAPIGatewayProxyEvent<typeof ques
     passScore,
   } = body;
 
-
   if (!id) {
     return {
       statusCode: 400,
