@@ -6,7 +6,6 @@ import { questionnaireService } from "src/database/services";
  * 
  * @param event event
  */
-
 const deleteQuestionnaireHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
 	const { id } = event.pathParameters || {};
 
@@ -25,7 +24,7 @@ const deleteQuestionnaireHandler: APIGatewayProxyHandler = async (event: APIGate
 			return {
 				statusCode: 404,
 				body: JSON.stringify({
-					error: "Questionnaire not found.",
+					error: "Questionnaire ${id} not found.",
 				}),
 			};
 		};
@@ -34,7 +33,7 @@ const deleteQuestionnaireHandler: APIGatewayProxyHandler = async (event: APIGate
 
     return {
       statusCode: 204,
-      body: JSON.stringify("Questionnaire deleted successfully."),
+      body: JSON.stringify(""),
     };
   } catch (error) {
     return {
