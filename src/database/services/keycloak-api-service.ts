@@ -73,6 +73,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
 const getAccessToken = async (): Promise<string> => {
   const realm: string = process.env.KEYCLOAK_REALM;
   const url: string = `${process.env.KEYCLOAK_BASE_URL}/realms/${realm}/protocol/openid-connect/token`;
+
   const requestBody = new URLSearchParams({
     client_id: process.env.KEYCLOAK_CLIENT_ID,
     client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
