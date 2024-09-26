@@ -12,6 +12,15 @@ import type questionnaireSchema from "src/schema/questionnaire";
 const updateQuestionnaireHandler: ValidatedEventAPIGatewayProxyEvent<typeof questionnaireSchema> = async event => {
   const { pathParameters, body } = event;
   const id = pathParameters?.id;
+  const {
+    title,
+    description,
+    options,
+    tags,
+    passedUsers,
+    passScore,
+  } = body;
+
 
   if (!id) {
     return {
@@ -30,12 +39,12 @@ const updateQuestionnaireHandler: ValidatedEventAPIGatewayProxyEvent<typeof ques
 
   const questionnaireUpdates: QuestionnaireModel = {
     id: existingQuestionnaire.id,
-    title: existingQuestionnaire.title,
-    description: existingQuestionnaire.description,
-    options: existingQuestionnaire.options,
-    tags: existingQuestionnaire.tags,
-    passedUsers: existingQuestionnaire.passedUsers,
-    passScore: existingQuestionnaire.passScore,
+    title: title,
+    description: description,
+    options: options,
+    tags: tags,
+    passedUsers: passedUsers,
+    passScore: passScore,
   };
 
   try {
