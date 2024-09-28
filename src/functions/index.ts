@@ -27,3 +27,5 @@ export { default as createQuestionnaireHandler } from "./questionnaire/create-qu
 export { default as findQuestionnaireHandler } from "./questionnaire/find-questionnaire";
 export { default as deleteQuestionnaireHandler } from "./questionnaire/delete-questionnaire";
 export { default as listQuestionsHandler } from "./questionnaire/list-questionnaire";   
+export { default as updateQuestionnaireHandler } from "./questionnaire/update-questionnaire";
+
