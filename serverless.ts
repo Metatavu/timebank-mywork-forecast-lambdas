@@ -32,16 +32,18 @@ import createQuestionnaireHandler from "@/functions/questionnaire/create-questio
 import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
 
+const isLocal = process.env.STAGE === 'local';
+
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-deployment-bucket', 'serverless-offline', 'serverless-dynamodb'],
+  plugins: ['serverless-esbuild', 'serverless-deployment-bucket', 'serverless-offline'],
   provider: {
     name: 'aws',
     runtime: 'nodejs16.x',
     region: (env.AWS_DEFAULT_REGION as any) || "us-east-1",
     deploymentBucket: {
-      name: "${self:service}-${opt:stage}-deploy"
+      name: isLocal ? 'local-bucket' : "${self:service}-${opt:stage}-deploy"
     },
     memorySize: 128,
     timeout: 60,
@@ -84,10 +86,11 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
+      DYNAMODB_ENDPOINT: isLocal ? 'http://localhost:8000' : undefined,
     },
     s3: {
       "on-call": {
-        bucketName: "${opt:stage}-on-call-data"
+        bucketName: isLocal ? 'local-on-call-data' : "${opt:stage}-on-call-data"
       }
     },
     iam: {
@@ -96,12 +99,12 @@ const serverlessConfiguration: AWS = {
           {
             Effect: "Allow",
             Action: ["s3:GetObject"],
-            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+            Resource: isLocal ? '*' : "arn:aws:s3:::${opt:stage}-on-call-data/*"
           },
           {
             Effect: "Allow",
             Action: ["s3:PutObject"],
-            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+            Resource: isLocal ? '*' : "arn:aws:s3:::${opt:stage}-on-call-data/*"
           },
           {
             Effect: "Allow",
@@ -114,7 +117,7 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
+            Resource: isLocal ? '*' : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
           }
         ]
       }
