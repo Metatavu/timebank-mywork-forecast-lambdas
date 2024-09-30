@@ -6,9 +6,9 @@ import { middyfy } from "src/libs/lambda";
 /**
  * Labmda for listing all questions from DynamoDB.
  */
-const listQuestionsHandler: APIGatewayProxyHandler = async () => {
+const listQuestionnaireHandler: APIGatewayProxyHandler = async () => {
   try {
-    const allQuestionaires: QuestionnaireModel[] =
+    const allQuestionnaires: QuestionnaireModel[] =
       await questionnaireService.listQuestionnaires();
 
     return {
@@ -26,4 +26,4 @@ const listQuestionsHandler: APIGatewayProxyHandler = async () => {
   }
 };
 
-export default middyfy(listQuestionsHandler);
+export default middyfy(listQuestionnaireHandler);
