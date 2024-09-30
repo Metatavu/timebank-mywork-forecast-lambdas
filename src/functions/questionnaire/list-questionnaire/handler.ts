@@ -13,7 +13,7 @@ const listQuestionnaireHandler: APIGatewayProxyHandler = async () => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify(allQuestionaires),
+      body: JSON.stringify(allQuestionnaires),
     };
   } catch (error) {
     return {
@@ -26,4 +26,4 @@ const listQuestionnaireHandler: APIGatewayProxyHandler = async () => {
   }
 };
 
-export default middyfy(listQuestionnaireHandler);
+export const main = middyfy(listQuestionnaireHandler);
