@@ -13,7 +13,7 @@ const listQuestionnaireHandler: APIGatewayProxyHandler = async () => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify(allQuestionaires),
+      body: JSON.stringify(allQuestionnaires),
     };
   } catch (error) {
     return {
