@@ -26,4 +26,4 @@ const listQuestionnaireHandler: APIGatewayProxyHandler = async () => {
   }
 };
 
-export default middyfy(listQuestionnaireHandler);
+export const main = middyfy(listQuestionnaireHandler);
