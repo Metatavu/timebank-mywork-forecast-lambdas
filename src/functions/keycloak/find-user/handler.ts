@@ -5,15 +5,15 @@ import { middyfy } from "src/libs/lambda";
 /**
  * Response schema for lambda
  */
-interface Response {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  isActive: boolean;
-  severaGuid: string;
-  forecastId: number;
-}
+// interface Response {
+//   id: string;
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   isActive: boolean;
+//   severaGuid: string;
+//   forecastId: number;
+// }
 
 /**
  * Lambda for finding user

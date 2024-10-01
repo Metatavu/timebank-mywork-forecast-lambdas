@@ -5,8 +5,8 @@ import fetch from "node-fetch";
  * Interface for a KeycloakApiService.
  */
 export interface KeycloakApiService {
-  getUsers: () => Promise<User[]>;
-  findUser: (id: string) => Promise<User[]>;
+  getUsers: (event) => Promise<User[]>;
+  findUser: (event) => Promise<User[]>;
 }
 
 /**
@@ -15,6 +15,7 @@ export interface KeycloakApiService {
 export const CreateKeycloakApiService = (): KeycloakApiService => {
   const baseUrl: string = process.env.KEYCLOAK_BASE_URL;
   const realm: string = process.env.KEYCLOAK_REALM;
+  
 
   return {
     /**
@@ -22,11 +23,19 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      *
      * @returns List of users
      */
-    getUsers: async (): Promise<User[]> => {
+    getUsers: async (event): Promise<User[]> => {
+      
+      const authHeader = event.headers?.Authorization || event.headers?.authorization;
+      
+      if (!authHeader) {
+        throw new Error("Missing Authorization header.");
+      } 
+      const token = authHeader.split(' ')[1];
+      
       const response = await fetch(`${baseUrl}/admin/realms/${realm}/users`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${await getAccessToken()}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -45,13 +54,21 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      * @param id string
      * @returns user by Id
      */
-    findUser: async (id: string): Promise<User[]> => {
+    findUser: async (event): Promise<User[]> => {
+      
+      const authHeader = event.headers?.Authorization || event.headers?.authorization;
+      if (!authHeader) {
+        throw new Error("Missing Authorization header.");
+      } 
+      const token = authHeader.split(' ')[1];
+      const { id } = event.pathParameters;
+
       const response = await fetch(
         `${baseUrl}/admin/realms/${realm}/users/${id}`,
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${await getAccessToken()}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -70,30 +87,30 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
  *
  * @returns access token as string
  */
-const getAccessToken = async (): Promise<string> => {
-  const realm: string = process.env.KEYCLOAK_REALM;
-  const url: string = `${process.env.KEYCLOAK_BASE_URL}/realms/${realm}/protocol/openid-connect/token`;
+// const getAccessToken = async (): Promise<string> => {
+//   const realm: string = process.env.KEYCLOAK_REALM;
+//   const url: string = `${process.env.KEYCLOAK_BASE_URL}/realms/${realm}/protocol/openid-connect/token`;
 
-  const requestBody = new URLSearchParams({
-    client_id: process.env.KEYCLOAK_CLIENT_ID,
-    client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
-    username: process.env.KEYCLOAK_ADMIN_USERNAME,
-    password: process.env.KEYCLOAK_ADMIN_PASSWORD,
-    grant_type: "client_credentials",
-  });
+//   const requestBody = new URLSearchParams({
+//     client_id: process.env.KEYCLOAK_CLIENT_ID,
+//     client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
+//     username: process.env.KEYCLOAK_ADMIN_USERNAME,
+//     password: process.env.KEYCLOAK_ADMIN_PASSWORD,
+//     grant_type: "client_credentials",
+//   });
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: requestBody.toString(),
-    });
-    const jsonResponse = await response.json();
+//   try {
+//     const response = await fetch(url, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       body: requestBody.toString(),
+//     });
+//     const jsonResponse = await response.json();
 
-    return jsonResponse.access_token;
-  } catch (error) {
-    throw error(error);
-  }
-};
+//     return jsonResponse.access_token;
+//   } catch (error) {
+//     throw error(error);
+//   }
+// };

@@ -1,5 +1,5 @@
 import { middyfy } from "@libs/lambda";
-import type { APIGatewayProxyHandler } from "aws-lambda";
+import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import {
   CreateKeycloakApiService,
   type KeycloakApiService,
@@ -21,11 +21,11 @@ interface Response {
 /**
  * Lambda for listing users
  */
-const listUsersHandler: APIGatewayProxyHandler = async () => {
+const listUsersHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
     const api = CreateKeycloakApiService();
 
-    const users = await api.getUsers();
+    const users = await api.getUsers(event);
 
     const mappedUsers: Response[] = users.map((user) => {
       const responseUser: Response = {
