@@ -57,7 +57,3 @@ export const createQuestionnaireHandler: ValidatedEventAPIGatewayProxyEvent<type
 };
 
 export const main = middyfy(createQuestionnaireHandler);
-function async(event: ValidatedAPIGatewayProxyEvent<TObject<{ title: TString; description: TString; options: TArray<TObject<{ question: TString; options: TArray<TObject<{ label: TString; value: TBoolean; }>>; }>>; tags: TOptional<TArray<TString>>; passedUsers: TOptional<TArray<TNumber>>; passScore: TNumber; }>>, context: Context, callback: Callback<APIGatewayProxyResult>): void | Promise<APIGatewayProxyResult> {
-  throw new Error("Function not implemented.");
-}
-
