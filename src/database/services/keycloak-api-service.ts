@@ -76,7 +76,7 @@ const getAccessToken = async (): Promise<string> => {
 
   const requestBody = new URLSearchParams({
     client_id: process.env.KEYCLOAK_CLIENT_ID,
-    client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
+    client_secret: process.env.KEYCLOAK_ADMIN_PASSWORD,
     username: process.env.KEYCLOAK_ADMIN_USERNAME,
     password: process.env.KEYCLOAK_ADMIN_PASSWORD,
     grant_type: "client_credentials",
