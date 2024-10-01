@@ -2,8 +2,8 @@ import { middyfy } from "src/libs/lambda";
 import { questionnaireService } from "src/database/services";
 import { v4 as uuidv4 } from "uuid";
 import type QuestionnaireModel from "src/database/models/questionnaire";
-import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
-import questionnaireSchema from "src/schema/questionnaire";
+import type { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
+import type questionnaireSchema from "src/schema/questionnaire";
 
 /**
  * Handler for creating a new questionnaire entry in DynamoDB.
