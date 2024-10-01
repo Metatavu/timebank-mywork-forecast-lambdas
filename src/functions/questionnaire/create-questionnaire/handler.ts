@@ -2,7 +2,8 @@ import { middyfy } from "src/libs/lambda";
 import { questionnaireService } from "src/database/services";
 import { v4 as uuidv4 } from "uuid";
 import type QuestionnaireModel from "src/database/models/questionnaire";
-import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
+import questionnaireSchema from "src/schema/questionnaire";
 
 /**
  * Handler for creating a new questionnaire entry in DynamoDB.
@@ -10,7 +11,7 @@ import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
  * @param event - API Gateway event containing the request body.
  * @returns Response object with status code
  */
-export const createQuestionnaireHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+export const createQuestionnaireHandler: ValidatedEventAPIGatewayProxyEvent<typeof questionnaireSchema> = async (event) => {
   if (!event.body) {
     return {
       statusCode: 400,
@@ -18,7 +19,7 @@ export const createQuestionnaireHandler: APIGatewayProxyHandler = async (event: 
     };
   }
   
-  const { title, description, options, tags, passedUsers, passScore } = JSON.parse(event.body);
+  const { title, description, options, tags, passedUsers, passScore } = event.body;
   
   if (!title || !description || !options || !passScore) {
     return {
@@ -56,3 +57,7 @@ export const createQuestionnaireHandler: APIGatewayProxyHandler = async (event: 
 };
 
 export const main = middyfy(createQuestionnaireHandler);
+function async(event: ValidatedAPIGatewayProxyEvent<TObject<{ title: TString; description: TString; options: TArray<TObject<{ question: TString; options: TArray<TObject<{ label: TString; value: TBoolean; }>>; }>>; tags: TOptional<TArray<TString>>; passedUsers: TOptional<TArray<TNumber>>; passScore: TNumber; }>>, context: Context, callback: Callback<APIGatewayProxyResult>): void | Promise<APIGatewayProxyResult> {
+  throw new Error("Function not implemented.");
+}
+
