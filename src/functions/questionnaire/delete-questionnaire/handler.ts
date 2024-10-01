@@ -1,5 +1,6 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { questionnaireService } from "src/database/services";
+import { middyfy } from "src/libs/lambda";
 
 /**
  * Lambda for deleting a questionnaire entry from DynamoDB.
@@ -46,4 +47,4 @@ const deleteQuestionnaireHandler: APIGatewayProxyHandler = async (event: APIGate
   }
 };
 
-export const main = deleteQuestionnaireHandler;
+export const main = middyfy(deleteQuestionnaireHandler);
