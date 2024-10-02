@@ -1,7 +1,7 @@
 import type { DocumentClient } from "aws-sdk/clients/dynamodb";
 import type QuestionnaireModel from "../models/questionnaire";
 
-const TABLE_NAME = "questionnaires";
+const TABLE_NAME = "Questionnaires";
 
 /**
  * Database service for questionnaires
