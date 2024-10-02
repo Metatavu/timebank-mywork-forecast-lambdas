@@ -39,7 +39,7 @@ const isLocal = process.env.STAGE === 'local';
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-deployment-bucket', 'serverless-offline'],
+  plugins: ['serverless-esbuild', 'serverless-deployment-bucket', 'serverless-offline', 'serverless-dynamodb'],
   provider: {
     name: 'aws',
     runtime: 'nodejs16.x',
