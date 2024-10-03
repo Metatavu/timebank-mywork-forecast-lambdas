@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import type FlextimeModel from "../models/severa";
 
 /**
  * Creates SeveraApiService
@@ -13,14 +14,14 @@ export const CreateSeveraApiService = () => {
     getFlexTimeByUser: async (
       userGuid: string,
       eventDate: string,
-    ): Promise<any> => {
+    ): Promise<FlextimeModel> => {
       const url: string = `${baseUrl}/v1/users/${userGuid}/flextime?date=${eventDate}`;
 
       const response = await fetch(url, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${await getSeveraAccessToken()}`,
-          Client_Id: process.env.SEVERA_CLIENT_ID,
+          "Client_Id": process.env.SEVERA_CLIENT_ID,
           "Content-Type": "application/json",
         },
       });
@@ -42,7 +43,7 @@ export const CreateSeveraApiService = () => {
  * @returns Access token as string
  */
 const getSeveraAccessToken = async (): Promise<string> => {
-  const url: string = `${process.env.SEVERA_BASE_URL}/v1/token`;
+  const url: string = `${process.env.SEVERA_BASE_URL}/token`;
   const client_Id: string = process.env.SEVERA_CLIENT_ID;
   const client_Secret: string = process.env.SEVERA_CLIENT_SECRET;
 
@@ -58,7 +59,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: requestBody.toString(),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {

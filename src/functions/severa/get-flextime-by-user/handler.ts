@@ -3,7 +3,6 @@ import { CreateSeveraApiService } from "src/database/services/severa-api-service
 import { middyfy } from "src/libs/lambda";
 
 /**
- *
  * @param event
  * @returns users flextime
  */

@@ -33,6 +33,7 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
+import getFlextimeByUser from "src/functions/severa/get-flextime-by-user";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -155,6 +156,7 @@ const serverlessConfiguration: AWS = {
     deleteQuestionnaireHandler,
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
+    getFlextimeByUser,
   },
   package: { individually: true },
   custom: {
