@@ -9,9 +9,9 @@ export const CreateSeveraApiService = () => {
 
   return {
     /**
-     * Gets flextime by userGUID
+     * Gets flextime by userGUID and eventDate
      */
-    getFlexTimeByUser: async (
+    getFlextimeByUser: async (
       userGuid: string,
       eventDate: string,
     ): Promise<FlextimeModel> => {
@@ -47,11 +47,11 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const client_Id: string = process.env.SEVERA_CLIENT_ID;
   const client_Secret: string = process.env.SEVERA_CLIENT_SECRET;
 
-  const requestBody = new URLSearchParams({
+  const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
     scope: "customers:read",
-  });
+  };
 
   try {
     const response = await fetch(url, {

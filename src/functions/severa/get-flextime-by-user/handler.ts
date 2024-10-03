@@ -1,4 +1,5 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import type FlextimeModel from "src/database/models/severa";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
 
 /**
@@ -10,7 +11,7 @@ export const getFlextimeHandler: APIGatewayProxyHandler = async (
 ) => {
   try {
     const userGuid = event.pathParameters?.userGuid;
-    const eventDate = event.queryStringParameters?.date;
+    const eventDate = event.queryStringParameters?.eventDate;
     const api = CreateSeveraApiService();
 
     if (!userGuid) {
@@ -20,7 +21,7 @@ export const getFlextimeHandler: APIGatewayProxyHandler = async (
       };
     }
 
-    const flexTimeByUser = await api.getFlexTimeByUser(userGuid, eventDate);
+    const flexTimeByUser: FlextimeModel = await api.getFlextimeByUser(userGuid, eventDate);
 
     return {
       statusCode: 200,
