@@ -1,12 +1,11 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
-import { middyfy } from "src/libs/lambda";
 
 /**
  * @param event
  * @returns users flextime
  */
-const getFlexTimeHandler: APIGatewayProxyHandler = async (
+export const getFlextimeHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
 ) => {
   try {
@@ -35,4 +34,4 @@ const getFlexTimeHandler: APIGatewayProxyHandler = async (
   }
 };
 
-export const main = middyfy(getFlexTimeHandler);
+export const main = getFlextimeHandler;

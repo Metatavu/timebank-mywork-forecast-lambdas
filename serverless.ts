@@ -33,7 +33,7 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
-import getFlextimeByUser from "src/functions/severa/get-flextime-by-user";
+import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -88,6 +88,9 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
+      SEVERA_BASE_URL: env.SEVERA_BASE_URL,
+      SEVERA_CLIENT_ID: env.SEVERA_CLIENT_ID,
+      SEVERA_CLIENT_SECRET: env.SEVERA_CLIENT_SECRET,
     },
     s3: {
       "on-call": {
@@ -156,7 +159,7 @@ const serverlessConfiguration: AWS = {
     deleteQuestionnaireHandler,
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
-    getFlextimeByUser,
+    getFlextimeHandler,
   },
   package: { individually: true },
   custom: {
