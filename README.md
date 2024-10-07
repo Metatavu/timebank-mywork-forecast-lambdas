@@ -93,7 +93,6 @@ DynamoDB Local:
 - To set up DynamoDB on your computer Download DynamoDB local [Here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html#DynamoDBLocal.DownloadingAndRunning.title)
 
 - After you download the archive, extract the contents and copy the extracted directory to a location of your choice.
-- I recommend extracting these like so "lambda-tester/dynamodb-local" so the -npm run local works, if u want u can always change the script for correct path.
 
 - There are other options for storing the table [Here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.UsageNotes.html)
 
@@ -109,7 +108,6 @@ IF U KNOW ABOUT ID:S TYPE CHANGE THIS TO N(NUMBER) OR S(STRING)!
 - "AttributeName=id,AttributeType=S \"
 - AND IN serverless.yml "AttributeType: S"
 
-You can also create 2 tables: MyDynamoDbTable(has string id in serverless.yaml) And MyDynamoDbTable2(has number id)
 
 Create a new table:
 ```
@@ -133,7 +131,7 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
 Start serverless offline:
 
 ```
-sls offline start
+sls offline --stage local --noAuth start
 ```
 
 ## Template features
