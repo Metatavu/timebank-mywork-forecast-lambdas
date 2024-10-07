@@ -84,8 +84,8 @@ run command:
 aws configure
 ```
 
-- AWS Access Key ID: qwerty (it can be whatever, you are running this locally)
-- AWS Secret Access Key: qwerty (same with this one)
+- AWS Access Key ID: example (it can be whatever, you are running this locally)
+- AWS Secret Access Key: example (same as above)
 - Default region name: localhost
 - Default output format: (this can be empty)
 
@@ -104,7 +104,7 @@ To start DynamoDB on your computer, open a command prompt window, navigate to th
 java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
 ```
 
-IF U KNOW ABOUT ID:S TYPE CHANGE THIS TO N(NUMBER) OR S(STRING)! 
+Set AttributeType accordingly based on the type of the id.
 - "AttributeName=id,AttributeType=S \"
 - AND IN serverless.yml "AttributeType: S"
 
