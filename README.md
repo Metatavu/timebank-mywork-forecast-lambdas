@@ -57,7 +57,7 @@ To run serverless-offline plugin run the following command:
 - `npx serverless offline --noAuth --stage dev`
 Ensure that you have the correct Lambda functions defined and added in your serverless.ts file for them to show up. You can test the endpoints using Postman.
 
-### Testing lambdas locally with dynamodb local & Serverless-offline
+## Testing lambdas locally with dynamodb local & Serverless-offline
 
 AWS CLI is required to run this.
 
