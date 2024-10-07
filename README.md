@@ -57,6 +57,85 @@ To run serverless-offline plugin run the following command:
 - `npx serverless offline --noAuth --stage dev`
 Ensure that you have the correct Lambda functions defined and added in your serverless.ts file for them to show up. You can test the endpoints using Postman.
 
+### Testing lambdas locally with dynamodb local & Serverless-offline
+
+AWS CLI is required to run this.
+
+Linux:
+- To install the AWS CLI, run the following commands:
+```
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    sudo ./aws/install
+```
+
+Mac:
+- In your browser, download the macOS pkg file: [Here](https://awscli.amazonaws.com/AWSCLIV2.pkg)
+
+- Run your downloaded file and follow the on-screen instructions.
+
+Windows:
+- Download and run the AWS CLI MSI installer for Windows (64-bit): [Here](https://awscli.amazonaws.com/AWSCLIV2.msi)
+
+After install is completed you need to configure it as follows:
+run command: 
+
+```
+aws configure
+```
+
+- AWS Access Key ID: qwerty (it can be whatever, you are running this locally)
+- AWS Secret Access Key: qwerty (same with this one)
+- Default region name: localhost
+- Default output format: (this can be empty)
+
+DynamoDB Local:
+- To set up DynamoDB on your computer Download DynamoDB local [Here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html#DynamoDBLocal.DownloadingAndRunning.title)
+
+- After you download the archive, extract the contents and copy the extracted directory to a location of your choice.
+- I recommend extracting these like so "lambda-tester/dynamodb-local" so the -npm run local works, if u want u can always change the script for correct path.
+
+- There are other options for storing the table [Here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.UsageNotes.html)
+
+- You can also use DynamoDB local as Docker Image.
+
+To start DynamoDB on your computer, open a command prompt window, navigate to the directory where you extracted DynamoDBLocal.jar, and enter the following command:
+
+```
+java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
+```
+
+IF U KNOW ABOUT ID:S TYPE CHANGE THIS TO N(NUMBER) OR S(STRING)! 
+- "AttributeName=id,AttributeType=S \"
+- AND IN serverless.yml "AttributeType: S"
+
+You can also create 2 tables: MyDynamoDbTable(has string id in serverless.yaml) And MyDynamoDbTable2(has number id)
+
+Create a new table:
+```
+aws dynamodb create-table \
+    --table-name MyDynamoDbTable \
+    --attribute-definitions \
+        AttributeName=id,AttributeType=S \
+    --key-schema \
+        AttributeName=id,KeyType=HASH \
+    --provisioned-throughput \
+        ReadCapacityUnits=1,WriteCapacityUnits=1 \
+    --endpoint-url http://localhost:8000
+```
+
+To check current tables:
+
+```
+aws dynamodb list-tables --endpoint-url http://localhost:8000
+```
+
+Start serverless offline:
+
+```
+sls offline start
+```
+
 ## Template features
 
 ### Project structure
