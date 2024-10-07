@@ -1,7 +1,7 @@
 import type { DocumentClient } from "aws-sdk/clients/dynamodb";
 import type QuestionnaireModel from "../models/questionnaire";
 
-const TABLE_NAME = "questionnaires";
+const TABLE_NAME = "Questionnaires";
 
 /**
  * Database service for questionnaires
@@ -15,10 +15,10 @@ class QuestionnaireService {
   constructor(private readonly docClient: DocumentClient) {}
 
   /**
-   * Creates a questionnaire 
-   * 
-   * @param questionnaire questionnaire 
-   * @returns created questionnaire 
+   * Creates a questionnaire
+   *
+   * @param questionnaire questionnaire
+   * @returns created questionnaire
    */
   public createQuestionnaire = async (questionnaire: QuestionnaireModel): Promise<QuestionnaireModel> => {
     await this.docClient
@@ -33,7 +33,7 @@ class QuestionnaireService {
 
   /**
    * Finds a single questionnaire
-   * 
+   *
    * @param id questionnaire id
    * @returns questionnaire or null if not found
    */
