@@ -131,7 +131,7 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
 Start serverless offline:
 
 ```
-sls offline --stage local --noAuth start
+npx sls offline --stage local --noAuth start
 ```
 
 ## Template features
