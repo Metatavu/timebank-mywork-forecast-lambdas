@@ -1,9 +1,9 @@
 /**
- * FlextimeModel for SeveraApiService.
+ * What Flextime returns from Severa.
  */
-interface FlextimeModel {
+interface Flextime {
 	totalFlextimeBalance: number | null; 
   monthFlextimeBalance: number | null;
 }
 
-export default FlextimeModel;
+export default Flextime;

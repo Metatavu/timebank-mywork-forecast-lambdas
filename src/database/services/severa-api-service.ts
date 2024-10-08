@@ -1,10 +1,17 @@
 import fetch from "node-fetch";
-import type FlextimeModel from "../models/severa";
+import type Flextime from "../models/severa";
+
+/**
+ * Interface for a SeveraApiService.
+ */
+export interface SeveraApiService {
+  getFlextimeByUser: (severaGuid: string) => Promise<Flextime>;
+}
 
 /**
  * Creates SeveraApiService
  */
-export const CreateSeveraApiService = () => {
+export const CreateSeveraApiService = (): SeveraApiService => {
   const baseUrl: string = process.env.SEVERA_BASE_URL;
 
   return {
@@ -12,10 +19,9 @@ export const CreateSeveraApiService = () => {
      * Gets flextime by userGUID and eventDate
      */
     getFlextimeByUser: async (
-      userGuid: string,
-      eventDate: string,
-    ): Promise<FlextimeModel> => {
-      const url: string = `${baseUrl}/v1/users/${userGuid}/flextime?date=${eventDate}`;
+      severaGuid: string,
+    ): Promise<Flextime> => {
+      const url: string = `${baseUrl}/v1/users/${severaGuid}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -64,13 +70,13 @@ const getSeveraAccessToken = async (): Promise<string> => {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to get access token: ${response.status} - ${response.statusText}`,
+        `Failed to get Severa access token: ${response.status} - ${response.statusText}`,
       );
     }
     const data = await response.json();
 
     return data.access_token;
   } catch (error) {
-    throw new Error(`Failed to get access token: ${error.message}`);
+    throw new Error(`Failed to get Severa access token: ${error.message}`);
   }
 };
