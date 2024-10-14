@@ -1,4 +1,4 @@
 import createDynamoDBClient from "../client";
-import QuestionnaireService from "./quiz-api-service";
+import QuestionnaireService from "./questionnaire-api-service";
 
 export const questionnaireService = new QuestionnaireService(createDynamoDBClient());
