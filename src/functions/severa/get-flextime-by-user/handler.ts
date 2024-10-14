@@ -1,5 +1,4 @@
-import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-import type Flextime from "src/database/models/severa";
+import type { APIGatewayProxyHandler } from "aws-lambda";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
 import { middyfy } from "src/libs/lambda";
 
@@ -8,25 +7,25 @@ import { middyfy } from "src/libs/lambda";
  * 
  * @param event - API Gateway event containing the user GUID.
  */
-export const getFlextimeHandler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEvent,
-) => {
+export const getFlextimeHandler: APIGatewayProxyHandler = async (event) => {
+  const { pathParameters } = event
+
   try {
-    const severaGuid = event.pathParameters?.severaGuid;
+    
     const api = CreateSeveraApiService();
 
-    if (!severaGuid) {
+    if (!pathParameters || !pathParameters.severaGuid) {
       return {
         statusCode: 400,
         body: JSON.stringify({ message: "User Guid is required" }),
       };
     }
 
-    const flexTimeByUser: Flextime = await api.getFlextimeByUser(severaGuid);
+    const flexTimeBySeveraGuid = await api.getFlextimeBySeveraGuid(pathParameters.severaGuid);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(flexTimeByUser),
+      body: JSON.stringify(flexTimeBySeveraGuid),
     };
   } catch (error) {
     return {
