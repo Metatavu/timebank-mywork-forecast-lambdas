@@ -3,19 +3,6 @@ import { CreateKeycloakApiService } from "src/database/services/keycloak-api-ser
 import { middyfy } from "src/libs/lambda";
 
 /**
- * Response schema for lambda
- */
-interface Response {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  isActive: boolean;
-  severaGuid: string;
-  forecastId: number;
-}
-
-/**
  * Lambda for finding user
  *
  * @param event event
@@ -35,9 +22,19 @@ const findUserHandler: APIGatewayProxyHandler = async (
 
     const userById = await api.findUser(queryStringParameters.id);
 
+    const filteredUser: User = {
+      id: userById.id,
+      firstName: userById.firstName,
+      lastName: userById.lastName,
+      email: userById.email,
+      isActive: userById.isActive,
+      severaGuid: userById.severaGuid,
+      forecastId: userById.forecastId
+    };
+
     return {
       statusCode: 200,
-      body: JSON.stringify(userById),
+      body: JSON.stringify(filteredUser),
     };
   } catch (error) {
     return {

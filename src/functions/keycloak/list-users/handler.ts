@@ -6,19 +6,6 @@ import {
 } from "src/database/services/keycloak-api-service";
 
 /**
- * Response schema for lambda
- */
-interface Response {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  isActive: boolean;
-  severaGuid: string;
-  forecastId: number;
-}
-
-/**
  * Lambda for listing users
  */
 const listUsersHandler: APIGatewayProxyHandler = async () => {
@@ -27,8 +14,11 @@ const listUsersHandler: APIGatewayProxyHandler = async () => {
 
     const users = await api.getUsers();
 
-    const mappedUsers: Response[] = users.map((user) => {
-      const responseUser: Response = {
+    const filteredUsers: User[] = [];
+
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      filteredUsers.push({
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -36,13 +26,12 @@ const listUsersHandler: APIGatewayProxyHandler = async () => {
         isActive: user.isActive,
         severaGuid: user.severaGuid,
         forecastId: user.forecastId,
-      };
-      return responseUser;
-    });
+      });
+    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify(mappedUsers),
+      body: JSON.stringify(filteredUsers),
     };
   } catch (error) {
     console.error(error);
