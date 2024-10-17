@@ -3,7 +3,7 @@ import SoftwareService from "src/database/services/software-service";
 import { middyfy } from "src/libs/lambda";
 import { SoftwareModel } from "src/database/models/software";
 import { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
-import { getUserIdFromToken } from "src/libs/auth-utils";
+import { getAuthDataFromToken } from "src/libs/auth-utils";
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
@@ -16,6 +16,7 @@ const softwareService = new SoftwareService(dynamoDb);
  */
 export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareModel> = async (event) => {
   console.log('Received event:', JSON.stringify(event));
+  
   try {
     if (!event.body) {
       console.log('Request body is missing');
@@ -41,16 +42,17 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
       };
     }
 
-    let loggedUserId = getUserIdFromToken(event);
-    console.log('Logged User ID getUserIdFromToken (sub claim):', loggedUserId);
-
-    if (!loggedUserId) {
+    const authData = getAuthDataFromToken(event);
+    if (!authData || !authData.sub) {
       console.log('User is not authenticated');
       return {
         statusCode: 403,
         body: JSON.stringify({ error: 'User is not authenticated.' }),
       };
     }
+
+    const loggedUserId = authData.sub;
+    console.log('Logged User ID (sub claim):', loggedUserId);
 
     const newSoftware: SoftwareModel = {
       name: data.name,
@@ -66,6 +68,7 @@ export const createSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
     };
     console.log('Creating new software with data:', newSoftware);
 
+    // Create new software entry in the database
     const createdSoftware = await softwareService.createSoftware(newSoftware);
     console.log('Software created successfully:', createdSoftware);
 

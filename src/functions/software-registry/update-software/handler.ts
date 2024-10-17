@@ -43,14 +43,15 @@ export const updateSoftwareHandler: ValidatedEventAPIGatewayProxyEvent<SoftwareM
     }
     console.log('Parsed request body:', data);
 
-    let loggedUserId = getUserIdFromToken(event);
-
-    if (!loggedUserId) {
+    const authData  = getAuthDataFromToken(event);
+    if (!authData || !authData.sub) {
       return {
         statusCode: 403,
         body: JSON.stringify({ error: 'User is not authenticated.' }),
       };
     }
+
+    const loggedUserId = authData.sub;
 
     console.log('Looking up existing software by id:', id);
     const existingSoftware = await softwareService.findSoftware(id);
