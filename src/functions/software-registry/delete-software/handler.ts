@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/database/services/software-service";
-import { getUserIdFromToken } from "src/libs/auth-utils";
+import { getAuthDataFromToken } from "src/libs/auth-utils";
 import { middyfy } from "src/libs/lambda";
 
 const dynamoDb = new DocumentClient();
@@ -26,11 +26,20 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     };
   }
 
-  let loggedUserId = getUserIdFromToken(event);
-  const userRoles = event.requestContext.authorizer?.claims?.roles || [];
-  console.log('User roles:', userRoles);
+  const authData  = getAuthDataFromToken(event);
+  if (!authData ) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized. Invalid token.' }),
+    };
+  }
 
-  const isAdmin = userRoles.includes('admin');
+  const { sub: loggedUserId, realm_access } = authData;
+  const roles = realm_access?.roles || [];
+  console.log('User ID:', loggedUserId);
+  console.log('User roles:', roles);
+
+  const isAdmin = roles.includes('admin');
 
   if (!isAdmin) {
     return {
@@ -57,7 +66,7 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
       body: null,
     };
   } catch (error) {
-    console.error("Error deleting software with id: ${id}", error);
+    console.error(`Error deleting software with id: ${id}`, error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to delete software.', details: error.message }),
