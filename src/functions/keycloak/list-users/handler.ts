@@ -1,8 +1,8 @@
 import { middyfy } from "@libs/lambda";
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
+import { User } from "src/types/keycloak/user";
 /**
- * FIXME: Import the User interface
  * FIXME: At this moment in KeyCloak its called: severa-user-id (string);
  */
 
