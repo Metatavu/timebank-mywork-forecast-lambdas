@@ -9,8 +9,9 @@ import { middyfy } from "src/libs/lambda";
  */
 
 const deleteVacationRequestHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
-    /*APIGatewayHandler (aka Handler<APIEvent, APIResult>) will take API event and result
+    /*APIGatewayHandler (aka Handler<APIEvent, APIResult>) will take API event and result as params
     Received API Event, Return API Result */
+
     const { id } = event.pathParameters || {};
 
     try {
