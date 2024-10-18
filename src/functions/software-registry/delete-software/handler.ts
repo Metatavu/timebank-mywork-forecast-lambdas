@@ -26,8 +26,8 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     };
   }
 
-  const authData = getAuthDataFromToken(event);
-  if (!authData) {
+  const authData  = getAuthDataFromToken(event);
+  if (!authData ) {
     return {
       statusCode: 401,
       body: JSON.stringify({ error: 'Unauthorized. Invalid token.' }),
@@ -35,16 +35,13 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
   }
 
   const { sub: loggedUserId, realm_access } = authData;
-  const roles = realm_access?.roles;
+  const roles = realm_access?.roles || [];
   console.log('User ID:', loggedUserId);
   console.log('User roles:', roles);
 
   const isAdmin = roles.includes('admin');
-  console.log(isAdmin);
-
 
   if (!isAdmin) {
-    console.log('User does not have admin privileges. Permission denied.');
     return {
       statusCode: 403,
       body: JSON.stringify({ error: 'User does not have permission to delete software.' }),
@@ -62,7 +59,6 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
       };
     }
 
-    console.log(`Deleting software with id: ${id}`);
     await softwareService.deleteSoftware(id);
 
     return {
