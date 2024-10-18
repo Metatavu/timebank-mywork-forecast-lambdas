@@ -18,7 +18,7 @@ class VacationRequestService {
      * @param vacationRequest vacation request
      * @returns created vacationRequest
      */
-    public createQuestionnaire = async (vacationRequest: VacationRequestModel): Promise<VacationRequestModel> => {
+    public createVacationRequest = async (vacationRequest: VacationRequestModel): Promise<VacationRequestModel> => {
         await this.docClient
             .put({
                 TableName: TABLE_NAME,
