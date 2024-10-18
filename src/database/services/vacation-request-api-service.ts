@@ -95,6 +95,6 @@ class VacationRequestService {
             })
             .promise();
     }
-
-
 }
+
+export default VacationRequestService;
