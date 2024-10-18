@@ -45,7 +45,7 @@ export const getAuthDataFromToken = (event: { headers: APIGatewayProxyEvent['hea
 
     return {
       sub: decodedToken.sub,
-      realm_access: decodedToken.realm_access || { roles: [] }
+      realm_access: decodedToken.realm_access
     };
   } catch (error) {
     console.error('Error decoding JWT token:', error);
