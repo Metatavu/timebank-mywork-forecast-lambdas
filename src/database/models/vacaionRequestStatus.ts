@@ -1,4 +1,5 @@
-interface VacationRequestStatus {
+
+interface VacationRequestStatusModel {
     id: string;
     vacationRequestId: string;
     status: VacationRequestStatuses;
@@ -14,3 +15,5 @@ enum VacationRequestStatuses {
     APPROVED = "APPROVED",
     REJECTED = "DECLINED"
 }
+
+export default VacationRequestStatusModel;

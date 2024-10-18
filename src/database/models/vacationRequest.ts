@@ -27,4 +27,6 @@ enum VacationType {
     MATERNITY_PATERNITY = "MATERNITY_PATERNITY",
     CHILD_SICKNESS = "CHILD_SICKNESS"
 }
+
+export default VacationRequestModel;
   
