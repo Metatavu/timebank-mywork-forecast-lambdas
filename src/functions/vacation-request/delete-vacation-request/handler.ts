@@ -52,3 +52,6 @@ const deleteVacationRequestHandler: APIGatewayProxyHandler = async (event: APIGa
 }
 
 export const main = middyfy(deleteVacationRequestHandler);
+
+/* middy helps to integrate multiple middlewares
+in lambda withoud cluttering the handler logic */

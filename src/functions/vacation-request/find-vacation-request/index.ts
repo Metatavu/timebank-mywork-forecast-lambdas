@@ -5,12 +5,12 @@ export default {
     events: [
         {
             httpApi: {
-                method: "post",
-                path: "/vacationsRequest",
+                method: "get",
+                path: "/vacationsRequest/{id}",
                 authorizer: {
                     name: "timebankKeycloakAuthorizer",
-                },
-            },
-        },
-    ],
-};
+                }
+            }
+        }
+    ]
+}
