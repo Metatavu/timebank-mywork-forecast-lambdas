@@ -26,4 +26,4 @@ const listVacationRequestHandler: APIGatewayProxyHandler = async () => {
   }
 };
 
-export const main = middyfy(listVacationRequestHandler());
+export const main = middyfy(listVacationRequestHandler);
