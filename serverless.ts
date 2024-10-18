@@ -33,6 +33,12 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
+import createVacationRequestHandler from "src/functions/vacation-request/create-vacation-request";
+import deleteVacationRequestHandler from "src/functions/vacation-request/delete-vacation-request";
+import findVacationRequestHandler from "src/functions/vacation-request/find-vacation-request";
+import listVacationRequestHandler from "src/functions/vacation-request/list-vacation-request";
+import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
+
 
 const isLocal = process.env.STAGE === "local";
 
@@ -159,6 +165,11 @@ const serverlessConfiguration: AWS = {
     deleteQuestionnaireHandler,
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
+    createVacationRequestHandler,
+    deleteVacationRequestHandler,
+    findVacationRequestHandler,
+    listVacationRequestHandler,
+    updateVacationRequestHandler,
   },
   package: { individually: true },
   custom: {
