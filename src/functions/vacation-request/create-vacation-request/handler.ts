@@ -59,4 +59,4 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
     }
 };
 
-export const main = middyfy(createVacationRequestHandler());
+export const main = middyfy(createVacationRequestHandler);
