@@ -1,0 +1,9 @@
+{
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "pathParameters": {
+    "id": "2ea9166e-dbad-44bf-b4ad-d08c92108adf"
+  },
+  "body": "{}"
+}
