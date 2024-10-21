@@ -2,9 +2,5 @@
   "headers": {
     "Content-Type": "application/json"
   },
-  "body": "{\"name\": \"Frederic\"}",
-  "pathParameters": {
-    "id": "90c3cf90-885a-11ee-b028-1f09afff86ec",
-    "message": "test request"
-  }
+  "body": "{\"name\": \"Frederic\"}"
 }
