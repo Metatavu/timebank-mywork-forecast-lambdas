@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/database/services/software-service";
 import { middyfy } from "src/libs/lambda";
-import { getRolesFromToken } from "src/libs/role-utils";
+import * as jwt from 'jsonwebtoken';
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
@@ -15,6 +15,56 @@ const softwareService = new SoftwareService(dynamoDb);
 export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   console.log('Received event:', JSON.stringify(event));
 
+  const authHeader = event.headers.Authorization || event.headers.authorization;
+  if (!authHeader) {
+    console.error("Missing Authorization header.");
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized. Authorization header is missing.' }),
+    };
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    console.error("Missing token in Authorization header.");
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized. Token is missing.' }),
+    };
+  }
+
+  const decodedToken = jwt.decode(token) as { realm_access?: { roles: string[] } } | null;
+  if (!decodedToken) {
+    console.error("Invalid token or unable to decode.");
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized. Invalid token.' }),
+    };
+  }
+
+  console.log('Decoded JWT Token:', JSON.stringify(decodedToken, null, 2));
+
+  const realmRoles = decodedToken.realm_access?.roles || [];
+  if (realmRoles.length === 0) {
+    console.log('No roles found in realm_access.');
+    return {
+      statusCode: 403,
+      body: JSON.stringify({ error: 'Forbidden. No roles found.' }),
+    };
+  }
+
+  console.log('User roles:', realmRoles);
+
+  const isAdmin = realmRoles.includes('admin');
+  console.log(isAdmin);
+  if (!isAdmin) {
+    console.log('User does not have admin privileges. Permission denied.');
+    return {
+      statusCode: 403,
+      body: JSON.stringify({ error: 'Forbidden. Admin privileges required.' }),
+    };
+  }
+
   const { id } = event.pathParameters || {};
   console.log('Path parameter (id):', id);
 
@@ -26,32 +76,12 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     };
   }
 
-  const roles = getRolesFromToken(event);
-  if (!roles) {
-    return {
-      statusCode: 401,
-      body: JSON.stringify({ error: 'Unauthorized. Invalid token.' }),
-    };
-  }
-  console.log('User roles:', roles);
-
-  const isAdmin = roles.includes('admin');
-  console.log(isAdmin);
-
-
-  if (!isAdmin) {
-    console.log('User does not have admin privileges. Permission denied.');
-    return {
-      statusCode: 403,
-      body: JSON.stringify({ error: 'User does not have permission to delete software.' }),
-    };
-  }
-
   try {
     console.log('Looking up existing software with id:', id);
     const existingSoftware = await softwareService.findSoftware(id);
 
     if (!existingSoftware) {
+      console.log('Software not found.');
       return {
         statusCode: 404,
         body: JSON.stringify({ error: 'Software not found.' }),
