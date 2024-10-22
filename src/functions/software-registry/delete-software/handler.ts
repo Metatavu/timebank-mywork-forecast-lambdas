@@ -1,8 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import SoftwareService from "src/database/services/software-service";
-import { getAuthDataFromToken } from "src/libs/auth-utils";
 import { middyfy } from "src/libs/lambda";
+import { getRolesFromToken } from "src/libs/role-utils";
 
 const dynamoDb = new DocumentClient();
 const softwareService = new SoftwareService(dynamoDb);
@@ -26,17 +26,13 @@ export const deleteSoftwareHandler: APIGatewayProxyHandler = async (event: APIGa
     };
   }
 
-  const authData = getAuthDataFromToken(event);
-  if (!authData) {
+  const roles = getRolesFromToken(event);
+  if (!roles) {
     return {
       statusCode: 401,
       body: JSON.stringify({ error: 'Unauthorized. Invalid token.' }),
     };
   }
-
-  const { sub: loggedUserId, realm_access } = authData;
-  const roles = realm_access?.roles;
-  console.log('User ID:', loggedUserId);
   console.log('User roles:', roles);
 
   const isAdmin = roles.includes('admin');
