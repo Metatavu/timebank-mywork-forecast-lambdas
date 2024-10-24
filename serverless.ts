@@ -39,7 +39,6 @@ import findVacationRequestHandler from "src/functions/vacation-request/find-vaca
 import listVacationRequestHandler from "src/functions/vacation-request/list-vacation-request";
 import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
 
-
 const isLocal = process.env.STAGE === "local";
 
 const serverlessConfiguration: AWS = {
@@ -191,6 +190,19 @@ const serverlessConfiguration: AWS = {
         DeletionPolicy: "Delete",
         Properties: {
           TableName: "Questionnaires",
+          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
+          KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1
+          },
+        }
+      },
+      VacationRequests: {
+        Type: "AWS::DynamoDB::Table",
+        DeletionPolicy: "Delete",
+        Properties: {
+          TableName: "VacationRequests",
           AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
           KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
           ProvisionedThroughput: {

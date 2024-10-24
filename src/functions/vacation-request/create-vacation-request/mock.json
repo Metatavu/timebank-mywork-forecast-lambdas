@@ -1,6 +1,0 @@
-{
-  "headers": {
-    "Content-Type": "application/json"
-  },
-  "body": "{\"personId\": \"54321\", \"draft\": true, \"startDate\": \"2024-10-01\", \"endDate\": \"2024-10-10\", \"days\": 15, \"type\": \"vacation\", \"message\": \"New test vacation request\", \"createdBy\": \"jane.doe@example.com\", \"createdAt\": \"2024-10-01T12:00:00Z\", \"updatedAt\": \"2024-10-01T12:00:00Z\"}"
-}

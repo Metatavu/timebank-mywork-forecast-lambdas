@@ -1,4 +1,5 @@
 import type { DocumentClient } from "aws-sdk/clients/dynamodb";
+import VacationRequestModel from "@database/models/vacationRequest";
 
 
 const TABLE_NAME = 'VacationRequests';

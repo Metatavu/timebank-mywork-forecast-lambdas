@@ -1,4 +1,6 @@
-
+/**
+ * DynamoDB model for Vacation request status
+ */
 interface VacationRequestStatusModel {
     id: string;
     vacationRequestId: string;

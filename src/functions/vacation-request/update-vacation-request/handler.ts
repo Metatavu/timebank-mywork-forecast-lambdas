@@ -22,7 +22,8 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     message,
     createdBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    updatedBy,
   } = body;
 
   if (!id) {
@@ -30,6 +31,13 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
       statusCode: 400,
       body: "Bad request, missing id"
     };
+  }
+
+  if(!personId || !draft || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
+    return {
+      statusCode: 400,
+      body: "Invalid body"
+    }
   }
 
   const existingVacationRequest = await vacationRequestService.findVacationRequest(id);
@@ -43,15 +51,16 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
   const vacationRequestUpdates: VacationRequestModel = {
     id: existingVacationRequest.id,
     personId: personId,
-    draft: draft,
+    draft: draft ? draft : false,
     startDate: startDate,
     endDate: endDate,
     days: days,
     type: type,
     message: message,
-    createdBy: createdBy,
-    createdAt: createdAt,
-    updatedAt: updatedAt
+    createdBy: existingVacationRequest.createdBy,
+    createdAt: existingVacationRequest.createdAt,
+    updatedAt: updatedAt,
+    updatedBy: updatedBy
   };
 
   try {

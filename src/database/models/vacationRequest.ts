@@ -13,6 +13,7 @@ interface VacationRequestModel {
     createdBy: string;
     createdAt: string;
     updatedAt: string;
+    updatedBy: string;
 }
 
 /**
