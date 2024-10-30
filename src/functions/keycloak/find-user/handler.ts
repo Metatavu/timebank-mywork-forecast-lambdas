@@ -1,10 +1,6 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
 import { middyfy } from "src/libs/lambda";
-import type { User } from "src/types/keycloak/user";
-/**
- * FIXME: At this moment in KeyCloak its called: severa-user-id (string), in here its severaGuid (string);
- */
 
 /**
  * Lambda for finding user
@@ -24,7 +20,7 @@ const findUserHandler: APIGatewayProxyHandler = async (
       throw new Error("Missing or invalid path parameter: id");
     }
 
-    const userById: User = await api.findUser(queryStringParameters.id);
+    const userById = await api.findUser(queryStringParameters.id);
 
     if (!userById) {
       return {
@@ -32,14 +28,12 @@ const findUserHandler: APIGatewayProxyHandler = async (
         body: JSON.stringify({ error: "User not found" }),
       };
     }
-    const filteredUser: User = {
+    const filteredUser = {
       id: userById.id,
       firstName: userById.firstName,
       lastName: userById.lastName,
       email: userById.email,
-      isActive: userById.isActive,
       severaGuid: userById.severaGuid,
-      forecastId: userById.forecastId
     };
 
     return {

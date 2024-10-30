@@ -1,10 +1,6 @@
 import { middyfy } from "@libs/lambda";
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
-import type { User } from "src/types/keycloak/user";
-/**
- * FIXME: At this moment in KeyCloak its called: severa-user-id (string);
- */
 
 /**
  * Lambda for listing users
@@ -15,24 +11,20 @@ const listUsersHandler: APIGatewayProxyHandler = async () => {
 
     const users = await api.getUsers();
 
-    const filteredUsers: User[] = [];
-
-    for (let i = 0; i < users.length; i++) {
-      const user = users[i];
-      filteredUsers.push({
+    const mappedUsers = users.map((user) => {
+      const responseUser = {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        isActive: user.isActive,
         severaGuid: user.severaGuid,
-        forecastId: user.forecastId,
-      });
-    }
+      };
+      return responseUser;
+    });
 
     return {
       statusCode: 200,
-      body: JSON.stringify(filteredUsers),
+      body: JSON.stringify(mappedUsers),
     };
   } catch (error) {
     console.error(error);

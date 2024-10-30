@@ -10,3 +10,6 @@ export interface User {
     severaGuid: string;
     forecastId: number;
 }
+/**
+ * FIXME: At this moment in KeyCloak its called: severa-user-id (string), in here its severaGuid (string);
+ */
