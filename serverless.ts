@@ -33,6 +33,8 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
+import getResourceAllocationHandler  from "src/functions/severa/list-resource-allocations-by-user"; 
+
 
 const isLocal = process.env.STAGE === "local";
 
@@ -172,6 +174,7 @@ const serverlessConfiguration: AWS = {
     deleteQuestionnaireHandler,
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
+    getResourceAllocationHandler,
   },
   package: { individually: true },
   custom: {

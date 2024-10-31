@@ -76,19 +76,23 @@ export const CreateSeveraApiService = (): SeveraApiService => {
  */
 const getSeveraAccessToken = async (): Promise<string> => {
   
-  if (process.env.IS_OFFLINE) {
-    return "test-token";
-  }
+//   if (process.env.IS_OFFLINE) {
+//     return "test-token";
+//   }
   
   const url: string = `${process.env.SEVERA_DEMO_BASE_URL}/v1/token`;
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
   const client_Secret: string = process.env.SEVERA_DEMO_CLIENT_SECRET;
 
+
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "users:read",
+    // scope:"users:read",
+    scope: "resourceallocations:read",
   };
+
+ 
 
   try {
     const response = await fetch(url, {

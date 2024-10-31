@@ -2,6 +2,6 @@
     "headers": {
       "Content-Type": "application/json"
     },
-    "body": "{\"client_id\": \"DEMOMetatavuOy_KOq9t4Euubm8vzFMOG.apps.vismasevera.com\", \"client_secret\": \"0fafefb8-176f-398a-924b-6dc71709dc91\"}",
-    "queryStringParameters": { "startDate": "2023-11-03", "endDate": "2021-11-03" }
+    "body": "{\"name\": \"Frederic\"}",
+    "pathParameters": { "severaGuid": "19284fe1-c0a1-841d-0528-cab7ca6694ca"    }
 }
