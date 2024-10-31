@@ -30,6 +30,16 @@ import listUsersHandler from "@/functions/keycloak/list-users";
 import findUserHandler from "@/functions/keycloak/find-user";
 import createQuestionnaireHandler from "@/functions/questionnaire/create-questionnaire";
 import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnaire";
+import listMemoPdfHandler from "@functions/memo-management/list-memo-pdf";
+import getTranslatedMemoPdfHandler from "@functions/memo-management/get-translated-memo-pdf";
+import getSummaryMemoPdfHandler from "@functions/memo-management/get-summary-memo-pdf";
+import uploadGoogleFileHandler from "@functions/memo-management/upload-file-in-pdf";
+import sendNotificationHandler from "@functions/meta-assistant/send-card-notification";
+import getCardsOnListHandler from "@functions/memo-management/get-cards";
+import getBoardMembersHandler from "src/functions/memo-management/get-board-members";
+import deleteCardHandler from "@functions/memo-management/delete-card";
+import createCardHandler from "@functions/memo-management/create-card";
+import createCommentHandler from "@functions/memo-management/comment-card";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -83,6 +93,10 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
+      GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID: env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID,
+      GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL: env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
+      GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
+      GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
     },
     s3: {
       "on-call": {
@@ -148,6 +162,16 @@ const serverlessConfiguration: AWS = {
     findUserHandler,
     createQuestionnaireHandler,
     findQuestionnaireHandler,
+    uploadGoogleFileHandler,
+    listMemoPdfHandler,
+    getTranslatedMemoPdfHandler,
+    getSummaryMemoPdfHandler,
+    sendNotificationHandler,
+    getCardsOnListHandler,
+    getBoardMembersHandler,
+    deleteCardHandler,
+    createCardHandler,
+    createCommentHandler,
   },
   package: { individually: true },
   custom: {

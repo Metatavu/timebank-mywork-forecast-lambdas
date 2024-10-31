@@ -1,4 +1,4 @@
-import type { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/types/meta-assistant/index";
+import type { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult, NotificationMessageResult, ParsedBody } from "src/types/meta-assistant/index";
 import { type ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
 import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
@@ -15,6 +15,7 @@ namespace SlackUtilities {
   });
 
   const slackOverride = process.env.SLACK_USER_OVERRIDE ? process.env.SLACK_USER_OVERRIDE.split(",") : undefined;
+  const slackChannelId = process.env.CHANNEL_ID;
 
   /**
    * Get list of slack users
@@ -27,6 +28,25 @@ namespace SlackUtilities {
     if (!result.ok) throw new Error(`Error while loading slack users list, ${result.error}`);
 
     return result.members;
+  };
+
+  /**
+   * Gets Slack ID of card creator
+   *
+   * @param createdBy card creator full name
+   * @returns Slack user ID
+   */
+  const getSlackUserId = async (createdBy: string): Promise<string> => {
+    try {
+      const users = await getSlackUsers();
+      const matchedUser = users.find(user => user.real_name === createdBy);
+    
+      if (!matchedUser) throw new Error(`User with name ${createdBy} not found in Slack`);
+      return matchedUser.id;
+    } catch (error) {
+      console.error(`Error finding user ID for ${createdBy}:`, error);
+      return 
+    }
   };
 
   /**
@@ -137,6 +157,53 @@ Have a great week!
   };
 
   /**
+   * Create notification message about new card
+   * 
+   * @param cardName Trello card name
+   * @param createdBy card creator full name
+   * @param cardId card ID
+   * @returns message 
+   */
+  const constructCardCreatedMessage = async (cardName: string, createdBy: string, cardId: string ): Promise<string> => {
+    const urlCard = `https://trello.com/c/${cardId}`
+    const message = `
+:card_file_box: *Card Created*: \`${cardName}\`
+Created by: <@${await getSlackUserId(createdBy)}> 
+:spiral_note_pad: Please check the card details here: ${urlCard}
+    `;  
+    return message;
+  };
+  
+  /**
+   * Create notification message about new assigned card member
+   * 
+   * @param cardName Trello card name
+   * @param assigned assigned member
+   * @returns message
+   */
+  const constructAssignedMessage = async (cardName: string, assigned: string): Promise<string> => {
+    const message = `
+:bust_in_silhouette: <@${await getSlackUserId(assigned)}> assigned to \`${cardName}\` recently
+    `;  
+    return message;
+  };
+    
+  /**
+   * Create notification message about new assigned card member
+   * 
+   * @param summary text summary
+   * @param name file name
+   * @returns message
+   */
+  const constructMemoDocCreatedMessage = async (summary: string, name: string): Promise<string> => {
+    const cleanName = name.slice(0, -4);
+    const message = `
+:checkered_flag: New summary *${cleanName}* is available: \n\`${summary.split("\n")[0]}\`
+    `;  
+    return message;
+  };
+
+  /**
    * Sends given message to given slack channel
    *
    * @param channelId channel ID
@@ -239,6 +306,43 @@ Have a great week!
     }
     return messageResults;
   };
+
+  /**
+   * Post an instant slack message to users
+   *
+   * @param notificationData list of card data
+   */
+  export const postNotificationToChannel = async (notificationData: ParsedBody): Promise<NotificationMessageResult> => {
+    let message;
+
+    if (notificationData.action === "createCard") 
+      message = await constructCardCreatedMessage(notificationData.cardName, notificationData.createdBy,notificationData.cardId);
+    if (notificationData.action === "addMemberToCard")
+      message = await constructAssignedMessage(notificationData.cardName, notificationData.assigned);
+
+    const messageResults: NotificationMessageResult = {
+      message: message,
+      response: await sendMessage(slackChannelId, message)
+    };
+    return messageResults;
+  }
+
+  /**
+   * Post an instant slack summary message to users
+   *
+   * @param summary text summary
+   * @param name file name
+   */
+  export const postSummaryToChannel = async (summary: string, name: string): Promise<NotificationMessageResult> => {
+    let message;
+      message = await constructMemoDocCreatedMessage(summary, name);
+  
+    const messageResults: NotificationMessageResult = {
+      message: message,
+      response: await sendMessage(slackChannelId, message)
+    };
+    return messageResults;
+  }
 }
 
 export default SlackUtilities;

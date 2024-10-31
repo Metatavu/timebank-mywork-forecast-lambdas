@@ -1,6 +1,6 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda"
 import type { FromSchema } from "json-schema-to-ts";
-import { DailyMessageResult, WeeklyMessageResult } from "src/types/meta-assistant/index";
+import { DailyMessageResult, NotificationMessageResult, WeeklyMessageResult } from "src/types/meta-assistant/index";
 import schema from "src/types/meta-assistant/index";
 
 export const formatJSONResponse = (response: Record<string, unknown>) => {
@@ -35,5 +35,14 @@ export type DailyHandlerResponse = {
 export type WeeklyHandlerResponse = {
   message: string,
   data?: WeeklyMessageResult[],
+  event?: ValidatedAPIGatewayProxyEvent<typeof schema>,
+};
+
+/**
+ * Type for NotificationHandlerResponse
+ */
+export type NotificationHandlerResponse = {
+  message: string,
+  data?: NotificationMessageResult[],
   event?: ValidatedAPIGatewayProxyEvent<typeof schema>,
 };

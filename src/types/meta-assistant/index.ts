@@ -164,6 +164,27 @@ export interface DailyMessageResult {
 }
 
 /**
+ * Interface for Notification Message Result
+ */
+export interface NotificationMessageResult {
+  message: string;
+  response: ChatPostMessageResponse;
+}
+
+/**
+ * Interface for Notification Message Handler
+ */
+export interface ParsedBody {
+  action: string,
+  cardName: string,
+  cardId: string,
+  createdBy: string,
+  cardList: string,
+  cardBoard: string,
+  assigned: string
+}
+
+/**
  * Interface for Parsed Access Token
  */
 export interface ParsedAccessToken {
