@@ -40,6 +40,11 @@ import getBoardMembersHandler from "src/functions/memo-management/get-board-memb
 import deleteCardHandler from "@functions/memo-management/delete-card";
 import createCardHandler from "@functions/memo-management/create-card";
 import createCommentHandler from "@functions/memo-management/comment-card";
+import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
+import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
+import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
+
+const isLocal = process.env.STAGE === "local";
 
 const serverlessConfiguration: AWS = {
   service: 'home-lambdas',
@@ -50,7 +55,7 @@ const serverlessConfiguration: AWS = {
     runtime: 'nodejs16.x',
     region: (env.AWS_DEFAULT_REGION as any) || "us-east-1",
     deploymentBucket: {
-      name: "${self:service}-${opt:stage}-deploy"
+      name: isLocal ? "local-bucket" : "${self:service}-${opt:stage}-deploy"
     },
     memorySize: 128,
     timeout: 60,
@@ -83,7 +88,9 @@ const serverlessConfiguration: AWS = {
       KEYCLOAK_REALM: env.KEYCLOAK_REALM,
       KEYCLOAK_USERNAME: env.KEYCLOAK_USERNAME,
       KEYCLOAK_PASSWORD: env.KEYCLOAK_PASSWORD,
+      KEYCLOAK_ADMIN_SECRET: env.KEYCLOAK_ADMIN_SECRET,
       KEYCLOAK_CLIENT: env.KEYCLOAK_CLIENT,
+      KEYCLOAK_CLIENT_ID: env.KEYCLOAK_CLIENT_ID,
       SLACK_USER_OVERRIDE: env.SLACK_USER_OVERRIDE,
       DAILY_SCHEDULE_TIMER: env.DAILY_SCHEDULE_TIMER,
       WEEKLY_SCHEDULE_TIMER: env.WEEKLY_SCHEDULE_TIMER,
@@ -97,10 +104,11 @@ const serverlessConfiguration: AWS = {
       GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL: env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
       GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
       GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+      DYNAMODB_ENDPOINT: isLocal ? "http://localhost:8000" : undefined,
     },
     s3: {
       "on-call": {
-        bucketName: "${opt:stage}-on-call-data"
+        bucketName: isLocal ? "local-on-call-data" : "${opt:stage}-on-call-data"
       }
     },
     iam: {
@@ -109,12 +117,12 @@ const serverlessConfiguration: AWS = {
           {
             Effect: "Allow",
             Action: ["s3:GetObject"],
-            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+            Resource: isLocal ? "*" : "arn:aws:s3:::${opt:stage}-on-call-data/*"
           },
           {
             Effect: "Allow",
             Action: ["s3:PutObject"],
-            Resource: "arn:aws:s3:::${opt:stage}-on-call-data/*"
+            Resource: isLocal ? "*" : "arn:aws:s3:::${opt:stage}-on-call-data/*"
           },
           {
             Effect: "Allow",
@@ -127,7 +135,20 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
+            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
+          },
+          {
+            Effect: "Allow",
+            Action: [
+              "dynamodb:DescribeTable",
+              "dynamodb:Query",
+              "dynamodb:Scan",
+              "dynamodb:GetItem",
+              "dynamodb:PutItem",
+              "dynamodb:UpdateItem",
+              "dynamodb:DeleteItem",
+            ],
+            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires"
           }
         ]
       }
@@ -172,6 +193,9 @@ const serverlessConfiguration: AWS = {
     deleteCardHandler,
     createCardHandler,
     createCommentHandler,
+    deleteQuestionnaireHandler,
+    listQuestionnaireHandler,
+    updateQuestionnaireHandler,
   },
   package: { individually: true },
   custom: {
@@ -192,8 +216,8 @@ const serverlessConfiguration: AWS = {
         Type: "AWS::DynamoDB::Table",
         DeletionPolicy: "Delete",
         Properties: {
-          TableName: "questionnaires",
-          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "N" }],
+          TableName: "Questionnaires",
+          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
           KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,
