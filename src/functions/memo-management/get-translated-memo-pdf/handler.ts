@@ -1,6 +1,5 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
-import { PdfFile } from "src/database/schemas/google";
 import { GoogleDriveService } from "src/database/services/google-api-service";
 import { middyfy } from "src/libs/lambda";
 

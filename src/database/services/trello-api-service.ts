@@ -2,11 +2,11 @@
  * Class that implements Trello Service for card operations.
  */
 export class TrelloService {
-  private apiKey = process.env.TRELLO_API_KEY;
-  private apiToken = process.env.TRELLO_TOKEN;
-  private baseUrl = 'https://api.trello.com/1';
-  private boardId = process.env.TRELLO_MANAGEMENT_BOARD_ID;
-  private hook = process.env.WEBHOOK_URL;
+  private readonly apiKey = process.env.TRELLO_API_KEY;
+  private readonly apiToken = process.env.TRELLO_TOKEN;
+  private readonly baseUrl = 'https://api.trello.com/1';
+  private readonly boardId = process.env.TRELLO_MANAGEMENT_BOARD_ID;
+  private readonly hook = process.env.WEBHOOK_URL;
 
   /**
    * Gets all boards from Trello

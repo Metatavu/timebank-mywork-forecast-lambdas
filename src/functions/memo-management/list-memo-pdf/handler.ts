@@ -32,7 +32,7 @@ const listMemoPdf = async (date: DateTime): Promise<PdfFile[]> => {
 const listMemoPdfHandler: APIGatewayProxyHandler = async (event: any) => {
   const {queryStringParameters} = event;
 
-  if (!queryStringParameters || !queryStringParameters?.date) {
+  if (!event.queryStringParameters?.date) {
     return  {
       statusCode: 400,
       body: 'Missing parameters'

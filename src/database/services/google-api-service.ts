@@ -8,10 +8,10 @@ import {streamToBuffer, getYearAndMonth} from "../../libs/file-utils";
  * Class that implements the GoogleApiService for fetching Google Drive files and content.
  */
 export class GoogleDriveService {
-  private folderId = process.env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID;
-  private folderCache: { [key: string]: string } = {};
-  private projectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
-  private openai = new OpenAI({
+  private readonly folderId = process.env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID;
+  private readonly folderCache: { [key: string]: string } = {};
+  private readonly projectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+  private readonly openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
   });
   
@@ -124,7 +124,7 @@ export class GoogleDriveService {
    * @param id file ID
    * @returns file's metadata
    */
-  public async getFile(id: string): Promise<File> {
+  public async getFile(id: string): Promise<File | undefined> {
     const drive = await this.getDriveService();
 
     const file = (await drive.files.get({
@@ -132,7 +132,7 @@ export class GoogleDriveService {
       fields: 'id, name, mimeType',
     }))?.data;
     
-    return file ? file : undefined;
+    return file;
   }
 
   /**
@@ -230,7 +230,7 @@ export class GoogleDriveService {
    * @returns PDF file objects
    */
   public async getFileContentPdf (file: File, usedDrive?: drive_v3.Drive): Promise<PdfFile> {
-    const drive = usedDrive ? usedDrive : await this.getDriveService();
+    const drive = usedDrive || await this.getDriveService();
     try {
       const response = await drive.files.get({
         fileId: file.id,
@@ -325,7 +325,7 @@ export class GoogleDriveService {
     const drive = await this.getDriveService();
     const response = await drive.files.export({ fileId, mimeType }, { responseType });
     if (!response) throw new Error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
-    return responseType === 'stream' ? response.data : response.data;
+    return response.data
   }
 
   /**
