@@ -126,6 +126,19 @@ const serverlessConfiguration: AWS = {
               "dynamodb:DeleteItem",
             ],
             Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
+          },
+          {
+            Effect: "Allow",
+            Action: [
+              "dynamodb:DescribeTable",
+              "dynamodb:Query",
+              "dynamodb:Scan",
+              "dynamodb:GetItem",
+              "dynamodb:PutItem",
+              "dynamodb:UpdateItem",
+              "dynamodb:DeleteItem",
+            ],
+            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires"
           }
         ]
       }
