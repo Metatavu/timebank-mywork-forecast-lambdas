@@ -7,10 +7,8 @@ import { middyfy } from "src/libs/lambda";
  * 
  * @param event - API Gateway event containing the user GUID.
  */
-
 export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event) => {
     const severaGuid = event.pathParameters?.severaGuid;
-    
     try {
         const api = CreateSeveraApiService();
         if(!severaGuid) {
@@ -19,15 +17,11 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
                 body: JSON.stringify({ message: "User Guid is required" }),
             };
         }
-
         const resourceAllocation = await api.getResourceAllocation(severaGuid);
-        
         const response = { 
             body: JSON.stringify(resourceAllocation),
         }
         const parsedResponse = JSON.parse(response.body);
-        
-
         return {
             statusCode: 200,
             // body: JSON.stringify(resourceAllocation),
@@ -37,7 +31,6 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
         return {
             statusCode: 500,
             body: JSON.stringify({ error: error.message })
-            
         }
     }
 }
