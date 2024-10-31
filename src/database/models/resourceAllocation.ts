@@ -21,3 +21,5 @@ interface ResourceAllocationProjectSubModel {
     isInternal: boolean;
 
 }
+
+export default ResourceAllocationModel;
