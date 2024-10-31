@@ -19,8 +19,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Gets flextime by userGUID and eventDate
      */
     getFlextimeBySeveraGuid: async (severaGuid: string, eventDate: string) => {
-      const url: string = `${baseUrl}/v1/users/${severaGuid}/flextime?date=${eventDate}`;
-      console.log(`Fetching flextime from Severa: ${url}`);
+      const url: string = `${baseUrl}/v1/users/${severaGuid}/flextime?eventdate=${eventDate}`;
 
       const response = await fetch(url, {
         method: "GET",
