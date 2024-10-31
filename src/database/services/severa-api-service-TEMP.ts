@@ -88,8 +88,8 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    // scope:"users:read",
-    scope: "resourceallocations:read",
+    scope:"users:read",
+    // scope: "resourceallocations:read",
   };
 
  
