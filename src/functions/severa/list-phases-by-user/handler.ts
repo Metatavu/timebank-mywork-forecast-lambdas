@@ -11,10 +11,8 @@ import phase from "@database/models/phase";
  */
 export const getPhasesBySeveraProjectGuidHandler: APIGatewayProxyHandler = async (event) => {
   const severaProjectGuid = event.pathParameters?.severaProjectGuid;
-
   try {
     const api = CreateSeveraApiService();
-
     if (!severaProjectGuid) {
       return {
         statusCode: 400,
@@ -22,11 +20,12 @@ export const getPhasesBySeveraProjectGuidHandler: APIGatewayProxyHandler = async
       };
     }
 
-    const phasesBySeveraProjectGuid: PhaseModel[] = await api.getPhasesBySeveraProjectGuid(severaProjectGuid);
+    const response: PhaseModel[] = await api.getPhasesBySeveraProjectGuid(severaProjectGuid);
+    const phasesBySeveraProjectGuid = JSON.parse(JSON.stringify(response))
 
     return {
       statusCode: 200,
-      body: JSON.stringify(phasesBySeveraProjectGuid),
+      body: phasesBySeveraProjectGuid,
     };
   } catch (error) {
     return {

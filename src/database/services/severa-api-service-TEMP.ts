@@ -116,7 +116,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         startDate: new Date(item.startDate),
         deadLine: new Date(item.deadLine),
         project: {
-          severaProjectGuid: item.project?.severaProjectGuid,
+          severaProjectGuid: item.project?.guid,
           name: item.project?.name,
           isClosed: item.project?.isClosed,
         },
@@ -143,8 +143,8 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    // scope: "projects:read",
-    scope: "resourceallocations:read",
+    scope: "projects:read, resourceallocations:read",
+    // scope: "resourceallocations:read",
   };
 
   try {
