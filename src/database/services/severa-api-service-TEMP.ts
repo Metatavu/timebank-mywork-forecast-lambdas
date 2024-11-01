@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
-import type Flextime from "../models/severa";
+import type Flextime from "../models/flextime";
 import type ResourceAllocationModel from "../models/resourceAllocation";
+import PhaseModel from "@database/models/phase";
 
 /**
  * Interface for a SeveraApiService.
@@ -8,6 +9,7 @@ import type ResourceAllocationModel from "../models/resourceAllocation";
 export interface SeveraApiService {
   getFlextimeBySeveraGuid: (severaGuid: string, eventDate: string) => Promise<Flextime>;
   getResourceAllocation: (severaGuid: string) => Promise<ResourceAllocationModel>;
+  getPhasesBySeveraProjectGuid: (severaProjectGuid: string) => Promise<PhaseModel[]>;
 }
 
 /**
@@ -63,11 +65,48 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         }
 
         return response.json();
-    }
+    },
+
+    /**
+     * Gets flextime by userGUID and eventDate
+     */
+
+    getPhasesBySeveraProjectGuid: async (severaProjectGuid: string) : Promise<PhaseModel[]> => {
+      const url: string = `${baseUrl}/v1/projects/${severaProjectGuid}/phaseswithhierarchy`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch phases: ${response.status} - ${response.statusText}`,
+        );
+      }
+
+      const phases = await response.json();
+
+      return phases.map((item: any) => ({
+        severaPhaseGuid: item.severaPhaseGuid,
+        name: item.name,
+        isCompleted: item.isCompleted,
+        workHoursEstimate: item.workHoursEstimate,
+        startDate: new Date(item.startDate),
+        deadLine: new Date(item.deadLine),
+        project: {
+          severaProjectGuid: item.project?.severaProjectGuid,
+          name: item.project?.name,
+          isClosed: item.project?.isClosed,
+        },
+      }));
+    },
   };
 };
-
-
 
 /**
  * Gets Severa access token
@@ -84,15 +123,11 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
   const client_Secret: string = process.env.SEVERA_DEMO_CLIENT_SECRET;
 
-
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope:"users:read",
-    // scope: "resourceallocations:read",
+    scope: "projects:read",
   };
-
- 
 
   try {
     const response = await fetch(url, {

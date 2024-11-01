@@ -2,6 +2,6 @@
     "headers": {
       "Content-Type": "application/json"
     },
-    "body": "{\"name\": \"Frederic\"}",
-    "pathParameters": { "severaGuid": "19284fe1-c0a1-841d-0528-cab7ca6694ca"    }
+    "body": "{\"name\": \"Frederic\"  }",
+    "pathParameters": {"severaProjectGuid":  "334a66c6-cb35-fb03-b209-18626a31047e"}
 }
