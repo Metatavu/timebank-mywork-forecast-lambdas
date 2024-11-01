@@ -28,17 +28,9 @@ const findUserHandler: APIGatewayProxyHandler = async (
         body: JSON.stringify({ error: "User not found" }),
       };
     }
-    const filteredUser = {
-      id: userById.id,
-      firstName: userById.firstName,
-      lastName: userById.lastName,
-      email: userById.email,
-      severaGuid: userById.severaGuid,
-    };
-
     return {
       statusCode: 200,
-      body: JSON.stringify(filteredUser),
+      body: JSON.stringify(userById),
     };
   } catch (error) {
     return {

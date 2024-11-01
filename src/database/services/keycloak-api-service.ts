@@ -19,13 +19,19 @@ export interface KeycloakProfile {
 	createdTimestamp?: number;
 	attributes?: Record<string, unknown>;
 }
+/**
+ * Custom Interface for a user in keycloak functions with severaGuid added.
+ */
 
+export interface CustomKeycloakProfile extends KeycloakProfile {
+  severaGuid: string;
+}
 /**
  * Interface for a KeycloakApiService.
  */
 export interface KeycloakApiService {
-  getUsers: () => Promise<KeycloakProfile[]>;
-  findUser: (id: string) => Promise<KeycloakProfile>;
+  getUsers: () => Promise<CustomKeycloakProfile[]>;
+  findUser: (id: string) => Promise<CustomKeycloakProfile>;
 }
 
 /**
@@ -41,7 +47,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      *
      * @returns List of users
      */
-    getUsers: async (): Promise<KeycloakProfile[]> => {
+    getUsers: async (): Promise<CustomKeycloakProfile[]> => {
       const response = await fetch(`${baseUrl}/admin/realms/${realm}/users`, {
         method: "GET",
         headers: {
@@ -55,7 +61,11 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         );
       }
 
-      return response.json();
+      const users: KeycloakProfile[] = await response.json();
+      return users.map((user) => ({
+        ...user,
+        severaGuid: (user as CustomKeycloakProfile).severaGuid ?? "Users SeveraGuid not found in Keycloak",
+      })) as CustomKeycloakProfile[];
     },
 
     /**
@@ -64,7 +74,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      * @param id string
      * @returns user by Id
      */
-    findUser: async (id: string): Promise<KeycloakProfile> => {
+    findUser: async (id: string): Promise<CustomKeycloakProfile> => {
       const response = await fetch(
         `${baseUrl}/admin/realms/${realm}/users/${id}`,
         {
@@ -79,7 +89,11 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         throw new Error(`Failed to find user with id: ${id}`);
       }
 
-      return response.json();
+      const user: KeycloakProfile = await response.json();
+      return {
+        ...user,
+        severaGuid: (user as CustomKeycloakProfile).severaGuid ?? "Users SeveraGuid not found in Keycloak",
+      } as CustomKeycloakProfile;
     },
   };
 };
