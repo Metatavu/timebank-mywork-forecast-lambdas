@@ -109,7 +109,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const phases = await response.json();
 
       return phases.map((item: any) => ({
-        severaPhaseGuid: item.severaPhaseGuid,
+        severaPhaseGuid: item.guid,
         name: item.name,
         isCompleted: item.isCompleted,
         workHoursEstimate: item.workHoursEstimate,
