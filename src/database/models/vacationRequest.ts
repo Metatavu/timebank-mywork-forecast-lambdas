@@ -21,12 +21,7 @@ interface VacationRequestModel {
  */
 
 enum VacationType {
-    VACATION = "VACATION",
-    UNPAID_TIME_OFF = "UNPAID_TIME_OFF",
-    SICKNESS = "SICKNESS",
-    PERSONAL_DAYS = "PERSONAL_DAYS",
-    MATERNITY_PATERNITY = "MATERNITY_PATERNITY",
-    CHILD_SICKNESS = "CHILD_SICKNESS"
+    VACATION = "VACATION"
 }
 
 export default VacationRequestModel;

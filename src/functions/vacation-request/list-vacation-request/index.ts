@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: "get",
-        path: "/vacationsRequest",
+        path: "/vacationRequests",
         authorizer: {
           name: "timebankKeycloakAuthorizer",
         },

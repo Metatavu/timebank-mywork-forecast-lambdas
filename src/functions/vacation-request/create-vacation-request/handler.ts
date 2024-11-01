@@ -1,9 +1,9 @@
-import { middyfy } from "src/libs/lambda";
-import { vacationRequestService } from "src/database/services";
-import { v4 as uuidv4 } from "uuid";
-import type VacationRequestModel from "src/database/models/vacationRequest";
-import type { ValidatedEventAPIGatewayProxyEvent } from "src/libs/api-gateway";
+import {middyfy} from "src/libs/lambda";
+import {vacationRequestService} from "src/database/services";
+import {v4 as uuidv4} from "uuid";
+import type {ValidatedEventAPIGatewayProxyEvent} from "src/libs/api-gateway";
 import type vacationRequestSchema from "src/schema/vacationRequest";
+import VacationRequestModel from "@database/models/vacationRequest";
 
 /**
  * Handler for creating a new vacation request entry in DynamoDB.
@@ -19,9 +19,9 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
         };
     }
 
-    const { personId, draft, startDate, endDate, days, type, message, createdBy, createdAt, updatedAt} = event.body;
+    const { personId, draft, startDate, endDate, days, type, message, createdBy, createdAt, updatedAt, updatedBy} = event.body;
 
-    if (!personId || !draft || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt) {
+    if (!personId || !draft || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
         return {
             statusCode: 400,
             body: JSON.stringify({ error: "Some required data is missing !" })
@@ -29,7 +29,6 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
     }
 
     const newVacationRequestId: string = uuidv4();
-    let vacationRequestResponse: VacationRequestModel | undefined = undefined;
 
     try {
         const createdVacationRequest = await vacationRequestService.createVacationRequest({
@@ -43,14 +42,13 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
             message: message,
             createdBy: createdBy,
             createdAt: createdAt,
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            updatedBy: updatedBy
         });
-
-        vacationRequestResponse = createdVacationRequest;
 
         return {
             statusCode: 201,
-            body: JSON.stringify(vacationRequestResponse)
+            body: JSON.stringify(createdVacationRequest)
         };
     } catch (error) {
         return {
