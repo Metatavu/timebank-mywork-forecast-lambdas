@@ -5,7 +5,7 @@ import PhaseModel from "@database/models/phase";
 import phase from "@database/models/phase";
 
 /**
- * Handler for getting flextime by user from Severa REST API.
+ * Handler for getting Phases by project from Severa REST API.
  *
  * @param event - API Gateway event containing the user GUID.
  */

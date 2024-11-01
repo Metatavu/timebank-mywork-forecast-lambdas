@@ -1,7 +1,11 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/flextime";
 import type ResourceAllocationModel from "../models/resourceAllocation";
-import PhaseModel from "@database/models/phase";
+import Phase from "@database/models/phase";
+import WorkHours from "@database/models/workHours";
+import WorkHoursModel from "@database/models/workHours";
+import {Promise} from "@sinclair/typebox";
+import * as process from "node:process";
 
 /**
  * Interface for a SeveraApiService.
@@ -9,7 +13,8 @@ import PhaseModel from "@database/models/phase";
 export interface SeveraApiService {
   getFlextimeBySeveraGuid: (severaGuid: string, eventDate: string) => Promise<Flextime>;
   getResourceAllocation: (severaGuid: string) => Promise<ResourceAllocationModel[]>;
-  getPhasesBySeveraProjectGuid: (severaProjectGuid: string) => Promise<PhaseModel[]>;
+  getPhasesBySeveraProjectGuid: (severaProjectGuid: string) => Promise<Phase[]>;
+  getWorkHoursBySeveraUserGuid: (severaUserGuid: string) => Promise<WorkHours[]>;
 }
 
 /**
@@ -85,10 +90,10 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * Gets flextime by userGUID and eventDate
+     * Gets phases by userGUID
      */
 
-    getPhasesBySeveraProjectGuid: async (severaProjectGuid: string) : Promise<PhaseModel[]> => {
+    getPhasesBySeveraProjectGuid: async (severaProjectGuid: string) : Promise<Phase[]> => {
       const url: string = `${baseUrl}/v1/projects/${severaProjectGuid}/phaseswithhierarchy`;
 
       const response = await fetch(url, {
@@ -113,13 +118,59 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         name: item.name,
         isCompleted: item.isCompleted,
         workHoursEstimate: item.workHoursEstimate,
-        startDate: new Date(item.startDate),
-        deadLine: new Date(item.deadLine),
+        startDate: item.startDate,
+        deadLine: item.deadLine,
         project: {
-          severaProjectGuid: item.project?.guid,
-          name: item.project?.name,
-          isClosed: item.project?.isClosed,
+          severaProjectGuid: item.project.guid,
+          name: item.project.name,
+          isClosed: item.project.isClosed,
         },
+      }));
+    },
+
+    /**
+     * Gets work hours by userGUID
+     */
+
+    getWorkHoursBySeveraUserGuid: async (severaUserGuid: string) : Promise<WorkHours[]> => {
+      const url: string = `${baseUrl}/v1/users/${severaUserGuid}/workhours`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
+        );
+      }
+
+      const workHours = await response.json();
+
+      return workHours.map((item: any) => ({
+        severaWorkHoursGuid: item.guid,
+        user: {
+          severaUserGuid: item.user.guid,
+          name: item.user.name,
+        },
+        project: {
+          severaProjectGuid: item.project.guid,
+          name: item.project.name,
+          isClosed: item.project.isClosed,
+        },
+        phase: {
+          severaPhaseGuid: item.phase.guid,
+          name: item.phase.name
+        },
+        description: item.description,
+        eventDate: item.eventDate,
+        quantity: item.quantity,
+        startTime: item.startTime,
+        endTime: item.endTime,
       }));
     },
   };
@@ -143,8 +194,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "projects:read, resourceallocations:read",
-    // scope: "resourceallocations:read",
+    scope: "projects:read, resourceallocations:read, hours:read",
   };
 
   try {
