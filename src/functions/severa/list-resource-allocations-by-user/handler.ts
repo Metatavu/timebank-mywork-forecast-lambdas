@@ -1,4 +1,5 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
+import ResourceAllocationModel from "src/database/models/resourceAllocation";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service-TEMP";
 import { middyfy } from "src/libs/lambda";
 
@@ -21,6 +22,7 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
         const response = { 
             body: JSON.stringify(resourceAllocation),
         }
+
         const parsedResponse = JSON.parse(response.body);
         return {
             statusCode: 200,

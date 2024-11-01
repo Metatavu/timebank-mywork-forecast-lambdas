@@ -8,7 +8,7 @@ import PhaseModel from "@database/models/phase";
  */
 export interface SeveraApiService {
   getFlextimeBySeveraGuid: (severaGuid: string, eventDate: string) => Promise<Flextime>;
-  getResourceAllocation: (severaGuid: string) => Promise<ResourceAllocationModel>;
+  getResourceAllocation: (severaGuid: string) => Promise<ResourceAllocationModel[]>;
   getPhasesBySeveraProjectGuid: (severaProjectGuid: string) => Promise<PhaseModel[]>;
 }
 
@@ -49,7 +49,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
     getResourceAllocation: async (severaGuid: string) => {
         const url: string = `${baseUrl}/v1/users/${severaGuid}/resourceallocations/allocations`;
-
         const response = await fetch(url,{
             method: "GET",
             headers: {
@@ -63,8 +62,26 @@ export const CreateSeveraApiService = (): SeveraApiService => {
                 `Failed to fetch resource allocation: ${response.status} - ${response.statusText}`,
             );
         }
-
-        return response.json();
+        const resourceAllocations = await response.json();
+        const transformedResourceAllocations: ResourceAllocationModel[] = resourceAllocations.map((item:any) => ({
+          severaProjectGuid: item.severaProjectGuid,
+          allocationHours: item.allocationHours,
+          calculatedAllocationHours: item.calculatedAllocationHours,
+          phase: {
+              severaPhaseGuid: item.phase?.guid,
+              name: item.phase?.name,
+          },
+          users: {
+              severaUserGuid: item.user?.guid,
+              name: item.user?.name,
+          },
+          projects: {
+              severaProjectGuid: item.project?.guid,
+              name: item.project?.name,
+              isInternal: item.project?.isInternal,
+          },
+      }))
+        return transformedResourceAllocations;
     },
 
     /**
@@ -126,7 +143,8 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "projects:read",
+    // scope: "projects:read",
+    scope: "resourceallocations:read",
   };
 
   try {
