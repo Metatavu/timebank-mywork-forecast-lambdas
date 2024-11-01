@@ -3,15 +3,12 @@ import * as jwt from 'jsonwebtoken';
 
 interface DecodedToken {
   sub: string;
-  realm_access?: {
-    roles: string[];
-  };
 }
 
 /**
- * Helper function to get the user's sub (user ID) and roles from the Authorization header.
+ * Helper function to get the user's sub (user ID) from the Authorization header.
  * @param event - The API Gateway event containing the headers.
- * @returns The sub claim (user ID) and roles.
+ * @returns The sub claim (user ID).
  */
 export const getAuthDataFromToken = (event: { headers: APIGatewayProxyEvent['headers'] }): DecodedToken | null => {
   try {
@@ -44,8 +41,7 @@ export const getAuthDataFromToken = (event: { headers: APIGatewayProxyEvent['hea
     console.log('Decoded JWT Token:', JSON.stringify(decodedToken, null, 2));
 
     return {
-      sub: decodedToken.sub,
-      realm_access: decodedToken.realm_access
+      sub: decodedToken.sub
     };
   } catch (error) {
     console.error('Error decoding JWT token:', error);
