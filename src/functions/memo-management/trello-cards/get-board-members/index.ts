@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'get',
-        path: '/card-members',
+        path: '/board-members',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }
