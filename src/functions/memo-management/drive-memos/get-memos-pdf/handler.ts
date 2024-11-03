@@ -1,10 +1,8 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
 import { PdfFile } from "src/database/schemas/google";
-import { GoogleDriveService } from "src/database/services/google-api-service";
+import { getFiles, getFilesContentPdf } from "src/database/services/google-api-service";
 import { middyfy } from "src/libs/lambda";
-
-const drive = new GoogleDriveService();
 
 /**
  * Gets content of PDF memos as buffer object
@@ -14,9 +12,9 @@ const drive = new GoogleDriveService();
  */
 const listMemoPdf = async (date: DateTime): Promise<PdfFile[]> => {
   try {
-    const files = (await drive.getFiles(date.year.toString(), date.monthLong))
+    const files = (await getFiles(date.year.toString(), date.monthLong))
     .filter(file => !file.name.startsWith("translated_"));
-    const pdfContent = await drive.getFilesContentPdf(files);
+    const pdfContent = await getFilesContentPdf(files);
     return pdfContent;
   } catch (error) {
     console.log(error);

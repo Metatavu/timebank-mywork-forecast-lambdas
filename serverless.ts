@@ -30,19 +30,19 @@ import listUsersHandler from "@/functions/keycloak/list-users";
 import findUserHandler from "@/functions/keycloak/find-user";
 import createQuestionnaireHandler from "@/functions/questionnaire/create-questionnaire";
 import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnaire";
-import listMemoPdfHandler from "@functions/memo-management/list-memo-pdf";
-import getTranslatedMemoPdfHandler from "@functions/memo-management/get-translated-memo-pdf";
-import getSummaryMemoPdfHandler from "@functions/memo-management/get-summary-memo-pdf";
-import uploadGoogleFileHandler from "@functions/memo-management/upload-file-in-pdf";
-import sendNotificationHandler from "@functions/meta-assistant/send-card-notification";
-import getCardsOnListHandler from "@functions/memo-management/get-cards";
-import getBoardMembersHandler from "src/functions/memo-management/get-board-members";
-import deleteCardHandler from "@functions/memo-management/delete-card";
-import createCardHandler from "@functions/memo-management/create-card";
-import createCommentHandler from "@functions/memo-management/comment-card";
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
+import listMemoPdfHandler from "src/functions/memo-management/drive-memos/get-memos-pdf";
+import getTranslatedMemoPdfHandler from "src/functions/memo-management/drive-memos/get-translated-memo-pdf";
+import getSummaryMemoPdfHandler from "src/functions/memo-management/drive-memos/get-summary-memo-pdf";
+import uploadGoogleFileHandler from "src/functions/memo-management/drive-memos/create-memo-pdf";
+import sendNotificationHandler from "@functions/meta-assistant/send-card-notification";
+import getCardsOnListHandler from "src/functions/memo-management/trello-cards/get-cards";
+import getBoardMembersHandler from "src/functions/memo-management/trello-cards/get-board-members";
+import deleteCardHandler from "src/functions/memo-management/trello-cards/delete-card";
+import createCardHandler from "src/functions/memo-management/trello-cards/create-card";
+import createCommentHandler from "src/functions/memo-management/trello-cards/comment-card";
 
 const isLocal = process.env.STAGE === "local";
 
@@ -183,6 +183,9 @@ const serverlessConfiguration: AWS = {
     findUserHandler,
     createQuestionnaireHandler,
     findQuestionnaireHandler,
+    deleteQuestionnaireHandler,
+    listQuestionnaireHandler,
+    updateQuestionnaireHandler,
     uploadGoogleFileHandler,
     listMemoPdfHandler,
     getTranslatedMemoPdfHandler,
@@ -193,9 +196,6 @@ const serverlessConfiguration: AWS = {
     deleteCardHandler,
     createCardHandler,
     createCommentHandler,
-    deleteQuestionnaireHandler,
-    listQuestionnaireHandler,
-    updateQuestionnaireHandler,
   },
   package: { individually: true },
   custom: {

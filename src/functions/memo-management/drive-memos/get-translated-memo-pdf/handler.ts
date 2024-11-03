@@ -1,9 +1,7 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
-import { GoogleDriveService } from "src/database/services/google-api-service";
+import { createPdfFile, getFile, getFileContentPdf, getFiles, getFolderId, getTranslatedPdf } from "src/database/services/google-api-service";
 import { middyfy } from "src/libs/lambda";
-
-const drive = new GoogleDriveService();
 
 /**
  * Gets content of translated pdf memos as buffer object
@@ -12,20 +10,20 @@ const drive = new GoogleDriveService();
  * @param fileId Id of file to translate
  * @returns translated pdf buffer object
  */
-const getTranslatedMemoPdf = async (date: DateTime, fileId: string) => {
+ const getTranslatedMemoPdf = async (date: DateTime, fileId: string) => {
   try {
-    const file = await drive.getFile(fileId);
+    const file = await getFile(fileId);
     if (!file) return;
-    const filesInFolder = await drive.getFiles(date.year.toString(), date.monthLong);
+    const filesInFolder = await getFiles(date.year.toString(), date.monthLong);
     const translatedFile = filesInFolder.find(fileInFolder => fileInFolder.name == `translated_${file.name}`);
     if (translatedFile) {
-      const translatedPdf = await drive.getFileContentPdf(translatedFile);
+      const translatedPdf = await getFileContentPdf(translatedFile);
       return translatedPdf;
     }
-    const filePdf = await drive.getFileContentPdf(file);
-    const translatedPdf = await drive.getTranslatedPdf(filePdf);
-    const folderIdToSaveFile = await drive.getFolderId(date.year.toString(), date.monthLong);
-    const idOfCreatedFile = await drive.createPdfFile(translatedPdf, folderIdToSaveFile);
+    const filePdf = await getFileContentPdf(file);
+    const translatedPdf = await getTranslatedPdf(filePdf);
+    const folderIdToSaveFile = await getFolderId(date.year.toString(), date.monthLong);
+    const idOfCreatedFile = await createPdfFile(translatedPdf, folderIdToSaveFile);
     return {...translatedPdf, id: idOfCreatedFile};
   } catch (error) {
     console.error(error);

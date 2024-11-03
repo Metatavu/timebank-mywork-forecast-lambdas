@@ -1,3 +1,5 @@
+import fetch from "node-fetch";
+
 /**
  * Class that implements Trello Service for card operations.
  */
@@ -6,7 +8,6 @@ export class TrelloService {
   private readonly apiToken = process.env.TRELLO_TOKEN;
   private readonly baseUrl = 'https://api.trello.com/1';
   private readonly boardId = process.env.TRELLO_MANAGEMENT_BOARD_ID;
-  private readonly hook = process.env.WEBHOOK_URL;
 
   /**
    * Gets all boards from Trello
@@ -193,26 +194,5 @@ export class TrelloService {
       return `${name}.${surname}@metatavu.fi`;
     });
     return emails;
-  }
-
-  /**
-   * Creates a webhook by sending a POST request to the configured API endpoint. 
-   *
-   * @returns JSON object
-   */
-  public async createWebhook(): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/webhooks?key=${this.apiKey}&token=${this.apiToken}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        callbackURL: `${this.hook}`,  
-        idModel: this.boardId,  
-      }),
-    });
-  
-    if (!response.ok) {
-      throw new Error(`Failed to create webhook: ${response.status} - ${response.statusText}`);
-    }
-    return response.json();
   }
 }

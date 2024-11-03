@@ -5,8 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: 'get',
-        path: '/cards-summary',
+        method: 'post',
+        path: '/card',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

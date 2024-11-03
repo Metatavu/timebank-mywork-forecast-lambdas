@@ -5,8 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: 'delete',
-        path: '/cards/{id}',
+        method: 'get',
+        path: '/memo-summary',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }
