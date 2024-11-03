@@ -27,7 +27,6 @@
     "luxon": "^2.4.0",
     "moment": "^2.29.4",
     "node-fetch": "^2.6.9",
-    "openai": "^4.67.1",
     "request": "^2.88.2",
     "serverless-dynamodb": "^0.2.53"
   },
