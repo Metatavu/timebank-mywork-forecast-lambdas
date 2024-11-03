@@ -69,7 +69,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         }
         const resourceAllocations = await response.json();
         const transformedResourceAllocations: ResourceAllocationModel[] = resourceAllocations.map((item:any) => ({
-          severaProjectGuid: item.severaProjectGuid,
+          severaProjectGuid: item.guid,
           allocationHours: item.allocationHours,
           calculatedAllocationHours: item.calculatedAllocationHours,
           phase: {

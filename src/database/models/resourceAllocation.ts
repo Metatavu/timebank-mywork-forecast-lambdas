@@ -7,25 +7,25 @@ interface ResourceAllocationModel {
     severaProjectGuid: string;
     allocationHours: number;
     calculatedAllocationHours: number;
-    phase: PhaseSubModel;
-    users: UserSubModel;
+    phase: BaseSubmodel;
+    users: BaseSubmodel;
     projects: ResourceAllocationProjectSubModel;
 }
 
-// interface BaseSubmodel {
-//     severaGuid: string;
+interface BaseSubmodel {
+    severaGuid: string;
+    name: string;
+}
+
+// interface PhaseSubModel {
+//     severaPhaseGuid: string;
 //     name: string;
 // }
 
-interface PhaseSubModel {
-    severaPhaseGuid: string;
-    name: string;
-}
-
-interface UserSubModel {
-    severaUserGuid: string;
-    name: string;
-}
+// interface UserSubModel {
+//     severaUserGuid: string;
+//     name: string;
+// }
 
 interface ResourceAllocationProjectSubModel {
     severaProjectGuid: string;

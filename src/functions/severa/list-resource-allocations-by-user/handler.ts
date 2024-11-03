@@ -10,24 +10,23 @@ import { middyfy } from "src/libs/lambda";
  */
 export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event) => {
     const severaGuid = event.pathParameters?.severaGuid;
+
     try {
         const api = CreateSeveraApiService();
+
         if(!severaGuid) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({ message: "User Guid is required" }),
             };
         }
-        const resourceAllocation = await api.getResourceAllocation(severaGuid);
-        const response = { 
-            body: JSON.stringify(resourceAllocation),
-        }
 
-        const parsedResponse = JSON.parse(response.body);
+        const resourceAllocation = await api.getResourceAllocation(severaGuid);
+        console.log("Resource Allocation: ", resourceAllocation);
+        
         return {
             statusCode: 200,
-            // body: JSON.stringify(resourceAllocation),
-            body: parsedResponse
+            body: JSON.stringify(resourceAllocation),
         }
     } catch (error) {
         return {
