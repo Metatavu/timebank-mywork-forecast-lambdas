@@ -20,18 +20,18 @@ const convertToPdf = async () => {
  */
 export const uploadGoogleFileHandler: APIGatewayProxyHandler = async () => {
   try {
-    const filePdf = await convertToPdf();
+    await convertToPdf();
 
     return {
       statusCode: 200,
-      body: JSON.stringify(filePdf)
+      body: JSON.stringify({ message: "Files created successfully" })
     };
 
   } catch (error) {
     console.error("Error upoading pdf:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to upload pdf.', details: error.message }),
+      body: JSON.stringify({ error: 'Failed to upload PDFs.', details: error.message }),
     };
   }
 };

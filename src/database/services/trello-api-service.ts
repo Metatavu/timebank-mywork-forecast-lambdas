@@ -191,7 +191,11 @@ export class TrelloService {
     const emails = members.map((member: any) => {
       const fullName = member.fullName.toLowerCase().split(' ');
       const [name, surname] = fullName;
-      return `${name}.${surname}@metatavu.fi`;
+      return {
+        memberId: member.id,
+        fullName: member.fullName,
+        email: `${name}.${surname}@metatavu.fi`
+      }
     });
     return emails;
   }

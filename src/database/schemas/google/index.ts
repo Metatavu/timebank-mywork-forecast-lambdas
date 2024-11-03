@@ -1,5 +1,3 @@
-import { Readable } from "stream";
-
 /**
  * Interface for general file properties
  */
@@ -15,5 +13,5 @@ export interface File {
 export interface PdfFile {
   id: string;
   name: string;
-  content: Readable;
+  content: Buffer;
 }

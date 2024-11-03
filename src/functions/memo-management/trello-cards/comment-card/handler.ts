@@ -24,7 +24,10 @@ const createCommentHandler: APIGatewayProxyHandler = async (event: any) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify(createdComment),
+      body: JSON.stringify({
+        cardId: createdComment.data.card.shortLink,
+        comment: createdComment.data.text
+      })
     };
   } catch (error) {
     console.error("Error creating comment:", error);

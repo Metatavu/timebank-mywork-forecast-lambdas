@@ -249,10 +249,11 @@ export const getFileContentPdf = async (file: File, usedDrive?: drive_v3.Drive):
     if (!response) {
       throw new Error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
     }
+    const pdfBuffer = await streamToBuffer(response.data);
     return {
       id: file.id,
       name: file.name,
-      content: response.data
+      content: pdfBuffer
     }
   } catch (error) {
     console.error('Error loading the PDF:', error);
@@ -375,8 +376,8 @@ export const uploadDocsContentAsPdf = async (file: File): Promise<any> => {
  */
 export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
   const accessToken = (await (await getGoogleAuth()).authorize()).access_token;
-  const bufferContent = await streamToBuffer(pdfFile.content)
-  const content = bufferContent.toString('base64');
+
+  const content = pdfFile.content.toString('base64');
   const translatedFileName = `translated_${pdfFile.name}`;
   const url = `https://translation.googleapis.com/v3/projects/${projectId}/locations/us-central1:translateDocument`
 
@@ -402,7 +403,7 @@ export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
     return {
       id: "",
       name: translatedFileName,
-      content: Readable.from([bufferData])
+      content: bufferData
     }
   }
   const response = await fetch(url, {
@@ -427,7 +428,7 @@ export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
   return {
     id: "",
     name: translatedFileName,
-    content: Readable.from([bufferData])
+    content: bufferData
   }
 }
 

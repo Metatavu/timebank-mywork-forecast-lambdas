@@ -16,9 +16,9 @@ const getCardsOnListHandler: APIGatewayProxyHandler = async () => {
     const cardsParsed = cards.map((card, index) => {
       const cardComments = cardsComments[index];
       return {
-        id: card.id,
+        cardId: card.shortLink,
         title: card.name,
-        desc: card.desc,
+        description: card.desc,
         assignedPersons: card.idMembers,
         comments: cardComments, 
       };

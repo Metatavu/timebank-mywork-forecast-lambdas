@@ -12,10 +12,10 @@ const createCardHandler: APIGatewayProxyHandler = async (event: any) => {
   try {
     const { body } = event;
 
-    if (!body?.title) {
+    if (!body?.title && !body?.description) {
       return {
         statusCode: 400,
-        body: JSON.stringify("Missing body")
+        body: JSON.stringify({ error: "Missing required parameters" })
       };
     } 
       
@@ -24,14 +24,18 @@ const createCardHandler: APIGatewayProxyHandler = async (event: any) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify(newCard)
+      body: JSON.stringify({
+        cardId: newCard.shortLink,
+        title: newCard.name,
+        description: newCard.desc
+      })
     };
 
   } catch (error) {
     console.error("Error creating card:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to create cards.', details: error.message }),
+      body: JSON.stringify({ error: 'Failed to create card.', details: error.message }),
     };
   }
 };

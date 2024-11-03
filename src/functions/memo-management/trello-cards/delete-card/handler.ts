@@ -15,7 +15,7 @@ const deleteCardHandler: APIGatewayProxyHandler = async (event) => {
     if (!id) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Id is required.' }),
+        body: JSON.stringify({ error: 'Missing required parameters' }),
       };
     }
     
