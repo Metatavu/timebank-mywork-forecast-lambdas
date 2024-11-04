@@ -6,25 +6,23 @@ import fetch from "node-fetch";
  * FIXME: This is from node_modules/keycloak-js/lib/keycloak.d.ts
  *  This a temporary solution to avoid the error: "Cannot find module 'keycloak-js'"  
  */
-
 export interface KeycloakProfile {
-	id?: string;
-	username?: string;
-	email?: string;
-	firstName?: string;
-	lastName?: string;
-	enabled?: boolean;
-	emailVerified?: boolean;
-	totp?: boolean;
-	createdTimestamp?: number;
-	attributes?: Record<string, unknown>;
+  id?: string;
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  enabled?: boolean;
+  emailVerified?: boolean;
+  totp?: boolean;
+  createdTimestamp?: number;
+  attributes?: Record<string, unknown>;
 }
 /**
- * Custom Interface for a user in keycloak functions with severaGuid added.
+ * Custom Interface for a user in keycloak functions with severaUserGuid added.
  */
-
 export interface CustomKeycloakProfile extends KeycloakProfile {
-  severaGuid: string;
+  severaUserGuid: string;
 }
 /**
  * Interface for a KeycloakApiService.
@@ -33,7 +31,6 @@ export interface KeycloakApiService {
   getUsers: () => Promise<CustomKeycloakProfile[]>;
   findUser: (id: string) => Promise<CustomKeycloakProfile>;
 }
-
 /**
  * Creates KeycloakApiService
  */
@@ -64,7 +61,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
       const users: KeycloakProfile[] = await response.json();
       return users.map((user) => ({
         ...user,
-        severaGuid: (user as CustomKeycloakProfile).severaGuid ?? "Users SeveraGuid not found in Keycloak",
+        severaUserGuid: (user as CustomKeycloakProfile).severaUserGuid ?? undefined,
       })) as CustomKeycloakProfile[];
     },
 
@@ -92,7 +89,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
       const user: KeycloakProfile = await response.json();
       return {
         ...user,
-        severaGuid: (user as CustomKeycloakProfile).severaGuid ?? "Users SeveraGuid not found in Keycloak",
+        severaUserGuid: (user as CustomKeycloakProfile).severaUserGuid ?? undefined,
       } as CustomKeycloakProfile;
     },
   };

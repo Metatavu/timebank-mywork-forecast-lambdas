@@ -7,9 +7,6 @@ export interface User {
     lastName: string;
     email: string;
     isActive: boolean;
-    severaGuid: string;
+    severaUserGuid: string;
     forecastId: number;
 }
-/**
- * FIXME: At this moment in KeyCloak its called: severa-user-id (string), in here its severaGuid (string);
- */

@@ -8,7 +8,6 @@ import { middyfy } from "src/libs/lambda";
  * @param event event
  * @returns user information as string
  */
-
 const findUserHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
 ) => {

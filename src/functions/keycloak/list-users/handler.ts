@@ -2,7 +2,6 @@ import { middyfy } from "@libs/lambda";
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
 
-
 /**
  * Lambda for listing users
  */
