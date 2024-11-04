@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/flextime";
 import type ResourceAllocationModel from "../models/resourceAllocation";
-import Phase from "@database/models/phase";
-import WorkHours from "@database/models/workHours";
+import type Phase from "@database/models/phase";
+import type WorkHours from "@database/models/workHours";
 import WorkHoursModel from "@database/models/workHours";
 import {Promise} from "@sinclair/typebox";
 import * as process from "node:process";
@@ -51,7 +51,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /** 
      * Get resource allocation by userGUID 
      */
-
     getResourceAllocation: async (severaGuid: string) => {
         const url: string = `${baseUrl}/v1/users/${severaGuid}/resourceallocations/allocations`;
         const response = await fetch(url,{
@@ -212,7 +211,6 @@ const getSeveraAccessToken = async (): Promise<string> => {
       );
     }
     const data = await response.json();
-
     return data.access_token;
   } catch (error) {
     throw new Error(`Failed to get Severa access token: ${error.message}`);
