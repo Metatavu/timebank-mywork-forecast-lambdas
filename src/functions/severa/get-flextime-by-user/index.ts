@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: "get",
-        path: "/severa/flextime/{severaGuid}",
+        path: "/severa/flextime/{severaUserGuid}",
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

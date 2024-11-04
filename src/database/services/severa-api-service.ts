@@ -5,7 +5,7 @@ import type Flextime from "../models/severa";
  * Interface for a SeveraApiService.
  */
 export interface SeveraApiService {
-  getFlextimeBySeveraGuid: (severaGuid: string, eventDate: string) => Promise<Flextime>;
+  getFlextimeBySeveraUserGuid: (severaUserGuid: string, eventDate: string) => Promise<Flextime>;
 }
 
 /**
@@ -18,8 +18,8 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets flextime by userGUID and eventDate
      */
-    getFlextimeBySeveraGuid: async (severaGuid: string, eventDate: string) => {
-      const url: string = `${baseUrl}/v1/users/${severaGuid}/flextime?eventdate=${eventDate}`;
+    getFlextimeBySeveraUserGuid: async (severaUserGuid: string, eventDate: string) => {
+      const url: string = `${baseUrl}/v1/users/${severaUserGuid}/flextime?eventdate=${eventDate}`;
 
       const response = await fetch(url, {
         method: "GET",

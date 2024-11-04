@@ -8,13 +8,13 @@ import { middyfy } from "src/libs/lambda";
  * @param event - API Gateway event containing the user GUID.
  */
 export const getFlextimeHandler: APIGatewayProxyHandler = async (event) => {
-  const severaGuid = event.pathParameters?.severaGuid;
+  const severaUserGuid = event.pathParameters?.severaUserGuid;
   const eventDateParam = event.queryStringParameters?.eventDate;
 
   try {
     const api = CreateSeveraApiService();
 
-    if (!severaGuid) {
+    if (!severaUserGuid) {
       return {
         statusCode: 400,
         body: JSON.stringify({ message: "User Guid is required" }),
@@ -23,7 +23,7 @@ export const getFlextimeHandler: APIGatewayProxyHandler = async (event) => {
 
     const eventDate = eventDateParam || new Date().toISOString();
 
-    const flexTimeBySeveraGuid = await api.getFlextimeBySeveraGuid(severaGuid, eventDate);
+    const flexTimeBySeveraGuid = await api.getFlextimeBySeveraUserGuid(severaUserGuid, eventDate);
 
     return {
       statusCode: 200,
