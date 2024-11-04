@@ -7,6 +7,6 @@ export interface User {
     lastName: string;
     email: string;
     isActive: boolean;
-    severaUserGuid: string;
+    severaUserId: string;
     forecastId: number;
 }

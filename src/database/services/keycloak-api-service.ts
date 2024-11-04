@@ -19,10 +19,10 @@ export interface KeycloakProfile {
   attributes?: Record<string, unknown>;
 }
 /**
- * Custom Interface for a user in keycloak functions with severaUserGuid added.
+ * Custom Interface for a user in keycloak functions with severaUserId added.
  */
 export interface CustomKeycloakProfile extends KeycloakProfile {
-  severaUserGuid: string;
+  severaUserId: string;
 }
 /**
  * Interface for a KeycloakApiService.
@@ -61,7 +61,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
       const users: KeycloakProfile[] = await response.json();
       return users.map((user) => ({
         ...user,
-        severaUserGuid: (user as CustomKeycloakProfile).severaUserGuid ?? undefined,
+        severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
       })) as CustomKeycloakProfile[];
     },
 
@@ -89,7 +89,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
       const user: KeycloakProfile = await response.json();
       return {
         ...user,
-        severaUserGuid: (user as CustomKeycloakProfile).severaUserGuid ?? undefined,
+        severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
       } as CustomKeycloakProfile;
     },
   };
