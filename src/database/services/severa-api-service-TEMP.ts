@@ -91,7 +91,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets phases by userGUID
      */
-
     getPhasesBySeveraProjectGuid: async (severaProjectGuid: string) : Promise<Phase[]> => {
       const url: string = `${baseUrl}/v1/projects/${severaProjectGuid}/phaseswithhierarchy`;
 
@@ -130,7 +129,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userGUID
      */
-
     getWorkHoursBySeveraUserGuid: async (severaUserGuid: string) : Promise<WorkHours[]> => {
       const url: string = `${baseUrl}/v1/users/${severaUserGuid}/workhours`;
       const response = await fetch(url, {
