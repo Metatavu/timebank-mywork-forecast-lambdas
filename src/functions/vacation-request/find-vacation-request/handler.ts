@@ -9,20 +9,19 @@ import { vacationRequestService } from "src/database/services";
  * @returns vacation request information as object 
  * 
  */
-
 const findVacationRequestHandler: APIGatewayProxyHandler = async(event: APIGatewayProxyEvent) => {
     const {id} = event.pathParameters || {};
 
-    try {
-        if (!id){
-            return {
-                statusCode: 400,
-                body: JSON.stringify({
-                    error: "Missing or invalid path parameter: id",
-                })
-            }
+    if (!id){
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                error: "Missing or invalid path parameter: id",
+            })
         }
+    }
 
+    try {
         const vacationRequestById = await vacationRequestService.findVacationRequest(id);
 
         if (!vacationRequestById){
@@ -42,7 +41,7 @@ const findVacationRequestHandler: APIGatewayProxyHandler = async(event: APIGatew
         return {
             statusCode: 500,
             body:JSON.stringify({
-                error: "Failed to retrieve vacation requests",
+                error: "Failed to retrieve vacation request",
                 details: error.message
             })
         }

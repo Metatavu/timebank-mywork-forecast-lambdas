@@ -1,3 +1,4 @@
+
 /**
  * DynamoDB model for vacation request
  */
@@ -9,6 +10,7 @@ interface VacationRequestModel {
     endDate: string;
     days: number;
     type: VacationType;
+    status: VacationRequestStatuses;
     message: string;
     createdBy: string;
     createdAt: string;
@@ -17,9 +19,17 @@ interface VacationRequestModel {
 }
 
 /**
+ * Enumerator for the vacation request statuses
+ */
+enum VacationRequestStatuses {
+    PENDING = "PENDING",
+    APPROVED = "APPROVED",
+    REJECTED = "DECLINED"
+}
+
+/**
  * DynamoDB model for vacation type
  */
-
 enum VacationType {
     VACATION = "VACATION"
 }

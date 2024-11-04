@@ -7,25 +7,22 @@ import { middyfy } from "src/libs/lambda";
  * 
  * @param event event
  */
-
 const deleteVacationRequestHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
-    /*APIGatewayHandler (aka Handler<APIEvent, APIResult>) will take API event and result as params
-    Received API Event, Return API Result */
 
     const { id } = event.pathParameters || {};
 
-    try {
-        if (!id) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({
-                    error: "Missing or invalid path parameter: id",
-                }),
-            };
-        }
+    if (!id) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                error: "Missing or invalid path parameter: id",
+            }),
+        };
+    }
 
-        const findVacationRequestById = await vacationRequestService.findVacationRequest(id);
-        if (!findVacationRequestById) {
+    try {
+        const foundVacationRequestById = await vacationRequestService.findVacationRequest(id);
+        if (!foundVacationRequestById) {
             return {
                 statusCode: 404,
                 body: JSON.stringify({
@@ -52,6 +49,3 @@ const deleteVacationRequestHandler: APIGatewayProxyHandler = async (event: APIGa
 }
 
 export const main = middyfy(deleteVacationRequestHandler);
-
-/* middy helps to integrate multiple middlewares
-in lambda withoud cluttering the handler logic */

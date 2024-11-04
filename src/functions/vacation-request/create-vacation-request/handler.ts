@@ -19,16 +19,16 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
         };
     }
 
-    const { personId, draft, startDate, endDate, days, type, message, createdBy, createdAt, updatedAt, updatedBy} = event.body;
+    const { personId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt, updatedBy} = event.body;
 
-    if (!personId || !draft || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
+    if (!personId || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
         return {
             statusCode: 400,
             body: JSON.stringify({ error: "Some required data is missing !" })
         };
     }
 
-    const newVacationRequestId: string = uuidv4();
+    const newVacationRequestId = uuidv4();
 
     try {
         const createdVacationRequest = await vacationRequestService.createVacationRequest({
@@ -39,6 +39,7 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
             endDate: endDate,
             days: days,
             type: type,
+            status: status,
             message: message,
             createdBy: createdBy,
             createdAt: createdAt,
