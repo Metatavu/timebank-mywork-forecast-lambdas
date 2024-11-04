@@ -22,8 +22,7 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
         }
 
         const resourceAllocation = await api.getResourceAllocation(severaGuid);
-        console.log("Resource Allocation: ", resourceAllocation);
-        
+                
         return {
             statusCode: 200,
             body: JSON.stringify(resourceAllocation),
