@@ -12,51 +12,51 @@ import VacationRequestModel from "@database/models/vacationRequest";
  * @returns Response object with status code
  */
 export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof vacationRequestSchema> = async (event) => {
-    if (!event.body) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: "Request body is required." })
-        };
+  if (!event.body) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Vacation request body is required." })
+    };
+  }
+
+  const { personId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt, updatedBy} = event.body;
+
+  if (!personId || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Some required data is missing !" })
+    };
+  }
+
+  const newVacationRequestId = uuidv4();
+
+  try {
+    const createdVacationRequest = await vacationRequestService.createVacationRequest({
+      id: newVacationRequestId,
+      personId: personId,
+      draft: draft,
+      startDate: startDate,
+      endDate: endDate,
+      days: days,
+      type: type,
+      status: status,
+      message: message,
+      createdBy: createdBy,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      updatedBy: updatedBy
+    });
+
+    return {
+      statusCode: 201,
+      body: JSON.stringify(createdVacationRequest)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: `Failed to create vacation request entry ${error}`
     }
-
-    const { personId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt, updatedBy} = event.body;
-
-    if (!personId || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: "Some required data is missing !" })
-        };
-    }
-
-    const newVacationRequestId = uuidv4();
-
-    try {
-        const createdVacationRequest = await vacationRequestService.createVacationRequest({
-            id: newVacationRequestId,
-            personId: personId,
-            draft: draft,
-            startDate: startDate,
-            endDate: endDate,
-            days: days,
-            type: type,
-            status: status,
-            message: message,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy
-        });
-
-        return {
-            statusCode: 201,
-            body: JSON.stringify(createdVacationRequest)
-        };
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: `Failed to create vacation request entry ${error}`
-        }
-    }
+  }
 };
 
 export const main = middyfy(createVacationRequestHandler);

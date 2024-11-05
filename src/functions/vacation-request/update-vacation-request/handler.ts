@@ -1,7 +1,7 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { vacationRequestService } from "src/database/services";
-import type VacationRequestModel from "src/database/models/vacationRequest";
+import VacationRequestModel from "src/database/models/vacationRequest";
 import type vacationRequestSchema from "src/schema/vacationRequest";
 
 /**
@@ -19,6 +19,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     endDate,
     days,
     type,
+    status,
     message,
     createdBy,
     createdAt,
@@ -29,11 +30,11 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
   if (!id) {
     return {
       statusCode: 400,
-      body: "Bad request, missing id"
+      body: "Bad vacation request, missing id"
     };
   }
 
-  if(!personId || !draft || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
+  if(!personId || !draft || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
     return {
       statusCode: 400,
       body: "Invalid body"
@@ -48,14 +49,15 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     };
   }
 
-  const vacationRequestUpdates: VacationRequestModel = {
+  const vacationRequestUpdates = {
     id: existingVacationRequest.id,
-    personId: personId,
+    personId: existingVacationRequest.personId,
     draft: draft ? draft : false,
     startDate: startDate,
     endDate: endDate,
     days: days,
     type: type,
+    status: status,
     message: message,
     createdBy: existingVacationRequest.createdBy,
     createdAt: existingVacationRequest.createdAt,
