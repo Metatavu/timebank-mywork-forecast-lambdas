@@ -8,7 +8,8 @@
     "test:coveralls": "jest --coverage && coveralls < coverage/lcov.info",
     "lint": "eslint ./src --ext .ts",
     "postinstall": "npm run build-client",
-    "build-client": "openapi-generator-cli generate -i time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node"
+    "build-client": "openapi-generator-cli generate -i time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node",
+    "sync-secrets": "vault kv get -format json -mount=$(cat .vault-mount) \"home-lambdas\"|jq -r '.data.data | to_entries[] | \"\\(.key)=\\(.value)\"' > .env"
   },
   "engines": {
     "node": ">=14.15.0"

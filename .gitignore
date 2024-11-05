@@ -16,3 +16,4 @@ generated/
 .dccache
 
 /coverage
+.vault-mount
