@@ -5,15 +5,15 @@ import { Type } from "@sinclair/typebox";
  */
 
 const vacationRequestSchema = Type.Object({
-    draft: Type.Boolean(),
-    startDate: Type.String(),
-    endDate: Type.String(),
-    days: Type.Number(),
-    type: Type.String(),
-    message: Type.String(),
-    createdBy: Type.String(),
-    createdAt: Type.String(),
-    updatedAt: Type.String(),
+  draft: Type.Boolean(),
+  startDate: Type.String(),
+  endDate: Type.String(),
+  days: Type.Number(),
+  type: Type.String(),
+  message: Type.String(),
+  createdBy: Type.String(),
+  createdAt: Type.String(),
+  updatedAt: Type.String(),
 });
 
 export default vacationRequestSchema;
