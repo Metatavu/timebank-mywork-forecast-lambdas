@@ -1,6 +1,6 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
-import { getFile, getFiles, getFileText, getFolderId, generateSummary, createDocxSummary } from "src/database/services/google-api-service";
+import { getFile, getFiles, getFileText, getFolderId, generateSummary, createDocSummary } from "src/database/services/google-api-service";
 import { middyfy } from "src/libs/lambda";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 
@@ -29,7 +29,7 @@ const getSummaryMemoPdf = async (date: DateTime, fileId: string) => {
     const summaryText = await generateSummary(fileToGenerateSummary);
 
     await SlackUtilities.postSummaryToChannel(summaryText, file.name);
-    await createDocxSummary(summaryText, folderId, fileToGenerateSummary)
+    await createDocSummary(summaryText, folderId, fileToGenerateSummary)
     return summaryText;
   } catch (error) {
     console.error(error);
@@ -41,20 +41,19 @@ const getSummaryMemoPdf = async (date: DateTime, fileId: string) => {
  * 
  * @param event event
  */
-const getSummaryMemoPdfHandler: APIGatewayProxyHandler = async (event: any) => {
+const getSummaryMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const {queryStringParameters} = event;
 
   if (!queryStringParameters && !queryStringParameters?.fileId && !queryStringParameters?.date) {
     return  {
       statusCode: 400,
-      body: 'Missing parameters'
+      body: "Missing parameters"
     };
   }
   
   const summaryText =  await getSummaryMemoPdf(DateTime.fromISO(queryStringParameters.date), queryStringParameters.fileId);
-  const splittedText = summaryText.split(/\r\n\r\n\r\n/);
-  console.log(splittedText[0])
-  
+  const paragraphSeparator = /\r\n\r\n\r\n/;
+  const splittedText = summaryText.split(paragraphSeparator);
   if (summaryText) 
     return {
       statusCode: 200,
@@ -62,7 +61,7 @@ const getSummaryMemoPdfHandler: APIGatewayProxyHandler = async (event: any) => {
     }
   return {
     statusCode: 404,
-    body: 'File not found'
+    body: "File not found"
   }
 };
 

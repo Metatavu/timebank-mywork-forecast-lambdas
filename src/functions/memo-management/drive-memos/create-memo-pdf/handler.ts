@@ -31,7 +31,7 @@ export const uploadGoogleFileHandler: APIGatewayProxyHandler = async () => {
     console.error("Error upoading pdf:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to upload PDFs.', details: error.message }),
+      body: JSON.stringify({ error: "Failed to upload PDFs", details: error.message }),
     };
   }
 };

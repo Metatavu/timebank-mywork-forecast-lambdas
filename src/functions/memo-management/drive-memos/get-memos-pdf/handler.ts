@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
 import { PdfFile } from "src/database/schemas/google";
 import { getFiles, getFilesContentPdf } from "src/database/services/google-api-service";
@@ -17,7 +17,7 @@ const listMemoPdf = async (date: DateTime): Promise<PdfFile[]> => {
     const pdfContent = await getFilesContentPdf(files);
     return pdfContent;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return [];
   }
 }
@@ -27,13 +27,13 @@ const listMemoPdf = async (date: DateTime): Promise<PdfFile[]> => {
  * 
  * @param event event
  */
-const listMemoPdfHandler: APIGatewayProxyHandler = async (event: any) => {
+const listMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const {queryStringParameters} = event;
 
   if (!queryStringParameters?.date) {
     return  {
       statusCode: 400,
-      body: 'Missing parameters'
+      body: "Missing parameters"
     };
   }
 

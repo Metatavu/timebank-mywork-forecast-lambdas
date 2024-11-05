@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
 import { createPdfFile, getFile, getFileContentPdf, getFiles, getFolderId, getTranslatedPdf } from "src/database/services/google-api-service";
 import { middyfy } from "src/libs/lambda";
@@ -35,13 +35,13 @@ import { middyfy } from "src/libs/lambda";
  * 
  * @param event event
  */
-export const getTranslatedMemoPdfHandler: APIGatewayProxyHandler = async (event: any) => {
+export const getTranslatedMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const {queryStringParameters} = event;
 
   if (!queryStringParameters || !queryStringParameters?.date && !queryStringParameters?.fileId) {
     return  {
       statusCode: 400,
-      body: 'Missing parameters'
+      body: "Missing parameters"
     };
   }
   
@@ -54,7 +54,7 @@ export const getTranslatedMemoPdfHandler: APIGatewayProxyHandler = async (event:
     }
   return {
     statusCode: 404,
-    body: 'File not found'
+    body: "File not found"
   }
 };
 

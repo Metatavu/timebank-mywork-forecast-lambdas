@@ -7,7 +7,7 @@ import { middyfy } from "src/libs/lambda";
  * 
  * @returns JSON responce
  */
-const getCardsOnListHandler: APIGatewayProxyHandler = async () => {
+const getTrelloCardsOnListHandler: APIGatewayProxyHandler = async () => {
   try {
     const trello = new TrelloService();
     const cards = await trello.getCardsOnList();
@@ -29,12 +29,12 @@ const getCardsOnListHandler: APIGatewayProxyHandler = async () => {
       body: JSON.stringify(cardsParsed),
     };
   } catch (error) {
-    console.error("Error fetching cards:", error);
+    console.error("Error fetching trello cards:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to fetch cards.", details: error.message }),
+      body: JSON.stringify({ error: "Failed to fetch trello cards.", details: error.message }),
     };
   }
 };
 
-export const main = middyfy(getCardsOnListHandler);
+export const main = middyfy(getTrelloCardsOnListHandler);

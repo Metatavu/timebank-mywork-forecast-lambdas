@@ -33,16 +33,17 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
-import listMemoPdfHandler from "src/functions/memo-management/drive-memos/get-memos-pdf";
-import getTranslatedMemoPdfHandler from "src/functions/memo-management/drive-memos/get-translated-memo-pdf";
-import getSummaryMemoPdfHandler from "src/functions/memo-management/drive-memos/get-summary-memo-pdf";
-import uploadGoogleFileHandler from "src/functions/memo-management/drive-memos/create-memo-pdf";
-import sendNotificationHandler from "@functions/meta-assistant/send-card-notification";
-import getCardsOnListHandler from "src/functions/memo-management/trello-cards/get-cards";
-import getBoardMembersHandler from "src/functions/memo-management/trello-cards/get-board-members";
-import deleteCardHandler from "src/functions/memo-management/trello-cards/delete-card";
-import createCardHandler from "src/functions/memo-management/trello-cards/create-card";
-import createCommentHandler from "src/functions/memo-management/trello-cards/comment-card";
+import listMemoPdfHandler from "@/functions/memo-management/drive-memos/get-memos-pdf";
+import getTranslatedMemoPdfHandler from "@/functions/memo-management/drive-memos/get-translated-memo-pdf";
+import getSummaryMemoPdfHandler from "@/functions/memo-management/drive-memos/get-summary-memo-pdf";
+import uploadGoogleFileHandler from "@/functions/memo-management/drive-memos/create-memo-pdf";
+import sendNotificationHandler from "@/functions/memo-management/trello-cards/send-trello-card-notification";
+import registerTrelloWebhook from "@/functions/memo-management/trello-cards/register-trello-webhook";
+import getTrelloCardsOnListHandler from "@/functions/memo-management/trello-cards/get-trello-cards";
+import getBoardMembersHandler from "@/functions/memo-management/trello-cards/get-board-members";
+import deleteTrelloCardHandler from "@/functions/memo-management/trello-cards/delete-trello-card";
+import createTrelloCardHandler from "@/functions/memo-management/trello-cards/create-trello-card";
+import createCommentHandler from "@/functions/memo-management/trello-cards/comment-trello-card";
 
 const isLocal = process.env.STAGE === "local";
 
@@ -191,11 +192,12 @@ const serverlessConfiguration: AWS = {
     getTranslatedMemoPdfHandler,
     getSummaryMemoPdfHandler,
     sendNotificationHandler,
-    getCardsOnListHandler,
+    getTrelloCardsOnListHandler,
     getBoardMembersHandler,
-    deleteCardHandler,
-    createCardHandler,
+    deleteTrelloCardHandler,
+    createTrelloCardHandler,
     createCommentHandler,
+    registerTrelloWebhook,
   },
   package: { individually: true },
   custom: {

@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 export class TrelloService {
   private readonly apiKey = process.env.TRELLO_API_KEY;
   private readonly apiToken = process.env.TRELLO_TOKEN;
-  private readonly baseUrl = 'https://api.trello.com/1';
+  private readonly baseUrl = "https://api.trello.com/1";
   private readonly boardId = process.env.TRELLO_MANAGEMENT_BOARD_ID;
 
   /**
@@ -16,7 +16,7 @@ export class TrelloService {
    */
   public async getBoardList(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/members/me/boards?key=${this.apiKey}&token=${this.apiToken}`, {
-      method: 'GET',
+      method: "GET",
     });
     
     if (!response.ok) {
@@ -37,9 +37,9 @@ export class TrelloService {
   public async createCard(title: string, description?: string): Promise<any> {
     const listId = await this.getListIdByName("Memo");
     const response = await fetch(`${this.baseUrl}/cards?key=${this.apiKey}&token=${this.apiToken}`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         idList: listId,
@@ -68,8 +68,8 @@ export class TrelloService {
         const url = `${this.baseUrl}/cards/${card.id}/actions?filter=commentCard&key=${this.apiKey}&token=${this.apiToken}`;
 
         const response = await fetch(url, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         });
 
         const comments = (await response.json()).map(comment => ({
@@ -91,9 +91,9 @@ export class TrelloService {
    */
   public async createComment(comment: string, cardId: string): Promise<any> {
     const response = await fetch(`${this.baseUrl}/cards/${cardId}/actions/comments?text=${comment}&key=${this.apiKey}&token=${this.apiToken}`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         text: comment
@@ -116,9 +116,9 @@ export class TrelloService {
    */
   public async deleteCard(cardId: string): Promise<any> {
     const response = await fetch(`${this.baseUrl}/cards/${cardId}?key=${this.apiKey}&token=${this.apiToken}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         id: cardId
@@ -140,7 +140,7 @@ export class TrelloService {
    */
   public async getListsOnBoard(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/boards/${this.boardId}/lists?key=${this.apiKey}&token=${this.apiToken}`, {
-      method: 'GET',
+      method: "GET",
     });
     if (!response.ok) throw new Error(`Failed to fetch lists: ${response.status} - ${response.statusText}`);
     return response.json();
@@ -157,8 +157,8 @@ export class TrelloService {
     const url = `${this.baseUrl}/lists/${listId}/cards?key=${this.apiKey}&token=${this.apiToken}`;
     
     const response = await fetch(url, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
     });
     return await response.json();
   }
@@ -181,7 +181,7 @@ export class TrelloService {
    */
   public async getBoardMembers(): Promise<string[]> {
     const response = await fetch(`${this.baseUrl}/boards/${this.boardId}/members?key=${this.apiKey}&token=${this.apiToken}`, {
-      method: 'GET',
+      method: "GET",
     });
 
     if (!response.ok) {
@@ -189,7 +189,7 @@ export class TrelloService {
     }
     const members = await response.json();
     const emails = members.map((member: any) => {
-      const fullName = member.fullName.toLowerCase().split(' ');
+      const fullName = member.fullName.toLowerCase().split(" ");
       const [name, surname] = fullName;
       return {
         memberId: member.id,

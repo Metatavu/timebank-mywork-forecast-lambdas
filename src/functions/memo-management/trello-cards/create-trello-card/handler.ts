@@ -1,6 +1,14 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { TrelloService } from "src/database/services/trello-api-service";
 import { middyfy } from "src/libs/lambda";
+
+/**
+ * Interface for JSON body trello card data
+ */
+interface EventBody {
+  title?: string,
+  description?: string
+}
 
 /**
  * Handler for card creation
@@ -8,9 +16,9 @@ import { middyfy } from "src/libs/lambda";
  * @param event event
  * @returns JSON responce
  */
-const createCardHandler: APIGatewayProxyHandler = async (event: any) => {
+const createTrelloCardHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-    const { body } = event;
+    const body = event.body as EventBody;
 
     if (!body?.title && !body?.description) {
       return {
@@ -18,7 +26,7 @@ const createCardHandler: APIGatewayProxyHandler = async (event: any) => {
         body: JSON.stringify({ error: "Missing required parameters" })
       };
     } 
-      
+
     const trello = new TrelloService();
     const newCard = await trello.createCard(body.title, body.description);
 
@@ -32,12 +40,12 @@ const createCardHandler: APIGatewayProxyHandler = async (event: any) => {
     };
 
   } catch (error) {
-    console.error("Error creating card:", error);
+    console.error("Error creating trello card:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to create card.', details: error.message }),
+      body: JSON.stringify({ error: "Failed to create trello card.", details: error.message }),
     };
   }
 };
 
-export const main = middyfy(createCardHandler);
+export const main = middyfy(createTrelloCardHandler);

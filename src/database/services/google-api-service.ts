@@ -1,6 +1,6 @@
-import { drive_v3, google } from 'googleapis';
-import { File, PdfFile } from '../schemas/google';
-import { Readable } from 'stream';
+import { drive_v3, google } from "googleapis";
+import { File, PdfFile } from "../schemas/google";
+import { Readable } from "stream";
 import {streamToBuffer, getYearAndMonth} from "../../libs/file-utils";
 import fetch from "node-fetch";
 
@@ -14,16 +14,21 @@ const folderId = process.env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID;
  * @returns Google Authentication 
  */
 const getGoogleAuth = async () => {
-  return new google.auth.JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL!,
-    keyId: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID!,
-    key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/g, "\n"),
-    scopes: [
-      "https://www.googleapis.com/auth/documents",
-      "https://www.googleapis.com/auth/drive",
-      "https://www.googleapis.com/auth/cloud-translation"
-    ],
-  });
+  try {
+    return new google.auth.JWT({
+      email: process.env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
+      keyId: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
+      key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/g, "\n"),
+      scopes: [
+        "https://www.googleapis.com/auth/documents",
+        "https://www.googleapis.com/auth/drive",
+        "https://www.googleapis.com/auth/cloud-translation"
+      ],
+    });
+  } catch (error) {
+    console.error("Error initializing Google Authentication:", error);
+    throw error;
+  }
 }
 
 /**
@@ -33,7 +38,7 @@ const getGoogleAuth = async () => {
  */
 const getDriveService = async () => {
   const auth = await getGoogleAuth();
-  return google.drive({ version: 'v3', auth });
+  return google.drive({ version: "v3", auth });
 }
 
 /**
@@ -43,7 +48,7 @@ const getDriveService = async () => {
  */
 const getDocsService = async () => {
   const auth = await getGoogleAuth(); 
-  return google.docs({ version: 'v1', auth });
+  return google.docs({ version: "v1", auth });
 }
 
 /**
@@ -54,20 +59,31 @@ const getDocsService = async () => {
  * @returns folder ID of month folder
  */
 export const getFolderId = async (year: string, month: string): Promise<string> => {
-  const drive = await getDriveService();
+  try {
+    const drive = await getDriveService();
 
-  const yearFolderId = (await drive.files.list({
-    q: `'${folderId}' in parents and name = '${year}' and mimeType = 'application/vnd.google-apps.folder'`,
-    fields: 'files(id)'
-  })).data?.files[0]?.id;
-  if (!yearFolderId) return "";
+    const yearFolderId = (await drive.files.list({
+      q: `${folderId}" in parents and name = "${year}" and mimeType = "application/vnd.google-apps.folder"`,
+      fields: "files(id)"
+    })).data?.files[0]?.id;
+    if (!yearFolderId) {
+      console.error(`Year folder not found for year: ${year}`);
+      return null;
+    }
 
-  const monthFolderId = (await drive.files.list({
-    q: `'${yearFolderId}' in parents and name = '${month}' and mimeType = 'application/vnd.google-apps.folder'`,
-    fields: 'files(id)'
-  })).data?.files[0]?.id;
-
-  return monthFolderId;
+    const monthFolderId = (await drive.files.list({
+      q: `"${yearFolderId}" in parents and name = "${month}" and mimeType = "application/vnd.google-apps.folder"`,
+      fields: "files(id)"
+    })).data?.files[0]?.id;
+    if (!monthFolderId) {
+      console.error(`Month folder not found for year: ${year}, month: ${month}`);
+      return null;
+    }
+    return monthFolderId;
+  } catch (error) {
+    console.error(`Error retrieving folder ID for year: ${year}, month: ${month}`, error);
+    return null;
+  }
 }
 
 /**
@@ -76,14 +92,17 @@ export const getFolderId = async (year: string, month: string): Promise<string> 
  * @returns array of File objects
  */ 
 export const getBaseFolderFiles = async (): Promise<File[]> => {
-  const drive = await getDriveService();
-
-  const files: File[] = (await drive.files.list({
-    q: `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.document'`,
-    fields: 'files(id, name, mimeType)'
-  })).data?.files;
-
-  return files;
+  try {
+    const drive = await getDriveService();
+    const files: File[] = (await drive.files.list({
+      q: `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.document'`,
+      fields: 'files(id, name, mimeType)'
+    })).data?.files;
+    return files;
+  } catch (error) {
+    console.error("Error retrieving base folder files:", error);
+    throw error;
+  }
 }
 
 /**
@@ -95,20 +114,22 @@ export const getBaseFolderFiles = async (): Promise<File[]> => {
  * @returns array of File objects
  */
 export const getFiles = async (year?: string, month?: string, mimeType: string = "application/pdf"): Promise<File[]> => {
-  const drive = await getDriveService();
-
-  if (!year && !month) {
-    return await getBaseFolderFiles();
+  try {
+    const drive = await getDriveService();
+    if (!year && !month) {
+      return await getBaseFolderFiles();
+    }
+    const monthFolderId = await getFolderId(year, month);
+    if (!monthFolderId) return [];
+    const files: File[] = (await drive.files.list({
+      q: `"${monthFolderId}" in parents and mimeType = "${mimeType}"`,
+      fields: "files(id, name, mimeType)"
+    })).data?.files;
+    return files;
+  } catch (error) {
+    console.error(`Error retrieving files for year: ${year}, month: ${month}`, error);
+    throw error;
   }
-  const monthFolderId = await getFolderId(year, month);
-
-  if (!monthFolderId) return [];
-  const files: File[] = (await drive.files.list({
-    q: `'${monthFolderId}' in parents and mimeType = '${mimeType}'`,
-    fields: 'files(id, name, mimeType)'
-  })).data?.files;
-
-  return files;
 }
 
 /**
@@ -118,14 +139,17 @@ export const getFiles = async (year?: string, month?: string, mimeType: string =
  * @returns file's metadata
  */
 export const getFile = async (id: string): Promise<File | undefined> => {
-  const drive = await getDriveService();
-
-  const file = (await drive.files.get({
-    fileId: id,
-    fields: 'id, name, mimeType',
-  }))?.data;
-  
-  return file;
+  try {
+    const drive = await getDriveService();
+    const file = (await drive.files.get({
+      fileId: id,
+      fields: "id, name, mimeType",
+    }))?.data;
+    return file;
+  } catch (error) {
+    console.error(`Error retrieving file with ID: ${id}`, error);
+    throw error;
+  }
 }
 
 /**
@@ -135,13 +159,17 @@ export const getFile = async (id: string): Promise<File | undefined> => {
  * @returns file's content
  */
 export const getFileText = async (file: File): Promise<string> => {
-  const drive = await getDriveService();
-
-  const text = await drive.files.export({
-    fileId: file.id,
-    mimeType: 'text/plain'
-  }).then(res => res.data);
-  return text as string;
+  try {
+    const drive = await getDriveService();
+    const text = await drive.files.export({
+      fileId: file.id,
+      mimeType: "text/plain"
+    }).then(res => res.data);
+    return text as string;
+  } catch (error) {
+    console.error(`Error retrieving text content of file: ${file.id}`, error);
+    throw error;
+  }
 }
 
 /**
@@ -155,16 +183,16 @@ export const generateSummary = async (file: File): Promise<string> => {
   try {
     const text = await drive.files.export({
       fileId: file.id,
-      mimeType: 'text/plain'
+      mimeType: "text/plain"
     }).then(res => res.data);
 
-    const url = 'https://api.openai.com/v1/chat/completions';
+    const url = "https://api.openai.com/v1/chat/completions";
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${openaiKey}`,
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${openaiKey}`,
     };
-    const summurizeInEn = `Generate a summary for the following document in English: ${text}`;
-    const summurizeInFi =  `Generate a summary for the following document in Finnish: ${text}`;
+    const summarizeInEn = `Generate a summary for the following document in English: ${text}`;
+    const summarizeInFi =  `Generate a summary for the following document in Finnish: ${text}`;
     const body = (content) => JSON.stringify({
       model: "gpt-4",
       messages: [
@@ -174,20 +202,20 @@ export const generateSummary = async (file: File): Promise<string> => {
     });
 
     const englishSummary = (await (await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: headers,
-      body : body(summurizeInEn)
+      body : body(summarizeInEn)
     })).json()).choices[0].message.content;
 
     const finnishSummary = (await (await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: headers,
-      body : body(summurizeInFi)
+      body : body(summarizeInFi)
     })).json()).choices[0].message.content;
     return englishSummary + "\n\n" + finnishSummary;
   } catch (error) {
-    console.error('Error generating description:', error);
-    throw new Error('Failed to generate description');
+    console.error("Error generating description:", error);
+    throw new Error("Failed to generate description");
   }
 }
 
@@ -198,36 +226,38 @@ export const generateSummary = async (file: File): Promise<string> => {
  * @param folderId folder ID
  * @param file File metadata
  */
-export const createDocxSummary = async (text: string, folderId: string, file: File) => {
-  const docs = await getDocsService();
-  const drive = await getDriveService();
-  const docResponse = await docs.documents.create({
-    requestBody: {
-      title: `summary_${file.name}`,
-    },
-  });
-  const documentId = docResponse.data.documentId;
-  
-  await drive.files.update({
-    fileId: documentId,
-    addParents: folderId,   
-    removeParents: "",      
-    fields: "id, parents",
-  });
+export const createDocSummary = async (text: string, folderId: string, file: File) => {
+  try {
+    const docs = await getDocsService();
+    const drive = await getDriveService();
+    const docResponse = await docs.documents.create({
+      requestBody: { title: `summary_${file.name}` },
+    });
+    const documentId = docResponse.data.documentId;
+    await drive.files.update({
+      fileId: documentId,
+      addParents: folderId,   
+      removeParents: "",      
+      fields: "id, parents",
+    });
 
-  await docs.documents.batchUpdate({
-    documentId: documentId,
-    requestBody: {
-      requests: [
-        {
-          insertText: {
-            location: { index: 1 }, 
-            text: text,
+    await docs.documents.batchUpdate({
+      documentId: documentId,
+      requestBody: {
+        requests: [
+          {
+            insertText: {
+              location: { index: 1 }, 
+              text: text,
+            },
           },
-        },
-      ],
-    },
-  });
+        ],
+      },
+    });
+  } catch (error) {
+    console.error(`Error creating document summary for file: ${file.id}`, error);
+    throw error;
+  }
 }
 
 /**
@@ -242,9 +272,9 @@ export const getFileContentPdf = async (file: File, usedDrive?: drive_v3.Drive):
   try {
     const response = await drive.files.get({
       fileId: file.id,
-      alt: 'media',
+      alt: "media",
     },
-    { responseType: 'stream'}
+    { responseType: "stream"}
     )
     if (!response) {
       throw new Error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
@@ -256,8 +286,8 @@ export const getFileContentPdf = async (file: File, usedDrive?: drive_v3.Drive):
       content: pdfBuffer
     }
   } catch (error) {
-    console.error('Error loading the PDF:', error);
-    throw new Error('Failed to load PDF');
+    console.error("Error loading the PDF:", error);
+    throw new Error("Failed to load PDF");
   } 
 }
 
@@ -287,17 +317,22 @@ export const getFilesContentPdf = async (files: File[]): Promise<PdfFile[]> => {
  * @returns ID of folders
  */
 const getOrCreateFolder = async (drive: any, folderName: string, parentFolderId: string): Promise<string> => {
-  const response = await drive.files.list({
-    q: `'${parentFolderId}' in parents and name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
-    fields: 'files(id, name)',
-  });
-  if (response.data.files && response.data.files.length > 0) {
-    return response.data.files[0].id;
-  } else {
-    const folder = await drive.files.create({
-      requestBody: { name: folderName, mimeType: 'application/vnd.google-apps.folder', parents: [parentFolderId] }
+  try {
+    const response = await drive.files.list({
+      q: `"${parentFolderId}" in parents and name="${folderName}" and mimeType="application/vnd.google-apps.folder"`,
+      fields: "files(id, name)",
     });
-    return folder.data.id;
+    if (response.data.files && response.data.files.length > 0) {
+      return response.data.files[0].id;
+    } else {
+      const folder = await drive.files.create({
+        requestBody: { name: folderName, mimeType: "application/vnd.google-apps.folder", parents: [parentFolderId] }
+      });
+      return folder.data.id;
+    }
+  } catch (error) {
+    console.error(`Error getting or creating folder: ${folderName} under parent ID: ${parentFolderId}`, error);
+    throw error;
   }
 }
 
@@ -310,15 +345,17 @@ const getOrCreateFolder = async (drive: any, folderName: string, parentFolderId:
  * @returns object of file IDs
  */
 const checkExistingFile = async (drive: any, folderId: string, fileName: string): Promise<{ id: string } | null> => {
-  const response = await drive.files.list({
-    q: `'${folderId}' in parents and name='${fileName}' and mimeType='application/pdf'`,
-    fields: 'files(id, name)'
-  });
-  const files = response.data.files;
-
-  return files && files.length > 0
-    ? { id: files[0].id }
-    : null;
+  try {
+    const response = await drive.files.list({
+      q: `"${folderId}" in parents and name="${fileName}" and mimeType="application/pdf"`,
+      fields: "files(id, name)"
+    });
+    const files = response.data.files;
+    return files && files.length > 0 ? { id: files[0].id } : null;
+  } catch (error) {
+    console.error(`${fileName} doesn't exist in folder ID: ${folderId}`, error);
+    throw error;
+  }
 }
 
 /**
@@ -329,11 +366,16 @@ const checkExistingFile = async (drive: any, folderId: string, fileName: string)
  * @param responseType type of response
  * @returns file content
  */
-const fetchFileContent = async (fileId: string, mimeType: string, responseType: 'stream' | 'text' = 'stream'): Promise<any> => {
-  const drive = await getDriveService();
-  const response = await drive.files.export({ fileId, mimeType }, { responseType });
-  if (!response) throw new Error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
-  return response.data
+const fetchFileContent = async (fileId: string, mimeType: string, responseType: "stream" | "text" = "stream"): Promise<any> => {
+  try {
+    const drive = await getDriveService();
+    const response = await drive.files.export({ fileId, mimeType }, { responseType });
+    if (!response) throw new Error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching file content for file ID: ${fileId}`, error);
+    throw error;
+  }
 }
 
 /**
@@ -350,17 +392,17 @@ export const uploadDocsContentAsPdf = async (file: File): Promise<any> => {
     const monthFolderId = await getOrCreateFolder(drive, monthName, yearFolderId);;
     const existingFile = await checkExistingFile(drive, monthFolderId, `${file.name}.pdf`);
 
-    const fileContent = await fetchFileContent(file.id, 'application/pdf', 'stream');
+    const fileContent = await fetchFileContent(file.id, "application/pdf", "stream");
     if (existingFile) {
       await drive.files.update({
         fileId: existingFile.id,
-        requestBody: { name: `${file.name}.pdf`, mimeType: 'application/pdf' },
-        media: { mimeType: 'application/pdf', body: fileContent },
+        requestBody: { name: `${file.name}.pdf`, mimeType: "application/pdf" },
+        media: { mimeType: "application/pdf", body: fileContent },
         });
     } else {
       await drive.files.create({
-        requestBody: { name: `${file.name}.pdf`, mimeType: 'application/pdf', parents: [monthFolderId] },
-        media: { mimeType: 'application/pdf', body: fileContent }
+        requestBody: { name: `${file.name}.pdf`, mimeType: "application/pdf", parents: [monthFolderId] },
+        media: { mimeType: "application/pdf", body: fileContent }
       });
     }
   } catch (error) {
@@ -375,60 +417,59 @@ export const uploadDocsContentAsPdf = async (file: File): Promise<any> => {
  * @returns PDF with translated content
  */
 export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
-  const accessToken = (await (await getGoogleAuth()).authorize()).access_token;
+  try {
+    const accessToken = (await (await getGoogleAuth()).authorize()).access_token;
+    const content = pdfFile.content.toString("base64");
+    const translatedFileName = `translated_${pdfFile.name}`;
+    const url = `https://translation.googleapis.com/v3/projects/${projectId}/locations/us-central1:translateDocument`;
 
-  const content = pdfFile.content.toString('base64');
-  const translatedFileName = `translated_${pdfFile.name}`;
-  const url = `https://translation.googleapis.com/v3/projects/${projectId}/locations/us-central1:translateDocument`
-
-  const detectFileLanguage = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({
-      target_language_code: "fi",
-      document_input_config: {
-        mimeType: "application/pdf",
-        content: content
+    const detectFileLanguage = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        target_language_code: "fi",
+        document_input_config: {
+          mimeType: "application/pdf",
+          content: content
+        }
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       }
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`
+    });
+    const result = await detectFileLanguage.json();
+    const detectedLanguage = result.documentTranslation.detectedLanguageCode;
+    if (detectedLanguage == "en") {
+      const translatedContent = result.documentTranslation.byteStreamOutputs[0];
+      const bufferData = Buffer.from(translatedContent, "base64");
+      return { id: "", name: translatedFileName, content: bufferData };
     }
-  });
-  const result = await detectFileLanguage.json();
-  const detectedLanguage = result.documentTranslation.detectedLanguageCode;
-  if (detectedLanguage == 'en') {
-    const translatedContent = result.documentTranslation.byteStreamOutputs[0];
-    const bufferData = Buffer.from(translatedContent, 'base64')
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        source_language_code: "fi",
+        target_language_code: "en",
+        document_input_config: {
+          mimeType: "application/pdf",
+          content: content
+        }
+      }),
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+    const responseJs = await response.json();
+    const translatedContent = responseJs.documentTranslation.byteStreamOutputs[0];
+    const bufferData = Buffer.from(translatedContent, "base64");
     return {
       id: "",
       name: translatedFileName,
       content: bufferData
-    }
-  }
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(
-    {
-      source_language_code: "fi",
-      target_language_code: "en",
-      document_input_config: {
-        mimeType: "application/pdf",
-        content: content
-      }
-    }),
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`
-      }
-  });
-  const responseJs = await response.json()
-  const translatedContent = responseJs.documentTranslation.byteStreamOutputs[0];
-  const bufferData = Buffer.from(translatedContent, 'base64')
-  return {
-    id: "",
-    name: translatedFileName,
-    content: bufferData
+    };
+  } catch (error) {
+    console.error(`Failed to translate PDF content for file: ${pdfFile.name}`, error);
+    throw error;
   }
 }
 
@@ -440,17 +481,22 @@ export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
  * @returns ID of files
  */
 export const createPdfFile = async (pdfFile: PdfFile, folderId: string) => {
-  const drive = await getDriveService();
-  const response = await drive.files.create({
-    requestBody: {
-      name: pdfFile.name,
-      mimeType: 'application/pdf',
-      parents: [folderId]
-    },
-    media: {
-      mimeType: 'application/pdf',
-      body: Readable.from(pdfFile.content)
-    }
-  });
-  return response.data.id;
+  try {
+    const drive = await getDriveService();
+    const response = await drive.files.create({
+      requestBody: {
+        name: pdfFile.name,
+        mimeType: "application/pdf",
+        parents: [folderId]
+      },
+      media: {
+        mimeType: "application/pdf",
+        body: Readable.from(pdfFile.content)
+      }
+    });
+    return response.data.id;
+  } catch (error) {
+    console.error(`Failed to create PDF file: ${pdfFile.name} in folder ID: ${folderId}`, error);
+    throw error;
+  }
 }

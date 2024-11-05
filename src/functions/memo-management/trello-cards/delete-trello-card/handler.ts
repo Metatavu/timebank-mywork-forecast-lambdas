@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { TrelloService } from "src/database/services/trello-api-service";
 import { middyfy } from "src/libs/lambda";
 
@@ -8,14 +8,14 @@ import { middyfy } from "src/libs/lambda";
  * @param event event
  * @returns JSON responce
  */
-const deleteCardHandler: APIGatewayProxyHandler = async (event) => {
+const deleteTrelloCardHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
     const { id } = event.pathParameters || {};
 
     if (!id) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing required parameters' }),
+        body: JSON.stringify({ error: "Missing required parameters" }),
       };
     }
     
@@ -27,12 +27,12 @@ const deleteCardHandler: APIGatewayProxyHandler = async (event) => {
       body: JSON.stringify({ message: "Card deleted successfully", result }),
     };
   } catch (error) {
-    console.error("Error deleting card:", error);
+    console.error("Error deleting trello card:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to delete card.", details: error.message }),
+      body: JSON.stringify({ error: "Failed to delete trello card.", details: error.message }),
     };
   }
 };
 
-export const main = middyfy(deleteCardHandler);
+export const main = middyfy(deleteTrelloCardHandler);

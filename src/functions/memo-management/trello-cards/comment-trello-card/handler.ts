@@ -1,6 +1,14 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { TrelloService } from "src/database/services/trello-api-service";
 import { middyfy } from "src/libs/lambda";
+
+/**
+ * Interface for JSON body Trello card data
+ */
+interface EventBody {
+  cardId?: string,
+  comment?: string
+}
 
 /**
  * Handler for creating a comment on a Trello card
@@ -8,9 +16,9 @@ import { middyfy } from "src/libs/lambda";
  * @param event event
  * @returns JSON response
  */
-const createCommentHandler: APIGatewayProxyHandler = async (event: any) => {
+const createCommentHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-    const { body } = event;
+    const body = event.body as EventBody;
 
     if (!body?.cardId && !body?.comment) {
       return {
@@ -30,10 +38,10 @@ const createCommentHandler: APIGatewayProxyHandler = async (event: any) => {
       })
     };
   } catch (error) {
-    console.error("Error creating comment:", error);
+    console.error("Error creating trello comment:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to create comment.", details: error.message }),
+      body: JSON.stringify({ error: "Failed to create trello comment.", details: error.message }),
     };
   }
 };

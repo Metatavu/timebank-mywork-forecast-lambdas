@@ -6,10 +6,7 @@ export default {
     {
       httpApi: {
         method: 'post',
-        path: '/send-memo-notification',
-        authorizer: {
-          name: "timebankKeycloakAuthorizer"
-        }
+        path: '/send-memo-notification'
       }
     }
   ],

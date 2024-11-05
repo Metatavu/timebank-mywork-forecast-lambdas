@@ -1,9 +1,10 @@
-import type { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult, NotificationMessageResult, ParsedBody } from "src/types/meta-assistant/index";
+import type { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/types/meta-assistant/index";
 import { type ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
 import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
 import MessageUtilities from "../generic/message-utils";
+import { NotificationMessageResult, ParsedBody } from "src/types/trello-notification";
 
 /**
  * Namespace for Slack utilities
