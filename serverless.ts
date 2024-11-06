@@ -126,33 +126,11 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
-          },
-          {
-            Effect: "Allow",
-            Action: [
-              "dynamodb:DescribeTable",
-              "dynamodb:Query",
-              "dynamodb:Scan",
-              "dynamodb:GetItem",
-              "dynamodb:PutItem",
-              "dynamodb:UpdateItem",
-              "dynamodb:DeleteItem",
-            ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires"
-          },
-          {
-            Effect: "Allow",
-            Action: [
-              "dynamodb:DescribeTable",
-              "dynamodb:Query",
-              "dynamodb:Scan",
-              "dynamodb:GetItem",
-              "dynamodb:PutItem",
-              "dynamodb:UpdateItem",
-              "dynamodb:DeleteItem",
-            ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/VacationRequests"
+            Resource: isLocal ? "*" : [
+              "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/VacationRequests"
+              ]
           }
         ]
       }

@@ -7,7 +7,6 @@ import { vacationRequestService } from "src/database/services";
  *
  * @param event event
  * @returns vacation request information as object
- *
  */
 const findVacationRequestHandler: APIGatewayProxyHandler = async(event: APIGatewayProxyEvent) => {
   const {id} = event.pathParameters || {};

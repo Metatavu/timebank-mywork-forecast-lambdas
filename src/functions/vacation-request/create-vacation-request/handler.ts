@@ -15,7 +15,7 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
   if (!event.body) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: "Vacation request body is required." })
+      body: JSON.stringify({ error: "Request body is required." })
     };
   }
 

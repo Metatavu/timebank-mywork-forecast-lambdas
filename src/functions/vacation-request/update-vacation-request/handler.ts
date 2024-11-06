@@ -30,7 +30,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
   if (!id) {
     return {
       statusCode: 400,
-      body: "Bad vacation request, missing id"
+      body: "Bad request, missing id"
     };
   }
 
