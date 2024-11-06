@@ -1,3 +1,4 @@
+import {VacationRequestStatuses} from "@generated/client/model/vacationRequestStatuses";
 
 /**
  * DynamoDB model for vacation request
@@ -10,7 +11,7 @@ interface VacationRequestModel {
   endDate: string;
   days: number;
   type: VacationType;
-  status: VacationRequestStatuses;
+  status: VacationRequestStatusesModel;
   message: string;
   createdBy: string;
   createdAt: string;
@@ -19,12 +20,13 @@ interface VacationRequestModel {
 }
 
 /**
- * Enumerator for the vacation request statuses
+ * DynamoDB model for vacation request status
  */
-enum VacationRequestStatuses {
-  PENDING = "PENDING",
-  APPROVED = "APPROVED",
-  REJECTED = "DECLINED"
+interface VacationRequestStatusesModel {
+  status: VacationRequestStatuses;
+  message: string;
+  createdBy: string;
+  updatedAt: Date;
 }
 
 /**
