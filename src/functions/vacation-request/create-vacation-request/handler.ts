@@ -3,7 +3,6 @@ import {vacationRequestService} from "src/database/services";
 import {v4 as uuidv4} from "uuid";
 import type {ValidatedEventAPIGatewayProxyEvent} from "src/libs/api-gateway";
 import type vacationRequestSchema from "src/schema/vacationRequest";
-import VacationRequestModel from "@database/models/vacationRequest";
 
 /**
  * Handler for creating a new vacation request entry in DynamoDB.
@@ -24,7 +23,7 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
   if (!personId || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: "Some required data is missing !" })
+      body: JSON.stringify({ error: "Invalid request body! Some data is missing!" })
     };
   }
 

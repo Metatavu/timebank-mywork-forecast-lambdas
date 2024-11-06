@@ -37,7 +37,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
   if(!personId || !draft || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
     return {
       statusCode: 400,
-      body: "Invalid body"
+      body: "Invalid request body! Some data is missing!"
     }
   }
 
@@ -57,7 +57,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     endDate: endDate,
     days: days,
     type: type,
-    status: status,
+    status: existingVacationRequest.status,
     message: message,
     createdBy: existingVacationRequest.createdBy,
     createdAt: existingVacationRequest.createdAt,
