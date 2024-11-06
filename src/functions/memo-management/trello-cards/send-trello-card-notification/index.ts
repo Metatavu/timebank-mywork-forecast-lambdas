@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'post',
-        path: '/send-memo-notification'
+        path: '/trello/send-memo-notification'
       }
     }
   ],

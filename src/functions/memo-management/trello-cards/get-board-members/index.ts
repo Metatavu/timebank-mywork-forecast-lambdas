@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'get',
-        path: '/board-members',
+        path: '/trello/board-members',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

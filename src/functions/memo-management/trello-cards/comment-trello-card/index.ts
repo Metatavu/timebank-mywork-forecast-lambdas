@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: 'post',
-        path: '/card-comments',
+        path: '/trello/card-comments',
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }
