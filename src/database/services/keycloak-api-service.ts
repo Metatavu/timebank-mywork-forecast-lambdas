@@ -1,14 +1,36 @@
-import type { User } from "../../types/keycloak/user";
 import fetch from "node-fetch";
 
+/**
+ * Interface for a KeycloakProfile. 
+ * 
+ * FIXME: This is from node_modules/keycloak-js/lib/keycloak.d.ts
+ *  This a temporary solution to avoid the error: "Cannot find module 'keycloak-js'"  
+ */
+export interface KeycloakProfile {
+  id?: string;
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  enabled?: boolean;
+  emailVerified?: boolean;
+  totp?: boolean;
+  createdTimestamp?: number;
+  attributes?: Record<string, unknown>;
+}
+/**
+ * Custom Interface for a user in keycloak functions with severaUserId added.
+ */
+export interface CustomKeycloakProfile extends KeycloakProfile {
+  severaUserId: string;
+}
 /**
  * Interface for a KeycloakApiService.
  */
 export interface KeycloakApiService {
-  getUsers: () => Promise<User[]>;
-  findUser: (id: string) => Promise<User[]>;
+  getUsers: () => Promise<CustomKeycloakProfile[]>;
+  findUser: (id: string) => Promise<CustomKeycloakProfile>;
 }
-
 /**
  * Creates KeycloakApiService
  */
@@ -22,7 +44,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      *
      * @returns List of users
      */
-    getUsers: async (): Promise<User[]> => {
+    getUsers: async (): Promise<CustomKeycloakProfile[]> => {
       const response = await fetch(`${baseUrl}/admin/realms/${realm}/users`, {
         method: "GET",
         headers: {
@@ -36,7 +58,11 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         );
       }
 
-      return response.json();
+      const users: KeycloakProfile[] = await response.json();
+      return users.map((user) => ({
+        ...user,
+        severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
+      })) as CustomKeycloakProfile[];
     },
 
     /**
@@ -45,7 +71,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      * @param id string
      * @returns user by Id
      */
-    findUser: async (id: string): Promise<User[]> => {
+    findUser: async (id: string): Promise<CustomKeycloakProfile> => {
       const response = await fetch(
         `${baseUrl}/admin/realms/${realm}/users/${id}`,
         {
@@ -60,7 +86,11 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         throw new Error(`Failed to find user with id: ${id}`);
       }
 
-      return response.json();
+      const user: KeycloakProfile = await response.json();
+      return {
+        ...user,
+        severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
+      } as CustomKeycloakProfile;
     },
   };
 };
