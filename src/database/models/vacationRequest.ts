@@ -1,4 +1,5 @@
 import {VacationRequestStatuses} from "@generated/client/model/vacationRequestStatuses";
+import {VacationRequestStatus} from "@generated/client/model/vacationRequestStatus";
 
 /**
  * DynamoDB model for vacation request
@@ -11,22 +12,12 @@ interface VacationRequestModel {
   endDate: string;
   days: number;
   type: VacationType;
-  status: VacationRequestStatusesModel[];
+  status: VacationRequestStatus[];
   message: string;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
   updatedBy: string;
-}
-
-/**
- * DynamoDB model for vacation request status
- */
-interface VacationRequestStatusesModel {
-  status: VacationRequestStatuses;
-  message: string;
-  createdBy: string;
-  updatedAt: Date;
 }
 
 /**
