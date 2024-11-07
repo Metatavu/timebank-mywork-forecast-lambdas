@@ -18,12 +18,12 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
     };
   }
 
-  const { personId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt, updatedBy} = event.body;
+  const { personId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt} = event.body;
 
-  if (!personId || !startDate || !endDate || !days || !type || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
+  if (!personId || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: "Invalid request body! Some data is missing!" })
+      body: JSON.stringify({ error: "Invalid request body. Some data is missing." })
     };
   }
 
@@ -42,8 +42,7 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
       message: message,
       createdBy: createdBy,
       createdAt: createdAt,
-      updatedAt: updatedAt,
-      updatedBy: updatedBy
+      updatedAt: updatedAt
     });
 
     return {

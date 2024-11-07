@@ -15,13 +15,14 @@ const vacationRequestStatusSchema = Type.Object({
  * Schema for the vacation request table
  */
 const vacationRequestSchema = Type.Object({
-  draft: Type.Boolean(),
+  personId: Type.String(),
+  days: Type.Number(),
   startDate: Type.String(),
   endDate: Type.String(),
-  days: Type.Number(),
   type: Type.String(),
   status: Type.Array(vacationRequestStatusSchema),
   message: Type.String(),
+  draft: Type.Optional(Type.Boolean()),
   createdBy: Type.String(),
   createdAt: Type.String(),
   updatedAt: Type.String(),

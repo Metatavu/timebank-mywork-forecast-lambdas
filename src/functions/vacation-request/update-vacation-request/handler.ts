@@ -24,8 +24,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     createdBy,
     createdAt,
     updatedAt,
-    updatedBy,
-  } = body;
+  } = event.body;
 
   if (!id) {
     return {
@@ -34,10 +33,10 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     };
   }
 
-  if(!personId || !draft || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt || !updatedBy) {
+  if(!personId || !draft || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
     return {
       statusCode: 400,
-      body: "Invalid request body! Some data is missing!"
+      body: "Invalid request body. Some data is missing."
     }
   }
 
@@ -61,8 +60,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     message: message,
     createdBy: existingVacationRequest.createdBy,
     createdAt: existingVacationRequest.createdAt,
-    updatedAt: updatedAt,
-    updatedBy: updatedBy
+    updatedAt: updatedAt
   };
 
   try {
