@@ -1,4 +1,5 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
+import { TrelloCardWithComments } from "src/database/schemas/trello";
 import { TrelloService } from "src/database/services/trello-api-service";
 import { middyfy } from "src/libs/lambda";
 
@@ -13,23 +14,16 @@ const getTrelloCardsOnListHandler: APIGatewayProxyHandler = async () => {
     const cards = await trello.getCardsOnList();
     const cardsComments = await trello.getCardsComments(cards);
 
-    const cardsParsed = cards.map((card, index) => {
-      const cardComments = cardsComments[index];
-      return {
-        cardId: card.shortLink,
-        title: card.name,
-        description: card.desc,
-        assignedPersons: card.idMembers,
-        comments: cardComments, 
-      };
-    });
+    const cardsParsed: TrelloCardWithComments[] = cards.map((card, index) => ({
+      ...card,
+      comments: cardsComments[index]
+    }));
 
     return {
       statusCode: 200,
       body: JSON.stringify(cardsParsed),
     };
   } catch (error) {
-    console.error("Error fetching trello cards:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to fetch trello cards.", details: error.message }),

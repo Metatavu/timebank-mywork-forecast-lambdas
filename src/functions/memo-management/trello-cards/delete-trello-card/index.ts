@@ -5,8 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: 'delete',
-        path: '/trello/card/{id}',
+        method: "delete",
+        path: "/trello/card/{id}",
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

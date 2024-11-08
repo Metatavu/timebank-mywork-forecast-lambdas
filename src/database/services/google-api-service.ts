@@ -27,7 +27,6 @@ const getGoogleAuth = async () => {
     });
   } catch (error) {
     console.error("Error initializing Google Authentication:", error);
-    throw error;
   }
 }
 
@@ -101,7 +100,6 @@ export const getBaseFolderFiles = async (): Promise<File[]> => {
     return files;
   } catch (error) {
     console.error("Error retrieving base folder files:", error);
-    throw error;
   }
 }
 
@@ -128,7 +126,6 @@ export const getFiles = async (year?: string, month?: string, mimeType: string =
     return files;
   } catch (error) {
     console.error(`Error retrieving files for year: ${year}, month: ${month}`, error);
-    throw error;
   }
 }
 
@@ -148,7 +145,6 @@ export const getFile = async (id: string): Promise<File | undefined> => {
     return file;
   } catch (error) {
     console.error(`Error retrieving file with ID: ${id}`, error);
-    throw error;
   }
 }
 
@@ -161,14 +157,13 @@ export const getFile = async (id: string): Promise<File | undefined> => {
 export const getFileText = async (file: File): Promise<string> => {
   try {
     const drive = await getDriveService();
-    const text = await drive.files.export({
+    const text = (await drive.files.export({
       fileId: file.id,
       mimeType: "text/plain"
-    }).then(res => res.data);
+    })).data;
     return text as string;
   } catch (error) {
     console.error(`Error retrieving text content of file: ${file.id}`, error);
-    throw error;
   }
 }
 
@@ -215,7 +210,6 @@ export const generateSummary = async (file: File): Promise<string> => {
     return englishSummary + "\n\n" + finnishSummary;
   } catch (error) {
     console.error("Error generating description:", error);
-    throw new Error("Failed to generate description");
   }
 }
 
@@ -256,7 +250,6 @@ export const createDocSummary = async (text: string, folderId: string, file: Fil
     });
   } catch (error) {
     console.error(`Error creating document summary for file: ${file.id}`, error);
-    throw error;
   }
 }
 
@@ -277,7 +270,7 @@ export const getFileContentPdf = async (file: File, usedDrive?: drive_v3.Drive):
     { responseType: "stream"}
     )
     if (!response) {
-      throw new Error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
+      console.error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
     }
     const pdfBuffer = await streamToBuffer(response.data);
     return {
@@ -287,7 +280,6 @@ export const getFileContentPdf = async (file: File, usedDrive?: drive_v3.Drive):
     }
   } catch (error) {
     console.error("Error loading the PDF:", error);
-    throw new Error("Failed to load PDF");
   } 
 }
 
@@ -332,7 +324,6 @@ const getOrCreateFolder = async (drive: any, folderName: string, parentFolderId:
     }
   } catch (error) {
     console.error(`Error getting or creating folder: ${folderName} under parent ID: ${parentFolderId}`, error);
-    throw error;
   }
 }
 
@@ -354,7 +345,6 @@ const checkExistingFile = async (drive: any, folderId: string, fileName: string)
     return files && files.length > 0 ? { id: files[0].id } : null;
   } catch (error) {
     console.error(`${fileName} doesn't exist in folder ID: ${folderId}`, error);
-    throw error;
   }
 }
 
@@ -370,11 +360,11 @@ const fetchFileContent = async (fileId: string, mimeType: string, responseType: 
   try {
     const drive = await getDriveService();
     const response = await drive.files.export({ fileId, mimeType }, { responseType });
-    if (!response) throw new Error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
+    if (!response) 
+      console.error(`Failed to fetch file content: ${response.status} - ${response.statusText}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching file content for file ID: ${fileId}`, error);
-    throw error;
   }
 }
 
@@ -406,7 +396,7 @@ export const uploadDocsContentAsPdf = async (file: File): Promise<any> => {
       });
     }
   } catch (error) {
-    throw new Error(`Failed to process file ${file.name}`);
+    console.error(`Failed to process file ${file.name}`,error);
   }
 }
   
@@ -469,7 +459,6 @@ export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
     };
   } catch (error) {
     console.error(`Failed to translate PDF content for file: ${pdfFile.name}`, error);
-    throw error;
   }
 }
 
@@ -497,6 +486,5 @@ export const createPdfFile = async (pdfFile: PdfFile, folderId: string) => {
     return response.data.id;
   } catch (error) {
     console.error(`Failed to create PDF file: ${pdfFile.name} in folder ID: ${folderId}`, error);
-    throw error;
   }
 }

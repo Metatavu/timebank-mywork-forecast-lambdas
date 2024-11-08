@@ -40,7 +40,6 @@ const createTrelloCardHandler: APIGatewayProxyHandler = async (event: APIGateway
     };
 
   } catch (error) {
-    console.error("Error creating trello card:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to create trello card.", details: error.message }),

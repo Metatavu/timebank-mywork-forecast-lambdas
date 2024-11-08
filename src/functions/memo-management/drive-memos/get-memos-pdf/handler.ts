@@ -11,15 +11,10 @@ import { middyfy } from "src/libs/lambda";
  * @returns Array of PDF
  */
 const listMemoPdf = async (date: DateTime): Promise<PdfFile[]> => {
-  try {
-    const files = (await getFiles(date.year.toString(), date.monthLong))
-    .filter(file => !file.name.startsWith("translated_"));
-    const pdfContent = await getFilesContentPdf(files);
-    return pdfContent;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+  const files = (await getFiles(date.year.toString(), date.monthLong))
+  .filter(file => !file.name.startsWith("translated_"));
+  const pdfContent = await getFilesContentPdf(files);
+  return pdfContent;
 }
 
 /**
@@ -36,12 +31,17 @@ const listMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxy
       body: "Missing parameters"
     };
   }
-
+  try {
   const pdfFilesContent = await listMemoPdf(DateTime.fromISO(queryStringParameters.date));
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify(pdfFilesContent)
+    return {
+      statusCode: 200,
+      body: JSON.stringify(pdfFilesContent)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Failed to retrieve PDF content", details: error.message }),
+    };
   }
 };
 

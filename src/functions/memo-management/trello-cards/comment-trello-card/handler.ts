@@ -33,12 +33,11 @@ const createCommentHandler: APIGatewayProxyHandler = async (event: APIGatewayPro
     return {
       statusCode: 200,
       body: JSON.stringify({
-        cardId: createdComment.data.card.shortLink,
-        comment: createdComment.data.text
+        cardId: createdComment,
+        comment: createdComment
       })
     };
   } catch (error) {
-    console.error("Error creating trello comment:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to create trello comment.", details: error.message }),

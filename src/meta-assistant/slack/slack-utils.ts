@@ -4,7 +4,7 @@ import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
 import MessageUtilities from "../generic/message-utils";
-import { NotificationMessageResult, ParsedBody } from "src/types/trello-notification";
+import { NotificationMessageResult } from "src/types/trello-notification";
 
 /**
  * Namespace for Slack utilities
@@ -158,39 +158,7 @@ Have a great week!
   };
 
   /**
-   * Create notification message about new card
-   * 
-   * @param cardName Trello card name
-   * @param createdBy card creator full name
-   * @param cardId card ID
-   * @returns message 
-   */
-  const constructCardCreatedMessage = async (cardName: string, createdBy: string, cardId: string ): Promise<string> => {
-    const urlCard = `https://trello.com/c/${cardId}`
-    const message = `
-:card_file_box: *Card Created*: \`${cardName}\`
-Created by: <@${await getSlackUserId(createdBy)}> 
-:spiral_note_pad: Please check the card details here: ${urlCard}
-    `;  
-    return message;
-  };
-  
-  /**
-   * Create notification message about new assigned card member
-   * 
-   * @param cardName Trello card name
-   * @param assigned assigned member
-   * @returns message
-   */
-  const constructAssignedMessage = async (cardName: string, assigned: string): Promise<string> => {
-    const message = `
-:bust_in_silhouette: <@${await getSlackUserId(assigned)}> assigned to \`${cardName}\` recently
-    `;  
-    return message;
-  };
-    
-  /**
-   * Create notification message about new assigned card member
+   * Create notification message about summary creation
    * 
    * @param summary text summary
    * @param name file name
@@ -307,26 +275,6 @@ Created by: <@${await getSlackUserId(createdBy)}>
     }
     return messageResults;
   };
-
-  /**
-   * Post an instant slack message to users
-   *
-   * @param notificationData list of card data
-   */
-  export const postNotificationToChannel = async (notificationData: ParsedBody): Promise<NotificationMessageResult> => {
-    let message;
-
-    if (notificationData.action === "createCard") 
-      message = await constructCardCreatedMessage(notificationData.cardName, notificationData.createdBy,notificationData.cardId);
-    if (notificationData.action === "addMemberToCard")
-      message = await constructAssignedMessage(notificationData.cardName, notificationData.assigned);
-
-    const messageResults: NotificationMessageResult = {
-      message: message,
-      response: await sendMessage(slackChannelId, message)
-    };
-    return messageResults;
-  }
 
   /**
    * Post an instant slack summary message to users

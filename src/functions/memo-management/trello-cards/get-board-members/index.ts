@@ -5,8 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: 'get',
-        path: '/trello/board-members',
+        method: "get",
+        path: "/trello/board-members",
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

@@ -27,7 +27,6 @@ const deleteTrelloCardHandler: APIGatewayProxyHandler = async (event: APIGateway
       body: JSON.stringify({ message: "Card deleted successfully", result }),
     };
   } catch (error) {
-    console.error("Error deleting trello card:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to delete trello card.", details: error.message }),

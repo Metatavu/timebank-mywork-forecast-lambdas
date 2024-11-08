@@ -17,7 +17,6 @@ const getBoardMembersHandler: APIGatewayProxyHandler = async () => {
       body: JSON.stringify(emails),
     };
   } catch (error) {
-    console.error("Error fetching board members' emails:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to fetch board members' emails.", details: error.message }),

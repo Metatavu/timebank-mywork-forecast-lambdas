@@ -18,16 +18,3 @@ export type NotificationHandlerResponse = {
   data?: NotificationMessageResult[],
   event?: ValidatedAPIGatewayProxyEvent<typeof schema>,
 };
-
-/**
- * Interface for Notification Message Handler
- */
-export interface ParsedBody {
-  action: string,
-  cardName: string,
-  cardId: string,
-  createdBy: string,
-  cardList: string,
-  cardBoard: string,
-  assigned: string
-};

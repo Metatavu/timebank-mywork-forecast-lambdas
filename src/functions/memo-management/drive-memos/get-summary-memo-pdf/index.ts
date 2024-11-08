@@ -5,8 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: 'get',
-        path: '/google-drive/memo-summary',
+        method: "get",
+        path: "/google-drive/memo-summary",
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

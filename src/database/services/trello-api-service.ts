@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { TrelloCards, TrelloComment, TrelloMembers } from "../schemas/trello";
 
 /**
  * Class that implements Trello Service for card operations.
@@ -62,21 +63,22 @@ export class TrelloService {
    * @param cards cards object
    * @returns Trello board
    */
-  public async getCardsComments(cards: any[]): Promise<any[]> {
+  public async getCardsComments(cards: TrelloCards[]): Promise<[TrelloComment[]]> {
     const comments = await Promise.all(
       cards.map(async card => {
-        const url = `${this.baseUrl}/cards/${card.id}/actions?filter=commentCard&key=${this.apiKey}&token=${this.apiToken}`;
+        const url = `${this.baseUrl}/cards/${card.cardId}/actions?filter=commentCard&key=${this.apiKey}&token=${this.apiToken}`;
 
         const response = await fetch(url, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
 
-        const comments = (await response.json()).map(comment => ({
+        const commentsData = await response.json();
+
+        return commentsData.map(comment => ({
           createdBy: comment.idMemberCreator || "",
           text: comment.data.text || "",
         }));
-        return comments || [];
       })
     )
     return comments;
@@ -152,7 +154,7 @@ export class TrelloService {
    * @param listId  Trello ID list
    * @returns cards
    */
-  public async getCardsOnList(): Promise<any[]> {
+  public async getCardsOnList(): Promise<TrelloCards[]> {
     const listId = await this.getListIdByName("Memo");
     const url = `${this.baseUrl}/lists/${listId}/cards?key=${this.apiKey}&token=${this.apiToken}`;
     
@@ -160,8 +162,16 @@ export class TrelloService {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
-    return await response.json();
+    const data = await response.json();
+    
+    return data.map((card: any) => ({
+      cardId: card.shortLink,
+      title: card.name,
+      description: card.desc,
+      assignedPersons: card.idMembers || [],
+    }));
   }
+
   /**
    * Lists specified Trello list
    *
@@ -179,7 +189,7 @@ export class TrelloService {
    *
    * @returns emails
    */
-  public async getBoardMembers(): Promise<string[]> {
+  public async getBoardMembers(): Promise<TrelloMembers[]> {
     const response = await fetch(`${this.baseUrl}/boards/${this.boardId}/members?key=${this.apiKey}&token=${this.apiToken}`, {
       method: "GET",
     });

@@ -5,8 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: 'post',
-        path: '/trello/card',
+        method: "post",
+        path: "/trello/card",
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }
