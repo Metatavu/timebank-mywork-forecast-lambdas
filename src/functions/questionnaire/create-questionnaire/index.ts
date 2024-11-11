@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: "post",
-        path: "/questionnaire",
+        path: "/questionnaires",
         authorizer: {
           name: "timebankKeycloakAuthorizer",
         },
