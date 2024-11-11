@@ -6,6 +6,7 @@ import type WorkHours from "@database/models/workHours";
 import WorkHoursModel from "@database/models/workHours";
 import {Promise} from "@sinclair/typebox";
 import * as process from "node:process";
+import { FilterUtilities } from "src/libs/filter-utils";
 
 /**
  * Interface for a SeveraApiService.
@@ -14,7 +15,8 @@ export interface SeveraApiService {
   getFlextimeBySeveraGuid: (severaGuid: string, eventDate: string) => Promise<Flextime>;
   getResourceAllocation: (severaGuid: string) => Promise<ResourceAllocationModel[]>;
   getPhasesBySeveraProjectGuid: (severaProjectGuid: string) => Promise<Phase[]>;
-  getWorkHoursBySeveraUserGuid: (severaUserGuid: string) => Promise<WorkHours[]>;
+  // getWorkHoursBySeveraUserGuid: (severaUserGuid: string) => Promise<WorkHours[]>;
+  getWorkHoursBySeveraUserGuid: ( severaProjectGuid?: string, severaUserGuid?: string ) => Promise<WorkHours[]>;
 }
 
 /**
@@ -129,8 +131,23 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userGUID
      */
-    getWorkHoursBySeveraUserGuid: async (severaUserGuid: string) : Promise<WorkHours[]> => {
-      const url: string = `${baseUrl}/v1/users/${severaUserGuid}/workhours`;
+    getWorkHoursBySeveraUserGuid: async (severaProjectGuid?: string, severaUserGuid?: string) : Promise<WorkHours[]> => {
+      // const url: string = `${baseUrl}/v1/users/${severaUserGuid}/workhours`;
+      // const url: string = `${baseUrl}/v1/workhours`;
+
+    
+
+      const url: string = severaProjectGuid && severaUserGuid 
+      // ? `${baseUrl}/v1/projects/${severaProjectGuid}/users/${severaUserGuid}/workhours`
+      // : severaProjectGuid
+      ? `${baseUrl}/v1/projects/${severaProjectGuid}/workhours`
+      : severaUserGuid
+      ? `${baseUrl}/v1/users/${severaUserGuid}/workhours`
+      : `${baseUrl}/v1/workhours`;
+
+      console.log("severaProjectGuid", severaProjectGuid)
+
+      console.log("url", url)
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -140,6 +157,12 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         },
       });
 
+      // if(severaProjectGuid){
+      //   response.filter((workHours) => {
+      //     return workHours.project.guid === severaProjectGuid
+      //   })
+      // }
+
       if (!response.ok) {
         throw new Error(
           `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
@@ -148,27 +171,63 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
       const workHours = await response.json();
 
-      return workHours.map((item: any) => ({
-        severaWorkHoursGuid: item.guid,
-        user: {
-          severaUserGuid: item.user.guid,
-          name: item.user.name,
-        },
-        project: {
-          severaProjectGuid: item.project.guid,
-          name: item.project.name,
-          isClosed: item.project.isClosed,
-        },
-        phase: {
-          severaPhaseGuid: item.phase.guid,
-          name: item.phase.name
-        },
-        description: item.description,
-        eventDate: item.eventDate,
-        quantity: item.quantity,
-        startTime: item.startTime,
-        endTime: item.endTime,
-      }));
+
+
+  
+
+      const filteredWorkHours = workHours.filter(workHours => {
+        return FilterUtilities.filterByProjectSevera(workHours.severaProjectId)
+      })
+
+      return filteredWorkHours.map(workHours => {
+        return {
+          severaWorkHoursGuid: workHours.guid,
+          user: {
+            severaUserGuid: workHours.user.guid,
+            name: workHours.user.name,
+          },
+          // project: {
+          //   severaProjectGuid: workHours.project.guid,
+          //   name: workHours.project.name,
+          //   isClosed: workHours.project.isClosed,
+          // },
+          // phase: {
+          //   severaPhaseGuid: workHours.phase.guid,
+          //   name: workHours.phase.name,
+          // },
+          description: workHours.description,
+          eventDate: workHours.eventDate,
+          quantity: workHours.quantity,
+          startTime: workHours.startTime,
+          endTime: workHours.endTime
+        }
+      })
+
+      
+      
+
+
+      // return workHours.map((item: any) => ({
+      //   severaWorkHoursGuid: item.guid,
+      //   user: {
+      //     severaUserGuid: item.user.guid,
+      //     name: item.user.name,
+      //   },
+      //   project: {
+      //     severaProjectGuid: item.project.guid,
+      //     name: item.project.name,
+      //     isClosed: item.project.isClosed,
+      //   },
+      //   phase: {
+      //     severaPhaseGuid: item.phase.guid,
+      //     name: item.phase.name
+      //   },
+      //   description: item.description,
+      //   eventDate: item.eventDate,
+      //   quantity: item.quantity,
+      //   startTime: item.startTime,
+      //   endTime: item.endTime,
+      // }));
     },
   };
 };

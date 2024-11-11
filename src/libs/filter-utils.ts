@@ -47,6 +47,13 @@ export namespace FilterUtilities {
     return true;
   }
 
+  export const filterByProjectSevera = (severaProjectId?: string) : boolean => {
+    if(severaProjectId !== undefined && severaProjectId !== null) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Compares Forecast person id to specified id
    * 
