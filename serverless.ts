@@ -35,8 +35,7 @@ import listQuestionnaireHandler from "src/functions/questionnaire/list-questionn
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
 import getResourceAllocationHandler  from "src/functions/severa/list-resource-allocations-by-user";
 import getPhasesBySeveraProjectGuidHandler from "src/functions/severa/list-phases-by-project";
-// import getWorkHoursBySeveraUserGuidHandler from "src/functions/severa/list-work-hours-by-user";
-// import getWorkHoursHandler from "src/functions/severa/list-filtered-workhours/handlerFilter";
+import getWorkHoursBySeveraUserGuidHandler from "src/functions/severa/list-work-hours-by-user";
 import  getWorkHoursHandler from "src/functions/severa/list-filtered-workhours";
 
 const isLocal = process.env.STAGE === "local";
@@ -179,7 +178,7 @@ const serverlessConfiguration: AWS = {
     updateQuestionnaireHandler,
     getResourceAllocationHandler,
     getPhasesBySeveraProjectGuidHandler,
-    // getWorkHoursBySeveraUserGuidHandler,
+    getWorkHoursBySeveraUserGuidHandler,
     getWorkHoursHandler,
   },
   package: { individually: true },

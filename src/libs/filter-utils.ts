@@ -65,8 +65,15 @@ export namespace FilterUtilities {
     if (personId !== undefined && person.toString() !== personId) {
       return false;
     }
-
     return true;
+  }
+
+  export const filterByUser = (severaUserGuid: string, targetUserGuid: string): boolean => {
+    // if (severaUserGuid !== undefined && severaUserGuid !== null) {
+    //   return false;
+    // }
+    // return true;
+    return severaUserGuid === targetUserGuid;
   }
 
   /**
