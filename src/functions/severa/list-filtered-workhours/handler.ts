@@ -13,13 +13,14 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
   
   // const severaProjectId = event.pathParameters?.severaProjectGuid;
   const severaUserGuid = event.pathParameters?.severaUserGuid;
+  const severaProjectGuid = event.pathParameters?.severaProjectGuid;
 
   // console.log("severaProjectId", severaProjectId)
-  console.log("severaUserGuid", severaUserGuid)
+  // console.log("severaUserGuid", severaUserGuid)
   
   try {
     const api = CreateSeveraApiService();
-    const response: WorkHours[] = await api.getWorkHoursBySeveraUserGuid(severaUserGuid);
+    const response: WorkHours[] = await api.getWorkHoursBySeveraUserGuid(severaProjectGuid, severaUserGuid);
 
     const workHoursByUserGuid = JSON.parse(JSON.stringify(response))
 

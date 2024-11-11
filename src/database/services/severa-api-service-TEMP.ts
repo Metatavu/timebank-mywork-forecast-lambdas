@@ -131,21 +131,30 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userGUID
      */
-    getWorkHoursBySeveraUserGuid: async (severaProjectGuid?: string, severaUserGuid?: string) : Promise<WorkHours[]> => {
+    getWorkHoursBySeveraUserGuid: async (severaProjectGuid?:string, severaUserGuid?: string) : Promise<WorkHours[]> => {
       // const url: string = `${baseUrl}/v1/users/${severaUserGuid}/workhours`;
       // const url: string = `${baseUrl}/v1/workhours`;
 
     
 
-      const url: string = severaProjectGuid && severaUserGuid 
-      // ? `${baseUrl}/v1/projects/${severaProjectGuid}/users/${severaUserGuid}/workhours`
+      // const url: string = severaProjectGuid || severaUserGuid 
+      // // ? `${baseUrl}/v1/projects/${severaProjectGuid}/users/${severaUserGuid}/workhours`
+      // ? `${baseUrl}/v1/projects/${severaProjectGuid}/workhours`
       // : severaProjectGuid
-      ? `${baseUrl}/v1/projects/${severaProjectGuid}/workhours`
-      : severaUserGuid
-      ? `${baseUrl}/v1/users/${severaUserGuid}/workhours`
-      : `${baseUrl}/v1/workhours`;
+      // ? `${baseUrl}/v1/projects/${severaProjectGuid}/workhours`
+      // : severaUserGuid
+      // ? `${baseUrl}/v1/users/${severaUserGuid}/workhours`
+      // : `${baseUrl}/v1/workhours`;
+
+      const url: string = severaUserGuid 
+        ? `${baseUrl}/v1/users/${severaUserGuid}/workhours`  // Use user URL if user GUID is provided
+        : severaProjectGuid 
+        ? `${baseUrl}/v1/projects/${severaProjectGuid}/workhours`  // Use project URL if project GUID is provided
+        : `${baseUrl}/v1/workhours`;  // Default URL if neither is provided
 
       console.log("severaProjectGuid", severaProjectGuid)
+      console.log("severaUserGuid", severaUserGuid)
+
 
       console.log("url", url)
       const response = await fetch(url, {
@@ -176,8 +185,10 @@ export const CreateSeveraApiService = (): SeveraApiService => {
   
 
       const filteredWorkHours = workHours.filter(workHours => {
-        return FilterUtilities.filterByProjectSevera(workHours.severaProjectId)
+        return FilterUtilities.filterByProjectSevera(workHours.severaUserGuid)
       })
+      // Cant filter with 2 parameters yet
+      // console.log("filteredWorkHours", filteredWorkHours)
 
       return filteredWorkHours.map(workHours => {
         return {
@@ -186,11 +197,11 @@ export const CreateSeveraApiService = (): SeveraApiService => {
             severaUserGuid: workHours.user.guid,
             name: workHours.user.name,
           },
-          // project: {
-          //   severaProjectGuid: workHours.project.guid,
-          //   name: workHours.project.name,
-          //   isClosed: workHours.project.isClosed,
-          // },
+          project: {
+            severaProjectGuid: workHours.project.guid,
+            name: workHours.project.name,
+            isClosed: workHours.project.isClosed,
+          },
           // phase: {
           //   severaPhaseGuid: workHours.phase.guid,
           //   name: workHours.phase.name,
@@ -228,6 +239,8 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       //   startTime: item.startTime,
       //   endTime: item.endTime,
       // }));
+
+
     },
   };
 };
