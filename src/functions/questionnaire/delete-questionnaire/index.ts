@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: "delete",
-        path: "/questionnaire/{id}",
+        path: "/questionnaires/{id}",
         authorizer: {
           name: "timebankKeycloakAuthorizer",
         },
