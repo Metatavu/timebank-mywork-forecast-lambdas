@@ -68,13 +68,16 @@ export namespace FilterUtilities {
     return true;
   }
 
-  export const filterByUser = (severaUserGuid: string, targetUserGuid: string): boolean => {
+  export const filterByUserSevera = (severaUserGuid: string, targetUserGuid: string): boolean => {
     // if (severaUserGuid !== undefined && severaUserGuid !== null) {
     //   return false;
     // }
     // return true;
     return severaUserGuid === targetUserGuid;
   }
+
+
+  
 
   /**
    * Compares Forecast task id to specified id
@@ -86,5 +89,9 @@ export namespace FilterUtilities {
   export const filterByTask = (task?: number, taskId?: string) => {
     if (taskId && task?.toString() !== taskId || !task) return false;
     return true;
+  }
+
+  export const filterByPhaseSevera = (severaPhaseGuid: string, targetPhaseGuid: string): boolean => {
+    return severaPhaseGuid === targetPhaseGuid;
   }
 }
