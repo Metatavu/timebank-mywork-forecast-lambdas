@@ -3,8 +3,6 @@ import type Flextime from "../models/flextime";
 import type ResourceAllocationModel from "../models/resourceAllocation";
 import type Phase from "@database/models/phase";
 import type WorkHours from "@database/models/workHours";
-import WorkHoursModel from "@database/models/workHours";
-import {Promise} from "@sinclair/typebox";
 import * as process from "node:process";
 import { FilterUtilities } from "src/libs/filter-utils";
 

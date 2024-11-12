@@ -1,7 +1,5 @@
-import { User } from "src/generated/client/api";
-
 /*
-    ResourceAllocation model
+ *  ResourceAllocation model
 */
 interface ResourceAllocationModel {
     severaProjectGuid: string;
@@ -12,17 +10,25 @@ interface ResourceAllocationModel {
     projects: ResourceAllocationProjectSubModel;
 }
 
-
+/*
+ * Interface for PhaseSubModel
+*/
 interface PhaseSubModel {
     severaPhaseGuid: string;
     name: string;
 }
 
+/*
+ * Interface for UserSubModel
+*/
 interface UserSubModel {
     severaUserGuid: string;
     name: string;
 }
 
+/*
+ * Interface for ResourceAllocationProjectSubModel
+*/
 interface ResourceAllocationProjectSubModel {
     severaProjectGuid: string;
     name: string;
