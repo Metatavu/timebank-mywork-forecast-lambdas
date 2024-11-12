@@ -43,6 +43,7 @@ import getBoardMembersHandler from "@/functions/memo-management/trello-cards/get
 import deleteTrelloCardHandler from "@/functions/memo-management/trello-cards/delete-trello-card";
 import createTrelloCardHandler from "@/functions/memo-management/trello-cards/create-trello-card";
 import createCommentHandler from "@/functions/memo-management/trello-cards/comment-trello-card";
+import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
 
 const isLocal = process.env.STAGE === "local";
 
@@ -104,6 +105,9 @@ const serverlessConfiguration: AWS = {
       GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL: env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
       GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
       GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+      SEVERA_DEMO_BASE_URL: env.SEVERA_DEMO_BASE_URL,
+      SEVERA_DEMO_CLIENT_ID: env.SEVERA_DEMO_CLIENT_ID,
+      SEVERA_DEMO_CLIENT_SECRET: env.SEVERA_DEMO_CLIENT_SECRET,
       DYNAMODB_ENDPOINT: isLocal ? "http://localhost:8000" : undefined,
     },
     s3: {
@@ -196,6 +200,7 @@ const serverlessConfiguration: AWS = {
     createTrelloCardHandler,
     createCommentHandler,
     getContentPdfHandler,
+    getFlextimeHandler,
   },
   package: { individually: true },
   custom: {

@@ -5,11 +5,11 @@ export default {
   events: [
     {
       httpApi: {
-        method: "delete",
-        path: "/questionnaires/{id}",
+        method: "get",
+        path: "/severa/{severaUserId}/flexTime",
         authorizer: {
-          name: "timebankKeycloakAuthorizer",
-        },
+          name: "timebankKeycloakAuthorizer"
+        }
       },
     },
   ],
