@@ -20,11 +20,7 @@ export const getFlextimeHandler: APIGatewayProxyHandler = async (event) => {
       };
     }
 
-    const eventDate = new Date();
-    eventDate.setDate(eventDate.getDate() - 1);
-    const eventDateYesterday = eventDate.toISOString().split("T")[0];
-
-    const flexTimeBySeveraId = await api.getFlextimeBySeveraUserId(severaUserId, eventDateYesterday);
+    const flexTimeBySeveraId = await api.getFlextimeBySeveraUserId(severaUserId);
 
     return {
       statusCode: 200,

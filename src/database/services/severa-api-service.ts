@@ -5,7 +5,7 @@ import type Flextime from "../models/severa";
  * Interface for a SeveraApiService.
  */
 export interface SeveraApiService {
-  getFlextimeBySeveraUserId: (severaUserId: string, eventDate: string) => Promise<Flextime>;
+  getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
 }
 
 /**
@@ -18,8 +18,13 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets flextime by userGUID and eventDate
      */
-    getFlextimeBySeveraUserId: async (severaUserId: string, eventDate: string) => {
-      const url: string = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${eventDate}`;
+    getFlextimeBySeveraUserId: async (severaUserId: string) => {
+
+      const eventDate = new Date();
+      eventDate.setDate(eventDate.getDate() - 1);
+      const formattedEventDate = eventDate.toISOString().split('T')[0];
+
+      const url: string = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${formattedEventDate}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -47,10 +52,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
  * @returns Access token as string
  */
 const getSeveraAccessToken = async (): Promise<string> => {
-  
-  if (process.env.IS_OFFLINE) {
-    return "test-token";
-  }
   
   const url: string = `${process.env.SEVERA_DEMO_BASE_URL}/v1/token`;
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
