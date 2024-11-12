@@ -6,7 +6,7 @@ import { CreateSeveraApiService } from "src/database/services/severa-api-service
 /**
  * Handler for getting Phases by project from Severa REST API.
  *
- * @param event - API Gateway event containing the user GUID.
+ * @param event - API Gateway event containing the userId.
  */
 export const getPhasesHandler: APIGatewayProxyHandler = async (event) => {
   const severaProjectId = event.pathParameters?.severaProjectId;

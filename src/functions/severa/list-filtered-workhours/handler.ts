@@ -7,17 +7,14 @@ import type WorkHours from "@database/models/workHours";
 /**
  * Handler for getting work hours Severa REST API.
  *
- * @param event - API Gateway event containing the user GUID.
+ * @param event - API Gateway event containing the userId.
  */
 export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
   
-  // const severaProjectId = event.pathParameters?.severaProjectGuid;
   const severaUserId = event.pathParameters?.severaUserId;
   const severaProjectId = event.pathParameters?.severaProjectId;
   const severaPhaseId = event.pathParameters?.severaPhaseId;
 
-  // console.log("severaProjectId", severaProjectId)
-  // console.log("severaUserGuid", severaUserGuid)
   
   try {
     const api = CreateSeveraApiService();

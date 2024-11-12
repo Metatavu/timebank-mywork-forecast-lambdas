@@ -1,5 +1,5 @@
 /**
- * Custom Interface for a user in keycloak functions with isActive, severaGuid, forecastID .
+ * Custom Interface for a user in keycloak functions with isActive, severaUserId, forecastID .
  */
 export interface User {
     id: string;

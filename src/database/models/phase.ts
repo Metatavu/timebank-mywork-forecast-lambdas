@@ -2,7 +2,7 @@
  * Severa model for Phases
  */
 interface PhaseModel {
-  severaPhaseGuid: string;
+  severaPhaseId: string;
   name: string;
   isCompleted: boolean;
   workHoursEstimate: number;
@@ -15,7 +15,7 @@ interface PhaseModel {
  * Severa model for project
  */
 interface PhaseProjectSubModel{
-  severaProjectGuid: string;
+  severaProjectId: string;
   name: string;
   isClosed: boolean;
 }
