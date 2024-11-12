@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { TrelloCards, TrelloComment, TrelloMembers } from "../schemas/trello";
+import { TrelloCards, TrelloComment, TrelloList, TrelloMembers } from "../schema/trello";
 
 /**
  * Class that implements Trello Service for card operations.
@@ -9,24 +9,6 @@ export class TrelloService {
   private readonly apiToken = process.env.TRELLO_TOKEN;
   private readonly baseUrl = "https://api.trello.com/1";
   private readonly boardId = process.env.TRELLO_MANAGEMENT_BOARD_ID;
-
-  /**
-   * Gets all boards from Trello
-   *
-   * @returns Trello board
-   */
-  public async getBoardList(): Promise<any[]> {
-    const response = await fetch(`${this.baseUrl}/members/me/boards?key=${this.apiKey}&token=${this.apiToken}`, {
-      method: "GET",
-    });
-    
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch boards: ${response.status} - ${response.statusText}`
-      );
-    }
-    return response.json();
-  }
 
   /**
    * Creates a card on the specified Trello list
@@ -54,7 +36,8 @@ export class TrelloService {
         `Failed to create card: ${response.status} - ${response.statusText}`
       );
     }
-    return response.json();
+    
+    return await response.json();
   }
 
   /**
@@ -107,7 +90,7 @@ export class TrelloService {
         `Failed to create comment: ${response.status} - ${response.statusText}`
       );
     }
-    return response.json();
+    return await response.json();
   }
 
   /**
@@ -132,7 +115,7 @@ export class TrelloService {
         `Failed to delete card: ${response.status} - ${response.statusText}`
       );
     }
-    return response.json();
+    return await response.json();
   }
 
   /**
@@ -140,36 +123,20 @@ export class TrelloService {
    *
    * @returns lists
    */
-  public async getListsOnBoard(): Promise<any[]> {
+  public async getListsOnBoard(): Promise<TrelloList[]> {
     const response = await fetch(`${this.baseUrl}/boards/${this.boardId}/lists?key=${this.apiKey}&token=${this.apiToken}`, {
       method: "GET",
     });
+  
     if (!response.ok) throw new Error(`Failed to fetch lists: ${response.status} - ${response.statusText}`);
-    return response.json();
-  }
-
-  /**
-   * Lists Trello cards on a list
-   *
-   * @param listId  Trello ID list
-   * @returns cards
-   */
-  public async getCardsOnList(): Promise<TrelloCards[]> {
-    const listId = await this.getListIdByName("Memo");
-    const url = `${this.baseUrl}/lists/${listId}/cards?key=${this.apiKey}&token=${this.apiToken}`;
-    
-    const response = await fetch(url, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await response.json();
-    
-    return data.map((card: any) => ({
-      cardId: card.shortLink,
-      title: card.name,
-      description: card.desc,
-      assignedPersons: card.idMembers || [],
+    const listsData = await response.json();
+    const lists: TrelloList[] = listsData.map((list: any) => ({
+      id: list.id,
+      name: list.name,
+      idBoard: list.idBoard,
     }));
+    console.log("lists:", lists)
+    return lists;
   }
 
   /**
@@ -179,10 +146,34 @@ export class TrelloService {
    * @returns list content
    */
   public getListIdByName = async (name: string) => {
-  const lists = await this.getListsOnBoard();
-  const listFound = lists.find(list => list.name == name);
-  return listFound.id;
+    const lists = await this.getListsOnBoard();
+    const listFound = lists.find(list => list.name == name);
+    return listFound.id;
   }
+
+  /**
+   * Lists Trello cards on a list
+   *
+   * @param listId  Trello ID list
+   * @returns cards
+   */
+    public async getCardsOnList(): Promise<TrelloCards[]> {
+      const listId = await this.getListIdByName("Memo");
+      const url = `${this.baseUrl}/lists/${listId}/cards?key=${this.apiKey}&token=${this.apiToken}`;
+  
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      
+      return data.map((card: any) => ({
+        cardId: card.shortLink,
+        title: card.name,
+        description: card.desc,
+        assignedPersons: card.idMembers || [],
+      }));
+    }
 
   /**
    * Fetches email addresses of all users related to a specific board
@@ -198,6 +189,7 @@ export class TrelloService {
       throw new Error(`Failed to fetch board members: ${response.status} - ${response.statusText}`);
     }
     const members = await response.json();
+
     const emails = members.map((member: any) => {
       const fullName = member.fullName.toLowerCase().split(" ");
       const [name, surname] = fullName;

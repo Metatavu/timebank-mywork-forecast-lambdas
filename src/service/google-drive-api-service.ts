@@ -1,11 +1,8 @@
 import { drive_v3, google } from "googleapis";
-import { File, PdfFile } from "../schemas/google";
+import { File, PdfFile } from "../schema/google";
 import { Readable } from "stream";
-import {streamToBuffer, getYearAndMonth} from "../../libs/file-utils";
-import fetch from "node-fetch";
+import {streamToBuffer, getYearAndMonth} from "../libs/file-utils";
 
-const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
-const openaiKey = process.env.OPENAI_API_KEY;
 const folderId = process.env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID;
 
 /**
@@ -13,7 +10,7 @@ const folderId = process.env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID;
  *
  * @returns Google Authentication 
  */
-const getGoogleAuth = async () => {
+export const getGoogleAuth = async () => {
   try {
     return new google.auth.JWT({
       email: process.env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
@@ -35,19 +32,9 @@ const getGoogleAuth = async () => {
  *
  * @returns Google Drive 
  */
-const getDriveService = async () => {
+export const getDriveService = async () => {
   const auth = await getGoogleAuth();
   return google.drive({ version: "v3", auth });
-}
-
-/**
- * Gets Google Authentication and Google Documents service
- *
- * @returns Google Documents
- */
-const getDocsService = async () => {
-  const auth = await getGoogleAuth(); 
-  return google.docs({ version: "v1", auth });
 }
 
 /**
@@ -62,7 +49,7 @@ export const getFolderId = async (year: string, month: string): Promise<string> 
     const drive = await getDriveService();
 
     const yearFolderId = (await drive.files.list({
-      q: `${folderId}" in parents and name = "${year}" and mimeType = "application/vnd.google-apps.folder"`,
+      q: `"${folderId}" in parents and name = "${year}" and mimeType = "application/vnd.google-apps.folder"`,
       fields: "files(id)"
     })).data?.files[0]?.id;
     if (!yearFolderId) {
@@ -118,9 +105,10 @@ export const getFiles = async (year?: string, month?: string, mimeType: string =
       return await getBaseFolderFiles();
     }
     const monthFolderId = await getFolderId(year, month);
+    console.log("Month folder", monthFolderId)
     if (!monthFolderId) return [];
     const files: File[] = (await drive.files.list({
-      q: `"${monthFolderId}" in parents and mimeType = "${mimeType}"`,
+      q: `'${monthFolderId}' in parents and mimeType = '${mimeType}'`,
       fields: "files(id, name, mimeType)"
     })).data?.files;
     return files;
@@ -168,100 +156,14 @@ export const getFileText = async (file: File): Promise<string> => {
 }
 
 /**
- * Generates memo summary with chatGPT service 
- *
- * @param file File metadata
- * @returns summary text as string
- */
-export const generateSummary = async (file: File): Promise<string> => {
-  const drive = await getDriveService();
-  try {
-    const text = await drive.files.export({
-      fileId: file.id,
-      mimeType: "text/plain"
-    }).then(res => res.data);
-
-    const url = "https://api.openai.com/v1/chat/completions";
-    const headers = {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${openaiKey}`,
-    };
-    const summarizeInEn = `Generate a summary for the following document in English: ${text}`;
-    const summarizeInFi =  `Generate a summary for the following document in Finnish: ${text}`;
-    const body = (content) => JSON.stringify({
-      model: "gpt-4",
-      messages: [
-        { role: "user", content: content},
-      ],
-      max_tokens: 200
-    });
-
-    const englishSummary = (await (await fetch(url, {
-      method: "POST",
-      headers: headers,
-      body : body(summarizeInEn)
-    })).json()).choices[0].message.content;
-
-    const finnishSummary = (await (await fetch(url, {
-      method: "POST",
-      headers: headers,
-      body : body(summarizeInFi)
-    })).json()).choices[0].message.content;
-    return englishSummary + "\n\n" + finnishSummary;
-  } catch (error) {
-    console.error("Error generating description:", error);
-  }
-}
-
-/**
- * Creates a new Google Docs document with a summary text, placed in a specified folder
- * 
- * @param text summary text
- * @param folderId folder ID
- * @param file File metadata
- */
-export const createDocSummary = async (text: string, folderId: string, file: File) => {
-  try {
-    const docs = await getDocsService();
-    const drive = await getDriveService();
-    const docResponse = await docs.documents.create({
-      requestBody: { title: `summary_${file.name}` },
-    });
-    const documentId = docResponse.data.documentId;
-    await drive.files.update({
-      fileId: documentId,
-      addParents: folderId,   
-      removeParents: "",      
-      fields: "id, parents",
-    });
-
-    await docs.documents.batchUpdate({
-      documentId: documentId,
-      requestBody: {
-        requests: [
-          {
-            insertText: {
-              location: { index: 1 }, 
-              text: text,
-            },
-          },
-        ],
-      },
-    });
-  } catch (error) {
-    console.error(`Error creating document summary for file: ${file.id}`, error);
-  }
-}
-
-/**
  * Retrieves the binary content of a single PDF file 
  * 
  * @param file File object
  * @param usedDrive Drive Instance
  * @returns PDF file objects
  */
-export const getFileContentPdf = async (file: File, usedDrive?: drive_v3.Drive): Promise<PdfFile> => {
-  const drive = usedDrive || await getDriveService();
+export const getFileContentPdf = async (file: File): Promise<PdfFile> => {
+  const drive = await getDriveService();
   try {
     const response = await drive.files.get({
       fileId: file.id,
@@ -281,23 +183,6 @@ export const getFileContentPdf = async (file: File, usedDrive?: drive_v3.Drive):
   } catch (error) {
     console.error("Error loading the PDF:", error);
   } 
-}
-
-/**
- * Fetches and exports binary file content of multiple PDF files
- *
- * @param files array of File objects
- * @returns array of PDF file objects
- */
-export const getFilesContentPdf = async (files: File[]): Promise<PdfFile[]> => {
-  const drive = await getDriveService();
-  const fileContentPdf = await Promise.all(
-    files.map(async (file: File) => {
-      const fileContent = await getFileContentPdf(file, drive)
-      return fileContent;
-    }
-  ));
-  return fileContentPdf;
 }
 
 /**
@@ -400,68 +285,6 @@ export const uploadDocsContentAsPdf = async (file: File): Promise<any> => {
   }
 }
   
-/**
- * Translates PDF content to Fi/En
- * 
- * @param pdfFile PDF file object
- * @returns PDF with translated content
- */
-export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
-  try {
-    const accessToken = (await (await getGoogleAuth()).authorize()).access_token;
-    const content = pdfFile.content.toString("base64");
-    const translatedFileName = `translated_${pdfFile.name}`;
-    const url = `https://translation.googleapis.com/v3/projects/${projectId}/locations/us-central1:translateDocument`;
-
-    const detectFileLanguage = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        target_language_code: "fi",
-        document_input_config: {
-          mimeType: "application/pdf",
-          content: content
-        }
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-    const result = await detectFileLanguage.json();
-    const detectedLanguage = result.documentTranslation.detectedLanguageCode;
-    if (detectedLanguage == "en") {
-      const translatedContent = result.documentTranslation.byteStreamOutputs[0];
-      const bufferData = Buffer.from(translatedContent, "base64");
-      return { id: "", name: translatedFileName, content: bufferData };
-    }
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        source_language_code: "fi",
-        target_language_code: "en",
-        document_input_config: {
-          mimeType: "application/pdf",
-          content: content
-        }
-      }),
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-    const responseJs = await response.json();
-    const translatedContent = responseJs.documentTranslation.byteStreamOutputs[0];
-    const bufferData = Buffer.from(translatedContent, "base64");
-    return {
-      id: "",
-      name: translatedFileName,
-      content: bufferData
-    };
-  } catch (error) {
-    console.error(`Failed to translate PDF content for file: ${pdfFile.name}`, error);
-  }
-}
-
 /**
  * Creates a new PDF file from binary content and stores it in a specified folder
  * 

@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { getBaseFolderFiles, uploadDocsContentAsPdf } from "src/database/services/google-api-service";
+import { getBaseFolderFiles, uploadDocsContentAsPdf } from "src/service/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 
 /**

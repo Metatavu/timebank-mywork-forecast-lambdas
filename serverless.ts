@@ -37,6 +37,7 @@ import listMemoPdfHandler from "@/functions/memo-management/drive-memos/get-memo
 import getTranslatedMemoPdfHandler from "@/functions/memo-management/drive-memos/get-translated-memo-pdf";
 import getSummaryMemoPdfHandler from "@/functions/memo-management/drive-memos/get-summary-memo-pdf";
 import uploadGoogleFileHandler from "@/functions/memo-management/drive-memos/create-memo-pdf";
+import getContentPdfHandler from "@/functions/memo-management/drive-memos/get-content-pdf";
 import getTrelloCardsOnListHandler from "@/functions/memo-management/trello-cards/get-trello-cards";
 import getBoardMembersHandler from "@/functions/memo-management/trello-cards/get-board-members";
 import deleteTrelloCardHandler from "@/functions/memo-management/trello-cards/delete-trello-card";
@@ -194,6 +195,7 @@ const serverlessConfiguration: AWS = {
     deleteTrelloCardHandler,
     createTrelloCardHandler,
     createCommentHandler,
+    getContentPdfHandler,
   },
   package: { individually: true },
   custom: {

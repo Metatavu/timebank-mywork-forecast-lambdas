@@ -31,3 +31,12 @@ export interface TrelloMembers {
 export interface TrelloCardWithComments extends TrelloCards {
   comments: TrelloComment[];
 }
+
+/**
+ * Interface for Trello list
+ */
+export interface TrelloList {
+  id: string,
+  name: string,
+  idBoard: string,
+}

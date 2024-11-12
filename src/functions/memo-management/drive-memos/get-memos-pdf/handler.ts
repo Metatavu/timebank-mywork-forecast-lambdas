@@ -1,7 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
-import { PdfFile } from "src/database/schemas/google";
-import { getFiles, getFilesContentPdf } from "src/database/services/google-api-service";
+import { getFiles } from "src/service/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 
 /**
@@ -10,11 +9,10 @@ import { middyfy } from "src/libs/lambda";
  * @param date DateTime for files filtering
  * @returns Array of PDF
  */
-const listMemoPdf = async (date: DateTime): Promise<PdfFile[]> => {
+const listMemoPdf = async (date: DateTime): Promise<any[]> => {
   const files = (await getFiles(date.year.toString(), date.monthLong))
   .filter(file => !file.name.startsWith("translated_"));
-  const pdfContent = await getFilesContentPdf(files);
-  return pdfContent;
+  return files;
 }
 
 /**
@@ -32,11 +30,12 @@ const listMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxy
     };
   }
   try {
-  const pdfFilesContent = await listMemoPdf(DateTime.fromISO(queryStringParameters.date));
-    return {
-      statusCode: 200,
-      body: JSON.stringify(pdfFilesContent)
-    };
+    const date = DateTime.fromISO(queryStringParameters.date)
+    const pdfFilesContent = await listMemoPdf(date);
+      return {
+        statusCode: 200,
+        body: JSON.stringify(pdfFilesContent)
+      };
   } catch (error) {
     return {
       statusCode: 500,

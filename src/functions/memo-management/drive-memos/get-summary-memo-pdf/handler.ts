@@ -1,8 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
-import { getFile, getFiles, getFileText, getFolderId, generateSummary, createDocSummary } from "src/database/services/google-api-service";
+import { getFile, getFiles, getFileText, getFolderId } from "src/service/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
+import { generateSummary } from "src/service/open-api-service";
+import { createDocSummary } from "src/service/google-docs-api-service";
 
 /**
  * Generates summary based on memo's content

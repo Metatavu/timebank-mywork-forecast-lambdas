@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { TrelloCardWithComments } from "src/database/schemas/trello";
-import { TrelloService } from "src/database/services/trello-api-service";
+import { TrelloCardWithComments } from "src/schema/trello";
+import { TrelloService } from "src/service/trello-api-service";
 import { middyfy } from "src/libs/lambda";
 
 /**
