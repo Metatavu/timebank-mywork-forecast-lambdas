@@ -17,7 +17,7 @@ export const getFlextimeHandler: APIGatewayProxyHandler = async (event) => {
     if (!severaUserId) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: "User Guid is required" }),
+        body: JSON.stringify({ message: "User Id is required" }),
       };
     }
 

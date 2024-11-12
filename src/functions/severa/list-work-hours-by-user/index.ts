@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: "get",
-        path: "/severa/users/{severaUserGuid}/workhours",
+        path: "/severa/users/{severaUserId}/workhours",
         authorizer: {
           name: "timebankKeycloakAuthorizer"
         }

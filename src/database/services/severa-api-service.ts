@@ -15,9 +15,9 @@ import * as process from "node:process";
  */
 export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string, eventDate: string) => Promise<Flextime>;
-  getResourceAllocation: (severaGuid: string) => Promise<ResourceAllocationModel[]>;
-  getPhasesBySeveraProjectGuid: (severaProjectGuid: string) => Promise<Phase[]>;
-  getWorkHoursBySeveraGuid: ( severaProjectGuid?: string, severaUserGuid?: string, severaPhaseGuid?: string ) => Promise<WorkHours[]>;
+  getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocationModel[]>;
+  getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<Phase[]>;
+  getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string ) => Promise<WorkHours[]>;
 }
 
 /**
@@ -28,7 +28,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
   return {
     /**
-     * Gets flextime by userGUID and eventDate
+     * Gets flextime by userId and eventDate
      */
     getFlextimeBySeveraUserId: async (severaUserId: string, eventDate: string) => {
       const url: string = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${eventDate}`;
@@ -52,10 +52,10 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
        /** 
-     * Get resource allocation by userGUID 
+     * Get resource allocation by userId
      */
-       getResourceAllocation: async (severaGuid: string) => {
-        const url: string = `${baseUrl}/v1/users/${severaGuid}/resourceallocations/allocations`;
+       getResourceAllocation: async (severaUserId: string) => {
+        const url: string = `${baseUrl}/v1/users/${severaUserId}/resourceallocations/allocations`;
         const response = await fetch(url,{
             method: "GET",
             headers: {
@@ -71,19 +71,19 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         }
         const resourceAllocations = await response.json();
         const transformedResourceAllocations: ResourceAllocationModel[] = resourceAllocations.map((item:any) => ({
-          severaProjectGuid: item.guid,
+          severaProjectId: item.guid,
           allocationHours: item.allocationHours,
           calculatedAllocationHours: item.calculatedAllocationHours,
           phase: {
-              severaPhaseGuid: item.phase?.guid,
+              severaPhaseId: item.phase?.guid,
               name: item.phase?.name,
           },
           users: {
-              severaUserGuid: item.user?.guid,
+              severaUserId: item.user?.guid,
               name: item.user?.name,
           },
           projects: {
-              severaProjectGuid: item.project?.guid,
+              severaProjectId: item.project?.guid,
               name: item.project?.name,
               isInternal: item.project?.isInternal,
           },
@@ -92,10 +92,10 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * Gets phases by userGUID
+     * Gets phases by userId
      */
-    getPhasesBySeveraProjectGuid: async (severaProjectGuid: string) : Promise<Phase[]> => {
-      const url: string = `${baseUrl}/v1/projects/${severaProjectGuid}/phaseswithhierarchy`;
+    getPhasesBySeveraProjectId: async (severaProjectId: string) : Promise<Phase[]> => {
+      const url: string = `${baseUrl}/v1/projects/${severaProjectId}/phaseswithhierarchy`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -115,14 +115,14 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const phases = await response.json();
 
       return phases.map((item: any) => ({
-        severaPhaseGuid: item.guid,
+        severaPhaseId: item.guid,
         name: item.name,
         isCompleted: item.isCompleted,
         workHoursEstimate: item.workHoursEstimate,
         startDate: item.startDate,
         deadLine: item.deadLine,
         project: {
-          severaProjectGuid: item.project.guid,
+          severaProjectId: item.project.guid,
           name: item.project.name,
           isClosed: item.project.isClosed,
         },
@@ -130,20 +130,20 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * Gets work hours by userGUID
+     * Gets work hours by userId
      */
-    getWorkHoursBySeveraGuid: async (severaProjectGuid?:string, severaUserGuid?: string, severaPhaseGuid?: string) : Promise<WorkHours[]> => {
+    getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string) : Promise<WorkHours[]> => {
 
       const url: string = 
-        severaProjectGuid 
-          ? `${baseUrl}/v1/projects/${severaProjectGuid}/workhours` 
-          : severaUserGuid 
-            ? `${baseUrl}/v1/users/${severaUserGuid}/workhours`
+      severaProjectId 
+          ? `${baseUrl}/v1/projects/${severaProjectId}/workhours` 
+          : severaUserId 
+            ? `${baseUrl}/v1/users/${severaUserId}/workhours`
             : `${baseUrl}/v1/workhours`;
     
-      console.log("severaProjectGuid", severaProjectGuid)
-      console.log("severaUserGuid", severaUserGuid)
-      console.log("severaPhaseGuid", severaPhaseGuid)
+      console.log("severaProjectId", severaProjectId)
+      console.log("severaUserId", severaUserId)
+      console.log("severaPhaseId", severaPhaseId)
       console.log("url", url)
 
       const response = await fetch(url, {
@@ -164,24 +164,24 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const workHours = await response.json();
 
       const filteredWorkHoursUser = workHours.filter(workHours => {
-        return FilterUtilities.filterByUserSevera(workHours.user.guid, severaUserGuid)
+        return FilterUtilities.filterByUserSevera(workHours.user.guid, severaUserId)
       })
 
       const filteredWorkHoursPhase = workHours.filter(workHours => {
-        return FilterUtilities.filterByPhaseSevera(workHours.phase.guid, severaPhaseGuid)
+        return FilterUtilities.filterByPhaseSevera(workHours.phase.guid, severaPhaseId)
       })
 
       // Return work hours for a specific phaseID
-      if(severaPhaseGuid){
+      if(severaPhaseId){
         return filteredWorkHoursPhase.map(workHours => {
           return {
-            severaWorkHoursGuid: workHours.guid,
+            severaWorkHoursId: workHours.guid,
             user: {
               name: workHours.user.name,
             },
 
             phase: {
-              severaPhaseGuid: workHours.phase.guid,
+              severaPhaseId: workHours.phase.guid,
               name: workHours.phase.name,
             },
             description: workHours.description,
@@ -191,21 +191,21 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       }
 
       // Return work hours for a specific userID
-      if(severaUserGuid){
+      if(severaUserId){
         return filteredWorkHoursUser.map(workHours => {
           return {
-            severaWorkHoursGuid: workHours.guid,
+            severaWorkHoursId: workHours.guid,
             user: {
-              severaUserGuid: workHours.user.guid,
+              severaUserId: workHours.user.guid,
               name: workHours.user.name,
             },
             project: {
-              severaProjectGuid: workHours.project.guid,
+              severaProjectId: workHours.project.guid,
               name: workHours.project.name,
               isClosed: workHours.project.isClosed,
             },
             phase: {
-              severaPhaseGuid: workHours.phase.guid,
+              severaPhaseId: workHours.phase.guid,
               name: workHours.phase.name,
             },
             description: workHours.description,
@@ -222,12 +222,12 @@ export const CreateSeveraApiService = (): SeveraApiService => {
             name: item.user.name,
           },
           project: {
-            severaProjectGuid: item.project.guid,
+            severaProjectId: item.project.guid,
             name: item.project.name,
             isClosed: item.project.isClosed,
           },
           phase: {
-            severaPhaseGuid: item.phase.guid,
+            severaPhaseId: item.phase.guid,
             name: item.phase.name
           },
           description: item.description,
@@ -247,9 +247,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
  */
 const getSeveraAccessToken = async (): Promise<string> => {
   
-  if (process.env.IS_OFFLINE) {
-    return "test-token";
-  }
+  // if (process.env.IS_OFFLINE) {
+  //   return "test-token";
+  // }
   
   const url: string = `${process.env.SEVERA_DEMO_BASE_URL}/v1/token`;
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
@@ -258,7 +258,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "users:read",
+    scope: "projects:read, resourceallocations:read, hours:read",
   };
 
   try {

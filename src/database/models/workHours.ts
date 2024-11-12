@@ -4,7 +4,7 @@ import type {DateTime} from "luxon";
  * Severa model for Work Hours
  */
 interface WorkHoursModel {
-  severaWorkHoursGuid: string;
+  severaWorkHoursId: string;
   user: UserSubModel;
   project: ProjectSubModel;
   phase: PhaseSubModel;
@@ -19,7 +19,7 @@ interface WorkHoursModel {
  * Severa sub model for user
  */
 interface UserSubModel {
-  severaUserGuid: string;
+  severaUserId: string;
   name: string;
 }
 
@@ -27,7 +27,7 @@ interface UserSubModel {
  * Severa sub model for project
  */
 interface ProjectSubModel {
-  severaProjectGuid: string;
+  severaProjectId: string;
   name: string;
   isClosed: boolean;
 }
@@ -36,7 +36,7 @@ interface ProjectSubModel {
  * Severa sub model for phase
  */
 interface PhaseSubModel {
-  severaPhaseGuid: string;
+  severaPhaseId: string;
   name: string;
 }
 

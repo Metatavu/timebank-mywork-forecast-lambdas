@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: "get",
-        path: "/severa/users/{severaResourceAllocationGuid}/resourceallocations/allocations",
+        path: "/severa/users/{severaUserId}/resourceallocations/allocations",
         authorizer: {
           name: "timebankKeycloakAuthorizer",
         },

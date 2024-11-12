@@ -1,4 +1,4 @@
-import { DateRange } from "src/types";
+import type { DateRange } from "src/types";
 
 export namespace FilterUtilities {
   /**
@@ -68,12 +68,12 @@ export namespace FilterUtilities {
     return true;
   }
 
-  export const filterByUserSevera = (severaUserGuid: string, targetUserGuid: string): boolean => {
+  export const filterByUserSevera = (severaUserId: string, targetUserId: string): boolean => {
     // if (severaUserGuid !== undefined && severaUserGuid !== null) {
     //   return false;
     // }
     // return true;
-    return severaUserGuid === targetUserGuid;
+    return severaUserId === targetUserId;
   }
 
 
@@ -91,7 +91,7 @@ export namespace FilterUtilities {
     return true;
   }
 
-  export const filterByPhaseSevera = (severaPhaseGuid: string, targetPhaseGuid: string): boolean => {
-    return severaPhaseGuid === targetPhaseGuid;
+  export const filterByPhaseSevera = (severaPhaseId: string, targetPhaseId: string): boolean => {
+    return severaPhaseId === targetPhaseId;
   }
 }

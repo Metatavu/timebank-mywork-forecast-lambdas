@@ -1,5 +1,5 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
-import { CreateSeveraApiService } from "src/database/services/severa-api-service-TEMP";
+import { CreateSeveraApiService } from "src/database/services/severa-api-service";
 import { middyfy } from "src/libs/lambda";
 import type WorkHours from "@database/models/workHours";
 
@@ -12,22 +12,22 @@ import type WorkHours from "@database/models/workHours";
 export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
   
   // const severaProjectId = event.pathParameters?.severaProjectGuid;
-  const severaUserGuid = event.pathParameters?.severaUserGuid;
-  const severaProjectGuid = event.pathParameters?.severaProjectGuid;
-  const severaPhaseGuid = event.pathParameters?.severaPhaseGuid;
+  const severaUserId = event.pathParameters?.severaUserId;
+  const severaProjectId = event.pathParameters?.severaProjectId;
+  const severaPhaseId = event.pathParameters?.severaPhaseId;
 
   // console.log("severaProjectId", severaProjectId)
   // console.log("severaUserGuid", severaUserGuid)
   
   try {
     const api = CreateSeveraApiService();
-    const response: WorkHours[] = await api.getWorkHoursBySeveraGuid(severaProjectGuid, severaUserGuid, severaPhaseGuid);
+    const response: WorkHours[] = await api.getWorkHoursBySeveraId(severaProjectId, severaUserId, severaPhaseId);
 
-    const workHoursByUserGuid = JSON.parse(JSON.stringify(response))
+    const workHoursByUserId = JSON.parse(JSON.stringify(response))
 
     return {
       statusCode: 200,
-      body: workHoursByUserGuid,
+      body: workHoursByUserId,
     };
   } catch (error) {
     return {
