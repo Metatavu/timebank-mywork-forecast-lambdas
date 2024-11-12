@@ -1,4 +1,4 @@
-import { drive_v3, google } from "googleapis";
+import { google } from "googleapis";
 import { File, PdfFile } from "../schema/google";
 import { Readable } from "stream";
 import {streamToBuffer, getYearAndMonth} from "../libs/file-utils";

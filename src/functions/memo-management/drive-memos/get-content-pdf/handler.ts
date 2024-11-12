@@ -24,7 +24,7 @@ const getContentPdfHandler: APIGatewayProxyHandlerV2 = async (
   try {
     const fileContent = await getFileContentPdf({ id: fileId });
 
-    if (!fileContent || !fileContent.content) {
+    if (!fileContent?.content) {
       return {
         statusCode: 404,
         body: JSON.stringify({ error: "File not found" }),
