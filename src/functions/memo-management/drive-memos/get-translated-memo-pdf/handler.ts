@@ -35,7 +35,7 @@ import { getTranslatedPdf } from "src/service/google-translation-api-service";
 export const getTranslatedMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const {queryStringParameters} = event;
 
-  if (!queryStringParameters || !queryStringParameters?.date && !queryStringParameters?.fileId) {
+  if (!queryStringParameters && !queryStringParameters?.date && !queryStringParameters?.fileId) {
     return  {
       statusCode: 400,
       body: "Missing parameters"
