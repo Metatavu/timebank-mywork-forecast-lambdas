@@ -47,7 +47,12 @@ export const getTranslatedMemoPdfHandler: APIGatewayProxyHandler = async (event:
     if (translatedFilePdf) {
       return {
         statusCode: 200,
-        body: JSON.stringify(translatedFilePdf),
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Disposition": `attachment; filename=${translatedFilePdf.name}`,
+        },
+        body: translatedFilePdf.content.toString("base64"),
+        isBase64Encoded: true,
       };
     }
 
