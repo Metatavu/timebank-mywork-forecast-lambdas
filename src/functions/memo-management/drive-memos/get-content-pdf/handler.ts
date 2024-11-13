@@ -12,7 +12,7 @@ import { getFileContentPdf } from "src/service/google-drive-api-service";
 const getContentPdfHandler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyStructuredResultV2> => {
-  const fileId = event.queryStringParameters?.id;
+  const fileId = event.queryStringParameters?.fileId;
 
   if (!fileId) {
     return {
