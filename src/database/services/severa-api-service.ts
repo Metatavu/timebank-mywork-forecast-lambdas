@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/severa";
+import { DateTime } from "luxon";
 
 /**
  * Interface for a SeveraApiService.
@@ -16,15 +17,13 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
   return {
     /**
-     * Gets flextime by userGUID and eventDate
+     * Gets flextime by severaUserId
      */
     getFlextimeBySeveraUserId: async (severaUserId: string) => {
 
-      const eventDate = new Date();
-      eventDate.setDate(eventDate.getDate() - 1);
-      const formattedEventDate = eventDate.toISOString().split('T')[0];
-
-      const url: string = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${formattedEventDate}`;
+      const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
+      
+      const url = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${eventDateYesterday}`;
 
       const response = await fetch(url, {
         method: "GET",
