@@ -15,18 +15,3 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
     stream.on('error', reject);
   });
 }
-
-/**
- * Extracts month and year from file name
- * 
- * @param fileName file name
- * @returns parsed date
- */
-export const  getYearAndMonth = (fileName: string): [string, string] => {
-  const dateTemplate = /\b(\d{2})\.(\d{2})\.(\d{4})\b$/;
-  const dateMatch = dateTemplate.exec(fileName);
-  const year = dateMatch ? dateMatch[3] : new Date().getFullYear().toString();
-  const month = dateMatch ? dateMatch[2] : new Date().getMonth().toString().padStart(2, '0');
-  const monthName = DateTime.fromFormat(`${year}-${month}`, 'yyyy-MM').toFormat('MMMM');
-  return [year, monthName];
-}
