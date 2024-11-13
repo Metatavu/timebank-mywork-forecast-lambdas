@@ -33,11 +33,7 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
-import createVacationRequestHandler from "src/functions/vacation-request/create-vacation-request";
-import deleteVacationRequestHandler from "src/functions/vacation-request/delete-vacation-request";
-import findVacationRequestHandler from "src/functions/vacation-request/find-vacation-request";
-import listVacationRequestHandler from "src/functions/vacation-request/list-vacation-request";
-import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
+import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
 
 const isLocal = process.env.STAGE === "local";
 
@@ -95,6 +91,9 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
+      SEVERA_DEMO_BASE_URL: env.SEVERA_DEMO_BASE_URL,
+      SEVERA_DEMO_CLIENT_ID: env.SEVERA_DEMO_CLIENT_ID,
+      SEVERA_DEMO_CLIENT_SECRET: env.SEVERA_DEMO_CLIENT_SECRET,
       DYNAMODB_ENDPOINT: isLocal ? "http://localhost:8000" : undefined,
     },
     s3: {
@@ -126,11 +125,20 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: isLocal ? "*" : [
-              "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry",
-              "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires",
-              "arn:aws:dynamodb:${self:provider.region}:*:table/VacationRequests"
-              ]
+            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
+          },
+          {
+            Effect: "Allow",
+            Action: [
+              "dynamodb:DescribeTable",
+              "dynamodb:Query",
+              "dynamodb:Scan",
+              "dynamodb:GetItem",
+              "dynamodb:PutItem",
+              "dynamodb:UpdateItem",
+              "dynamodb:DeleteItem",
+            ],
+            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires"
           }
         ]
       }
@@ -168,11 +176,7 @@ const serverlessConfiguration: AWS = {
     deleteQuestionnaireHandler,
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
-    createVacationRequestHandler,
-    deleteVacationRequestHandler,
-    findVacationRequestHandler,
-    listVacationRequestHandler,
-    updateVacationRequestHandler,
+    getFlextimeHandler,
   },
   package: { individually: true },
   custom: {
@@ -194,19 +198,6 @@ const serverlessConfiguration: AWS = {
         DeletionPolicy: "Delete",
         Properties: {
           TableName: "Questionnaires",
-          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
-          KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
-          ProvisionedThroughput: {
-            ReadCapacityUnits: 1,
-            WriteCapacityUnits: 1
-          },
-        }
-      },
-      VacationRequests: {
-        Type: "AWS::DynamoDB::Table",
-        DeletionPolicy: "Delete",
-        Properties: {
-          TableName: "VacationRequests",
           AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
           KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
           ProvisionedThroughput: {
