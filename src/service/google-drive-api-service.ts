@@ -105,7 +105,6 @@ export const getFiles = async (year?: string, month?: string, mimeType: string =
       return await getBaseFolderFiles();
     }
     const monthFolderId = await getFolderId(year, month);
-    console.log("Month folder", monthFolderId)
     if (!monthFolderId) return [];
     const files: File[] = (await drive.files.list({
       q: `'${monthFolderId}' in parents and mimeType = '${mimeType}'`,
