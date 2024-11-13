@@ -19,7 +19,7 @@ export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
   getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocationModel[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<Phase[]>;
-  getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string ) => Promise<WorkHours[]>;
+  getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string, startTime?:string, endTime?: string, ) => Promise<WorkHours[]>;
 }
 
 /**
@@ -56,7 +56,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       return response.json();
     },
 
-       /** 
+    /** 
      * Get resource allocation by userId
      */
        getResourceAllocation: async (severaUserId: string) => {
@@ -137,14 +137,31 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userId
      */
-    getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string) : Promise<WorkHours[]> => {
+    getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string, startTime?:string, endTime?:string) : Promise<WorkHours[]> => {
 
-      const url: string = 
+      let url: string = 
       severaProjectId 
           ? `${baseUrl}/v1/projects/${severaProjectId}/workhours` 
           : severaUserId 
             ? `${baseUrl}/v1/users/${severaUserId}/workhours`
             : `${baseUrl}/v1/workhours`;
+
+      const queryParams: string[] = [];
+
+      if(startTime){
+        queryParams.push(`startDate=${startTime}`);
+      }
+      if(endTime){
+        queryParams.push(`endDate=${endTime}`);
+      }
+
+      if(queryParams.length > 0){
+        url += `?${queryParams.join("&")}`;
+      }
+
+      console.log("startDate", startTime)
+
+      console.log( "queryParams", queryParams)
     
       console.log("severaProjectId", severaProjectId)
       console.log("severaUserId", severaUserId)
@@ -184,7 +201,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
             user: {
               name: workHours.user.name,
             },
-
             phase: {
               severaPhaseId: workHours.phase.guid,
               name: workHours.phase.name,
@@ -217,7 +233,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
             eventDate: workHours.eventDate,
             quantity: workHours.quantity,
             startTime: workHours.startTime,
-            endTime: workHours.endTime
+            endTime: workHours.endTime,
           }
         })
       }
@@ -238,8 +254,8 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           description: item.description,
           eventDate: item.eventDate,
           quantity: item.quantity,
-          startTime: item.startTime,
-          endTime: item.endTime,
+          startTime: item.startDate,
+          endTime: item.endDate,
         }));
     },
   };

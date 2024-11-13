@@ -1,0 +1,15 @@
+{
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"name\": \"Frederic\"}",
+    "pathParameters": {
+        "severaUserId": "83ebc1fe-16a4-b070-975f-e21c4334197b"
+    },
+    "queryStringParameters": {
+        "startTime": "null",
+        "endTime": "null"
+      }
+
+}
+  

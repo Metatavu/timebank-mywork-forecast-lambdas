@@ -9,10 +9,10 @@ interface WorkHoursModel {
   project: ProjectSubModel;
   phase: PhaseSubModel;
   description: string;
-  eventDate: Date;
+  eventDate: string;
   quantity: number;
-  startTime: DateTime;
-  endTime: DateTime;
+  startDate?: string;
+  endDate?: string;
 }
 
 /**
