@@ -5,6 +5,8 @@ import type ResourceAllocationModel from "../models/resourceAllocation";
 import type Phase from "@database/models/phase";
 import type WorkHours from "@database/models/workHours";
 import * as process from "node:process";
+import { DateTime } from "luxon";
+
 
 
 
@@ -14,7 +16,7 @@ import * as process from "node:process";
  * Interface for a SeveraApiService.
  */
 export interface SeveraApiService {
-  getFlextimeBySeveraUserId: (severaUserId: string, eventDate: string) => Promise<Flextime>;
+  getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
   getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocationModel[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<Phase[]>;
   getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string ) => Promise<WorkHours[]>;
@@ -28,10 +30,13 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
   return {
     /**
-     * Gets flextime by userId and eventDate
+     * Gets flextime by severaUserId
      */
-    getFlextimeBySeveraUserId: async (severaUserId: string, eventDate: string) => {
-      const url: string = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${eventDate}`;
+    getFlextimeBySeveraUserId: async (severaUserId: string) => {
+
+      const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
+      
+      const url = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${eventDateYesterday}`;
 
       const response = await fetch(url, {
         method: "GET",
