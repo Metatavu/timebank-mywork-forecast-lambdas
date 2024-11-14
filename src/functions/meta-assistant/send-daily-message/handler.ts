@@ -4,9 +4,11 @@ import schema from "src/types/meta-assistant/index";
 import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
 import TimebankUtilities from "src/meta-assistant/timebank/timebank-utils";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
-import { DailyEntry } from "src/generated/client/api";
+import { DailyEntriesApi, DailyEntry } from "src/generated/client/api";
 import ForecastApiUtilities from "src/meta-assistant/forecastapi/forecast-api";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
+import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
+import { CreateSeveraApiService } from "src/database/services/severa-api-service";
 import Auth from "src/meta-assistant/auth/auth-provider";
 
 /**
@@ -23,29 +25,36 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
 
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
-
-    const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
+    const severaUsersList = CreateSeveraApiService();
+    const severaUsers = await severaUsersList.getUsers();
     const slackUsers = await SlackUtilities.getSlackUsers();
+    // const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
-
     const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
-    if (!timebankUsers) {
-      throw new Error("No persons retrieved from Timebank");
+    // if (!timebankUsers) {
+    //   throw new Error("No persons retrieved from Timebank");
+    // }
+
+    if (!severaUsers) {
+      throw new Error("No users retrieved from Severa");
     }
 
+    // console.log("Keycloak users:", keycloakUsers);
     const dailyEntries: DailyEntry[] = [];
 
-    for (const timebankUser of timebankUsers) {
-      const dailyEntry = await TimeBankApiProvider.getDailyEntries(timebankUser.id, yesterday, yesterday, accessToken);
+    for (const severaUser of severaUsers) {
+      const dailyEntry = await TimeBankApiProvider.getDailyEntries(severaUser.id, yesterday, yesterday, accessToken);
       if (dailyEntry && !dailyEntry.isVacation) {
         dailyEntries.push(dailyEntry);
       }
     }
 
-    const filteredTimebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id));
 
-    const dailyCombinedData = TimebankUtilities.combineDailyData(filteredTimebankUsers, dailyEntries, slackUsers);
+    // const filteredTimebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id));
+
+    const dailyCombinedData = TimebankUtilities.combineDailyData(severaUsers, dailyEntries, slackUsers);
+    // const messagesSent = await SlackUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, nonProjectTimes);
     const messagesSent = await SlackUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, nonProjectTimes);
 
     const errors = messagesSent.filter(messageSent => messageSent.response.error);
@@ -69,7 +78,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
       message: `Error while sending slack message: ${error}`
     };
   }
-};
+}
 
 /**
  * Lambda function for sending slack message

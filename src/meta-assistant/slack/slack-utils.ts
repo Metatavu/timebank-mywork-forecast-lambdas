@@ -177,17 +177,20 @@ Have a great week!
 
       if (!isAway && !firstDayBack) {
         if (!slackOverride) {
-          messageResults.push({
-            message: message,
-            response: await sendMessage(slackId, message.message)
-          });
+          // messageResults.push({
+          //   message: message,
+          //   response: await sendMessage(slackId, message.message)
+          // });
+          console.log("messsage is: ", message.message);
+          console.log("slackoverride: ", slackId);
         }
         else {
           for (const stagingid of slackOverride) {
-            messageResults.push({
-              message: message,
-              response: await sendMessage(stagingid, message.message)
-            });
+            // messageResults.push({
+            //   message: message,
+            //   response: await sendMessage(stagingid, message.message)
+            // });
+            console.log("messsage is: ", message.message);
           }
         }
       }

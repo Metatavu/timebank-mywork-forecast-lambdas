@@ -1,9 +1,13 @@
 /**
  * What Flextime returns from Severa.
  */
-interface Flextime {
+export interface Flextime {
 	totalFlextimeBalance: number | null; 
   monthFlextimeBalance: number | null;
 }
 
-export default Flextime;
+export interface getUsers {
+  id: string;
+  name: string;
+  email: string;
+}

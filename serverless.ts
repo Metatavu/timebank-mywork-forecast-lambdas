@@ -34,6 +34,7 @@ import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-quest
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
 import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
+import getUsersHandler from "src/functions/severa/get-users";
 
 const isLocal = process.env.STAGE === "local";
 
@@ -177,6 +178,7 @@ const serverlessConfiguration: AWS = {
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
     getFlextimeHandler,
+    getUsersHandler,
   },
   package: { individually: true },
   custom: {
