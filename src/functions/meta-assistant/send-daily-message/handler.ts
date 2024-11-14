@@ -30,17 +30,12 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const slackUsers = await SlackUtilities.getSlackUsers();
     // const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
-    const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
-
-    // if (!timebankUsers) {
-    //   throw new Error("No persons retrieved from Timebank");
-    // }
+    // const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!severaUsers) {
       throw new Error("No users retrieved from Severa");
     }
 
-    // console.log("Keycloak users:", keycloakUsers);
     const dailyEntries: DailyEntry[] = [];
 
     for (const severaUser of severaUsers) {
