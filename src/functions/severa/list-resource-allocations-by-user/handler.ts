@@ -8,7 +8,7 @@ import { middyfy } from "src/libs/lambda";
  * @param event - API Gateway event containing the userId.
  */
 export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event) => {
-    const severaUserId = event.pathParameters?.severaUserId;
+    const {severaUserId} = event.pathParameters
 
     try {
         const api = CreateSeveraApiService();
@@ -20,8 +20,29 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
             };
         }
 
-        const resourceAllocation = await api.getResourceAllocation(severaUserId);
-        
+        const response = await api.getResourceAllocation(severaUserId);
+
+        const resourceAllocation = response.map((item:any) => ({
+            severaResourceAllocationId: item.guid,
+            allocationHours: item.allocationHours,
+            calculatedAllocationHours: item.calculatedAllocationHours,
+            phase: {
+                severaPhaseId: item.phase?.guid,
+                name: item.phase?.name,
+            },
+            users: {
+                severaUserId: item.user?.guid,
+                name: item.user?.name,
+            },
+            projects: {
+                severaProjectId: item.project?.guid,
+                name: item.project?.name,
+                isInternal: item.project?.isInternal,
+            },
+        }))
+
+        console.log("resourceAllocation", JSON.parse(JSON.stringify(resourceAllocation)));
+
         return {
             statusCode: 200,
             body: JSON.stringify(resourceAllocation),

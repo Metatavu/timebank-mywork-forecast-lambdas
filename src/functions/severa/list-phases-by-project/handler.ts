@@ -1,7 +1,7 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { middyfy } from "src/libs/lambda";
-import type PhaseModel from "@database/models/phase";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
+import PhaseModel from "src/database/models/phase";
 
 /**
  * Handler for getting Phases by project from Severa REST API.
@@ -9,9 +9,11 @@ import { CreateSeveraApiService } from "src/database/services/severa-api-service
  * @param event - API Gateway event containing the userId.
  */
 export const getPhasesHandler: APIGatewayProxyHandler = async (event) => {
-  const severaProjectId = event.pathParameters?.severaProjectId;
+  const {severaProjectId} = event.pathParameters
+
   try {
     const api = CreateSeveraApiService();
+
     if (!severaProjectId) {
       return {
         statusCode: 400,
@@ -19,12 +21,27 @@ export const getPhasesHandler: APIGatewayProxyHandler = async (event) => {
       };
     }
 
-    const response: PhaseModel[] = await api.getPhasesBySeveraProjectId(severaProjectId);
-    const phasesBySeveraProjectId = JSON.parse(JSON.stringify(response))
+    const response = await api.getPhasesBySeveraProjectId(severaProjectId);
+
+    const phases =  response.map((item: any) => ({
+      severaPhaseId: item.guid,
+      name: item.name,
+      isCompleted: item.isCompleted,
+      workHoursEstimate: item.workHoursEstimate,
+      startDate: item.startDate,
+      deadLine: item.deadline,
+      project: {
+        severaProjectId: item.project.guid,
+        name: item.project.name,
+        isClosed: item.project.isClosed,
+      },
+    }));
+
+    console.log(JSON.parse(JSON.stringify(phases)))
 
     return {
       statusCode: 200,
-      body: phasesBySeveraProjectId,
+      body: JSON.stringify(phases),
     };
   } catch (error) {
     return {

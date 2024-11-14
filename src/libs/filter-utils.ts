@@ -73,7 +73,7 @@ export namespace FilterUtilities {
     //   return false;
     // }
     // return true;
-    return severaUserId === targetUserId;
+    return targetUserId === severaUserId;
   }
 
 
