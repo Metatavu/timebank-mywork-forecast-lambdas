@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
-import type Flextime from "../models/severa";
-import type getUsers from "../models/severa";
+import type { Flextime, getUsers } from "../models/severa";
+import { DateTime } from "luxon";
 
 /**
  * Interface for a SeveraApiService.
@@ -19,10 +19,13 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
   return {
     /**
-     * Gets flextime by userGUID and eventDate
+     * Gets flextime by severaUserId
      */
-    getFlextimeBySeveraUserId: async (severaUserId: string, eventDate: string) => {
-      const url: string = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${eventDate}`;
+    getFlextimeBySeveraUserId: async (severaUserId: string) => {
+
+      const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
+      
+      const url = `${baseUrl}/v1/users/${severaUserId}/flextime?eventdate=${eventDateYesterday}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -78,10 +81,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
  * @returns Access token as string
  */
 const getSeveraAccessToken = async (): Promise<string> => {
-  
-  // if (process.env.IS_OFFLINE) {
-  //   return "test-token";
-  // }
   
   const url: string = `${process.env.SEVERA_DEMO_BASE_URL}/v1/token`;
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
