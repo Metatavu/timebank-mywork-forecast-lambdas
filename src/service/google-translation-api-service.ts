@@ -57,7 +57,6 @@ export const getTranslatedPdf = async (pdfFile: PdfFile): Promise<PdfFile> => {
     const translatedContent = responseJs.documentTranslation.byteStreamOutputs[0];
     const bufferData = Buffer.from(translatedContent, "base64");
     return {
-      id: "",
       name: translatedFileName,
       content: bufferData
     };

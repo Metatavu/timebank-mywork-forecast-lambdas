@@ -1,6 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-import { DateTime } from "luxon";
-import { getFile, getFiles, getFileText, getFolderId } from "src/service/google-drive-api-service";
+import { getBaseFolderByName, getBaseFolderFiles, getFile, getFileSummaries, getFileText, getFolderId } from "src/service/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import { generateSummary } from "src/service/open-api-service";
@@ -13,24 +12,23 @@ import { createDocSummary } from "src/service/google-docs-api-service";
  * @param fileId ID of file
  * @returns generated summary text
  */
-const getSummaryMemoPdf = async (date: DateTime, fileId: string) => {
+const getSummaryMemoPdf = async (fileId: string) => {
   const file = await getFile(fileId);
   if (!file) return;
 
-  const fileSummary = (await getFiles(date.year.toString(), date.monthLong, "application/vnd.google-apps.document"))
-  .find(fileInFolder => `summary_${file.name}`.includes(fileInFolder.name));
+  const fileSummary = (await getFileSummaries()).find(fileInFolder => `summary_${file.name}`.includes(fileInFolder.name));
   if (fileSummary) {
     const text = await getFileText(fileSummary);
     return text;
   }
   
-  const filesInBaseFolder = await getFiles();
-  const folderId = await getFolderId(date.year.toString(), date.monthLong)
+  const filesInBaseFolder = await getBaseFolderFiles();
+  const folderId = await getBaseFolderByName("summaries");
   const fileToGenerateSummary = filesInBaseFolder.find(fileInBaseFolder => file.name.includes(fileInBaseFolder.name));
   const summaryText = await generateSummary(fileToGenerateSummary);
 
   await SlackUtilities.postSummaryToChannel(summaryText, file.name);
-  await createDocSummary(summaryText, folderId, fileToGenerateSummary)
+  await createDocSummary(summaryText, folderId, fileToGenerateSummary);
   return summaryText;
 }
 
@@ -42,14 +40,14 @@ const getSummaryMemoPdf = async (date: DateTime, fileId: string) => {
 const getSummaryMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const {queryStringParameters} = event;
 
-  if (!queryStringParameters && !queryStringParameters?.fileId && !queryStringParameters?.date) {
+  if (!queryStringParameters && !queryStringParameters?.fileId) {
     return  {
       statusCode: 400,
       body: "Missing parameters"
     };
   }
   try {
-    const summaryText =  await getSummaryMemoPdf(DateTime.fromISO(queryStringParameters.date), queryStringParameters.fileId);
+    const summaryText =  await getSummaryMemoPdf(queryStringParameters.fileId);
     const paragraphSeparator = /\r\n\r\n\r\n/;
     const splittedText = summaryText.split(paragraphSeparator);
     if (summaryText) 

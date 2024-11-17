@@ -1,6 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-import { DateTime } from "luxon";
-import { createPdfFile, getFile, getFileContentPdf, getFiles, getFolderId } from "src/service/google-drive-api-service";
+import { createPdfFile, getBaseFolderByName, getFile, getFileContentPdf, getFileTranslated } from "src/service/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 import { getTranslatedPdf } from "src/service/google-translation-api-service";
 
@@ -11,10 +10,10 @@ import { getTranslatedPdf } from "src/service/google-translation-api-service";
  * @param fileId Id of file to translate
  * @returns translated pdf buffer object
  */
- const getTranslatedMemoPdf = async (date: DateTime, fileId: string) => {
+ const getTranslatedMemoPdf = async (fileId: string) => {
   const file = await getFile(fileId);
   if (!file) return;
-  const filesInFolder = await getFiles(date.year.toString(), date.monthLong);
+  const filesInFolder = await getFileTranslated();
   const translatedFile = filesInFolder.find(fileInFolder => fileInFolder.name == `translated_${file.name}`);
   if (translatedFile) {
     const translatedPdf = await getFileContentPdf(translatedFile);
@@ -22,7 +21,7 @@ import { getTranslatedPdf } from "src/service/google-translation-api-service";
   }
   const filePdf = await getFileContentPdf(file);
   const translatedPdf = await getTranslatedPdf(filePdf);
-  const folderIdToSaveFile = await getFolderId(date.year.toString(), date.monthLong);
+  const folderIdToSaveFile = await getBaseFolderByName("translated");
   const idOfCreatedFile = await createPdfFile(translatedPdf, folderIdToSaveFile);
   return {...translatedPdf, id: idOfCreatedFile};
 };
@@ -35,7 +34,7 @@ import { getTranslatedPdf } from "src/service/google-translation-api-service";
 export const getTranslatedMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const {queryStringParameters} = event;
 
-  if (!queryStringParameters && !queryStringParameters?.date && !queryStringParameters?.fileId) {
+  if (!queryStringParameters && !queryStringParameters?.fileId) {
     return  {
       statusCode: 400,
       body: "Missing parameters"
@@ -43,7 +42,7 @@ export const getTranslatedMemoPdfHandler: APIGatewayProxyHandler = async (event:
   }
   
   try {
-    const translatedFilePdf = await getTranslatedMemoPdf(DateTime.fromISO(queryStringParameters.date), queryStringParameters.fileId);
+    const translatedFilePdf = await getTranslatedMemoPdf(queryStringParameters.fileId);
     if (translatedFilePdf) {
       return {
         statusCode: 200,

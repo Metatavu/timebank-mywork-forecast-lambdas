@@ -11,7 +11,7 @@ export interface File {
  * Interface for PDF files
  */
 export interface PdfFile {
-  id: string;
+  id?: string;
   name: string;
   content: Buffer;
 }
