@@ -15,7 +15,7 @@ export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
   getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocationModel[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<Phase[]>;
-  getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string) => Promise<WorkHours[]>;
+  getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?: string) => Promise<WorkHours[]>;
 }
 
 /**
@@ -98,21 +98,21 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userId
      */
-    getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string) => {
+    getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?: string) => {
 
 
-      // const queryParams: string[] = [];
+      const queryParams: string[] = [];
 
-      // if(startDate){
-      //   queryParams.push(`startDate=${startDate}`);
-      // }
-      // if(endDate){
-      //   queryParams.push(`endDate=${endDate}`);
-      // }
+      if(startDate){
+        queryParams.push(`startDate=${startDate}`);
+      }
+      if(endDate){
+        queryParams.push(`endDate=${endDate}`);
+      }
 
 
 
-      const url: string = 
+      let url: string = 
       severaProjectId 
           ? `${baseUrl}/v1/projects/${severaProjectId}/workhours` 
           : severaUserId 
@@ -122,9 +122,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
 
 
-      // if(queryParams.length > 0){
-      //   url += `?${queryParams.join("&")}`;
-      // }
+      if(queryParams.length > 0){
+        url += `?${queryParams.join("&")}`;
+      }
 
 
       // console.log( "queryParams", queryParams)

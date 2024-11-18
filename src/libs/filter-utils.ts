@@ -32,6 +32,13 @@ export namespace FilterUtilities {
     return true;
   }
 
+  export const filterByDateSevera = (startDate?: string, endDate?: string): boolean => {
+    if (startDate === null || endDate === null) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Compares Forecast project id to specified id
    * 

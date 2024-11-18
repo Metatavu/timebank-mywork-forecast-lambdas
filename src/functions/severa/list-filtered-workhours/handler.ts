@@ -11,10 +11,11 @@ import { FilterUtilities } from "src/libs/filter-utils";
  */
 export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
   const { severaUserId, severaProjectId, severaPhaseId } = event.pathParameters;
+  const { startDate, endDate } = event.queryStringParameters || {};
 
   try {
     const api = CreateSeveraApiService();
-    const response: WorkHours[] = await api.getWorkHoursBySeveraId(severaProjectId, severaUserId, severaPhaseId);
+    const response: WorkHours[] = await api.getWorkHoursBySeveraId(severaProjectId, severaUserId, severaPhaseId, startDate, endDate);
 
     // Define a reusable mapping function
     const mapWorkHours = (workHours: any) => ({
@@ -40,7 +41,7 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
     });
 
     // Reusable filtering and mapping function
-    const filterAndMapWorkHours = (response: any[], severaUserId?: string, severaPhaseId?: string) => {
+    const filterAndMapWorkHours = (response: any[], severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?:string) => {
       let filteredResponse = response;
 
       // Apply user filter if severaUserId is provided
@@ -59,12 +60,28 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
         );
       }
 
+      if (startDate) {
+        console.log("Filtering by startDate:", startDate);
+        filteredResponse = filteredResponse.filter(workHours => 
+          // workHours.startDate >= startDate
+          FilterUtilities.filterByDateSevera(workHours.startDate, startDate)
+        );
+      }
+    
+      if (endDate) {
+        console.log("Filtering by endDate:", endDate);
+        filteredResponse = filteredResponse.filter(workHours => 
+        //  workHours.endDate <= endDate
+        FilterUtilities.filterByDateSevera(workHours.endDate, endDate)
+        );
+      }
+
       // Map the filtered response to the desired structure
       return filteredResponse.map(mapWorkHours);
     };
 
     // Call the filter and map function with the response data
-    const result = filterAndMapWorkHours(response, severaUserId, severaPhaseId);
+    const result = filterAndMapWorkHours(response, severaUserId, severaPhaseId, startDate, endDate);
 
     console.log(JSON.parse(JSON.stringify(result)))
 

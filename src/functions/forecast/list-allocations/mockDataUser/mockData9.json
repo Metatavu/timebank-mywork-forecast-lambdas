@@ -7,7 +7,8 @@
         "severaUserId": "83ebc1fe-16a4-b070-975f-e21c4334197b"
     },
     "queryStringParameters": {
-        "startDate": "2024-08-01"
+        "startDate": "2024-08-01",
+        "endDate": "2024-08-03"
       }
 
 }
