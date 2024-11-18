@@ -1,5 +1,3 @@
-import type {DateTime} from "luxon";
-
 /**
  * Severa model for Work Hours
  */
