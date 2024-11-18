@@ -14,12 +14,15 @@
     "node": ">=14.15.0"
   },
   "dependencies": {
+    "@googleapis/docs": "^3.3.0",
+    "@googleapis/drive": "^8.14.0",
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
     "@sinclair/typebox": "^0.33.12",
     "@slack/web-api": "^6.7.0",
     "dotenv": "^16.3.1",
     "envalid": "^7.3.1",
+    "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
     "keycloak-js": "^26.0.2",
     "luxon": "^2.4.0",
