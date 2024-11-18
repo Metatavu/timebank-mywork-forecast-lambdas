@@ -4,6 +4,7 @@ import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
 import MessageUtilities from "../generic/message-utils";
+import { NotificationMessageResult } from "src/types/trello-notification";
 
 /**
  * Namespace for Slack utilities
@@ -15,6 +16,7 @@ namespace SlackUtilities {
   });
 
   const slackOverride = process.env.SLACK_USER_OVERRIDE ? process.env.SLACK_USER_OVERRIDE.split(",") : undefined;
+  const slackChannelId = process.env.CHANNEL_ID;
 
   /**
    * Get list of slack users
@@ -27,6 +29,25 @@ namespace SlackUtilities {
     if (!result.ok) throw new Error(`Error while loading slack users list, ${result.error}`);
 
     return result.members;
+  };
+
+  /**
+   * Gets Slack ID of card creator
+   *
+   * @param createdBy card creator full name
+   * @returns Slack user ID
+   */
+  const getSlackUserId = async (createdBy: string): Promise<string> => {
+    try {
+      const users = await getSlackUsers();
+      const matchedUser = users.find(user => user.real_name === createdBy);
+    
+      if (!matchedUser) throw new Error(`User with name ${createdBy} not found in Slack`);
+      return matchedUser.id;
+    } catch (error) {
+      console.error(`Error finding user ID for ${createdBy}:`, error);
+      return 
+    }
   };
 
   /**
@@ -137,6 +158,21 @@ Have a great week!
   };
 
   /**
+   * Create notification message about summary creation
+   * 
+   * @param summary text summary
+   * @param name file name
+   * @returns message
+   */
+  const constructMemoDocCreatedMessage = async (summary: string, name: string): Promise<string> => {
+    const cleanName = name.slice(0, -4);
+    const message = `
+:checkered_flag: New summary *${cleanName}* is available: \n\`${summary.split("\n")[0]}\`
+    `;  
+    return message;
+  };
+
+  /**
    * Sends given message to given slack channel
    *
    * @param channelId channel ID
@@ -239,6 +275,23 @@ Have a great week!
     }
     return messageResults;
   };
+
+  /**
+   * Post an instant slack summary message to users
+   *
+   * @param summary text summary
+   * @param name file name
+   */
+  export const postSummaryToChannel = async (summary: string, name: string): Promise<NotificationMessageResult> => {
+    let message;
+      message = await constructMemoDocCreatedMessage(summary, name);
+  
+    const messageResults: NotificationMessageResult = {
+      message: message,
+      response: await sendMessage(slackChannelId, message)
+    };
+    return messageResults;
+  }
 }
 
 export default SlackUtilities;

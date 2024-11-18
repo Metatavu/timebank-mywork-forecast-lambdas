@@ -33,6 +33,15 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
+import listMemoPdfHandler from "@/functions/memo-management/drive-memos/get-memos-pdf";
+import getTranslatedMemoPdfHandler from "@/functions/memo-management/drive-memos/get-translated-memo-pdf";
+import getSummaryMemoPdfHandler from "@/functions/memo-management/drive-memos/get-summary-memo-pdf";
+import getContentPdfHandler from "@/functions/memo-management/drive-memos/get-content-pdf";
+import getTrelloCardsOnListHandler from "@/functions/memo-management/trello-cards/get-trello-cards";
+import getBoardMembersHandler from "@/functions/memo-management/trello-cards/get-board-members";
+import deleteTrelloCardHandler from "@/functions/memo-management/trello-cards/delete-trello-card";
+import createTrelloCardHandler from "@/functions/memo-management/trello-cards/create-trello-card";
+import createCommentHandler from "@/functions/memo-management/trello-cards/comment-trello-card";
 import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
 import getResourceAllocationHandler  from "src/functions/severa/list-resource-allocations-by-user";
 import  getPhasesHandler  from "src/functions/severa/list-phases-by-project";
@@ -93,6 +102,10 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
+      GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID: env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID,
+      GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL: env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
+      GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
+      GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
       SEVERA_DEMO_BASE_URL: env.SEVERA_DEMO_BASE_URL,
       SEVERA_DEMO_CLIENT_ID: env.SEVERA_DEMO_CLIENT_ID,
       SEVERA_DEMO_CLIENT_SECRET: env.SEVERA_DEMO_CLIENT_SECRET,
@@ -178,6 +191,15 @@ const serverlessConfiguration: AWS = {
     deleteQuestionnaireHandler,
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
+    listMemoPdfHandler,
+    getTranslatedMemoPdfHandler,
+    getSummaryMemoPdfHandler,
+    getTrelloCardsOnListHandler,
+    getBoardMembersHandler,
+    deleteTrelloCardHandler,
+    createTrelloCardHandler,
+    createCommentHandler,
+    getContentPdfHandler,
     getFlextimeHandler,
     getResourceAllocationHandler,
     getPhasesHandler,
