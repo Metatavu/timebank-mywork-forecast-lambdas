@@ -32,6 +32,14 @@ export namespace FilterUtilities {
     return true;
   }
 
+
+  /**
+   * Compares severa dates to target dates
+   * 
+   * @param startDate Start date from Severa
+   * @param endDate End date from Severa
+   * @returns 
+   */
   export const filterByDateSevera = (startDate?: string, endDate?: string): boolean => {
     if (startDate === null || endDate === null) {
       return false;
@@ -50,15 +58,21 @@ export namespace FilterUtilities {
     if (projectId !== undefined && project?.toString() !== projectId) {
       return false;
     }
-
     return true;
   }
 
-  export const filterByProjectSevera = (severaProjectId?: string) : boolean => {
-    if(severaProjectId !== undefined && severaProjectId !== null) {
+  /**
+   * Compares severa project id to targetProject id
+   * 
+   * @param severaProjectId Project id from Severa
+   * @param targetProjectId Project id to compare
+   * @returns 
+   */
+  export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) : boolean => {
+    if(severaProjectId === null || targetProjectId === null) {
       return false;
     }
-    return true;
+    return severaProjectId === targetProjectId;
   }
 
   /**
@@ -75,16 +89,19 @@ export namespace FilterUtilities {
     return true;
   }
 
+  /**
+   * Compares severa User id to targetUser id
+   * 
+   * @param severaUserId User id from Severa
+   * @param targetUserId User id to compare
+   * @returns 
+   */
   export const filterByUserSevera = (severaUserId: string, targetUserId: string): boolean => {
-    // if (severaUserGuid !== undefined && severaUserGuid !== null) {
-    //   return false;
-    // }
-    // return true;
+    if(severaUserId === null || targetUserId === null) {
+      return false;
+    }
     return targetUserId === severaUserId;
   }
-
-
-  
 
   /**
    * Compares Forecast task id to specified id
@@ -98,7 +115,17 @@ export namespace FilterUtilities {
     return true;
   }
 
+  /**
+   * Compares severa phase id to targetPhase id
+   * 
+   * @param severaPhaseId Phase id from Severa
+   * @param targetPhaseId Phase id to compare
+   * @returns 
+   */
   export const filterByPhaseSevera = (severaPhaseId: string, targetPhaseId: string): boolean => {
+    if(severaPhaseId === null || targetPhaseId === null) {
+      return false;
+    }
     return severaPhaseId === targetPhaseId;
   }
 }

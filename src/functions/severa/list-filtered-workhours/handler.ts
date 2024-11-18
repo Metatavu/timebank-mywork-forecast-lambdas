@@ -17,8 +17,16 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
     const api = CreateSeveraApiService();
     const response: WorkHours[] = await api.getWorkHoursBySeveraId(severaProjectId, severaUserId, severaPhaseId, startDate, endDate);
 
-    // Define a reusable mapping function
-    const mapWorkHours = (workHours: any) => ({
+    const filteredWorkHours = response.filter((workHours:any) => {
+      return (
+        (!severaUserId || FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId)) &&
+        (!severaPhaseId || FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId)) &&
+        (!startDate || FilterUtilities.filterByDateSevera(workHours.startDate, startDate)) &&
+        (!endDate || FilterUtilities.filterByDateSevera(workHours.endDate, endDate))
+      );
+    });
+
+    const mappedWorkHours = filteredWorkHours.map((workHours:any) => ({
       severaWorkHoursId: workHours.guid,
       user: {
         severaUserId: workHours.user?.guid,
@@ -38,56 +46,11 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       quantity: workHours.quantity,
       startTime: workHours.startTime,
       endTime: workHours.endTime,
-    });
-
-    // Reusable filtering and mapping function
-    const filterAndMapWorkHours = (response: any[], severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?:string) => {
-      let filteredResponse = response;
-
-      // Apply user filter if severaUserId is provided
-      if (severaUserId) {
-        console.log("Filtering by severaUserId:", severaUserId);
-        filteredResponse = filteredResponse.filter(workHours =>
-          FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId)
-        );
-      }
-
-      // Apply phase filter if severaPhaseId is provided
-      if (severaPhaseId) {
-        console.log("Filtering by severaPhaseId:", severaPhaseId);
-        filteredResponse = filteredResponse.filter(workHours =>
-          FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId)
-        );
-      }
-
-      if (startDate) {
-        console.log("Filtering by startDate:", startDate);
-        filteredResponse = filteredResponse.filter(workHours => 
-          // workHours.startDate >= startDate
-          FilterUtilities.filterByDateSevera(workHours.startDate, startDate)
-        );
-      }
-    
-      if (endDate) {
-        console.log("Filtering by endDate:", endDate);
-        filteredResponse = filteredResponse.filter(workHours => 
-        //  workHours.endDate <= endDate
-        FilterUtilities.filterByDateSevera(workHours.endDate, endDate)
-        );
-      }
-
-      // Map the filtered response to the desired structure
-      return filteredResponse.map(mapWorkHours);
-    };
-
-    // Call the filter and map function with the response data
-    const result = filterAndMapWorkHours(response, severaUserId, severaPhaseId, startDate, endDate);
-
-    console.log(JSON.parse(JSON.stringify(result)))
+    }));
 
     return {
       statusCode: 200,
-      body: JSON.stringify(result),
+      body: JSON.stringify(mappedWorkHours),
     };
   } catch (error) {
     return {

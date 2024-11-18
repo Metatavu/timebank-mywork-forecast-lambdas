@@ -1,12 +1,10 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/severa";
-import { FilterUtilities } from "src/libs/filter-utils";
 import type ResourceAllocationModel from "../models/resourceAllocation";
 import type Phase from "@database/models/phase";
 import type WorkHours from "@database/models/workHours";
 import * as process from "node:process";
 import { DateTime } from "luxon";
-import PhaseModel from "@database/models/phase";
 
 /**
  * Interface for a SeveraApiService.
@@ -23,7 +21,6 @@ export interface SeveraApiService {
  */
 export const CreateSeveraApiService = (): SeveraApiService => {
   const baseUrl: string = process.env.SEVERA_DEMO_BASE_URL;
-
   return {
     /**
      * Gets flextime by severaUserId
@@ -86,7 +83,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           "Content-Type": "application/json",
         },
       });
-
       if (!response.ok) {
         throw new Error(
           `Failed to fetch phases: ${response.status} - ${response.statusText}`,
@@ -99,40 +95,22 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Gets work hours by userId
      */
     getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?: string) => {
+      let url: string;
 
-
-      const queryParams: string[] = [];
-
-      if(startDate){
-        queryParams.push(`startDate=${startDate}`);
+      if (severaProjectId) {
+        url = `${baseUrl}/v1/projects/${severaProjectId}/workhours`;
+      } else if (severaUserId) {
+        url = `${baseUrl}/v1/users/${severaUserId}/workhours`;
+      } else {
+        url = `${baseUrl}/v1/workhours`;
       }
-      if(endDate){
-        queryParams.push(`endDate=${endDate}`);
+      
+      const queryParams = new URLSearchParams();
+      if (startDate) queryParams.append("startDate", startDate);
+      if (endDate) queryParams.append("endDate", endDate);
+      if (queryParams.toString()) {
+        url += `?${queryParams.toString()}`;
       }
-
-
-
-      let url: string = 
-      severaProjectId 
-          ? `${baseUrl}/v1/projects/${severaProjectId}/workhours` 
-          : severaUserId 
-            ? `${baseUrl}/v1/users/${severaUserId}/workhours`
-            : `${baseUrl}/v1/workhours`;
-
-
-
-
-      if(queryParams.length > 0){
-        url += `?${queryParams.join("&")}`;
-      }
-
-
-      // console.log( "queryParams", queryParams)
-    
-      console.log("severaProjectId", severaProjectId)
-      console.log("severaUserId", severaUserId)
-      console.log("severaPhaseId", severaPhaseId)
-      console.log("url", url)
 
       const response = await fetch(url, {
         method: "GET",
@@ -142,13 +120,11 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           "Content-Type": "application/json",
         },
       });
-
       if (!response.ok) {
         throw new Error(
           `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
         );
       }
-
       return response.json();
     },
   };
@@ -160,10 +136,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
  * @returns Access token as string
  */
 const getSeveraAccessToken = async (): Promise<string> => {
-  
-  // if (process.env.IS_OFFLINE) {
-  //   return "test-token";
-  // }
+  if (process.env.IS_OFFLINE) {
+    return "test-token";
+  }
   
   const url: string = `${process.env.SEVERA_DEMO_BASE_URL}/v1/token`;
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
