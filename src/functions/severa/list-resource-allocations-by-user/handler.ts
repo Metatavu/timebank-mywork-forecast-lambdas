@@ -40,9 +40,6 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
                 isInternal: item.project?.isInternal,
             },
         }))
-
-        console.log("resourceAllocation", JSON.parse(JSON.stringify(resourceAllocation)));
-
         return {
             statusCode: 200,
             body: JSON.stringify(resourceAllocation),

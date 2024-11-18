@@ -35,9 +35,6 @@ export const getPhasesHandler: APIGatewayProxyHandler = async (event) => {
         isClosed: item.project.isClosed,
       },
     }));
-
-    console.log(JSON.parse(JSON.stringify(phases)))
-
     return {
       statusCode: 200,
       body: JSON.stringify(phases),
