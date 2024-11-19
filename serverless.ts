@@ -43,9 +43,15 @@ import deleteTrelloCardHandler from "@/functions/memo-management/trello-cards/de
 import createTrelloCardHandler from "@/functions/memo-management/trello-cards/create-trello-card";
 import createCommentHandler from "@/functions/memo-management/trello-cards/comment-trello-card";
 import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
+import createVacationRequestHandler from "src/functions/vacation-request/create-vacation-request";
+import deleteVacationRequestHandler from "src/functions/vacation-request/delete-vacation-request";
+import findVacationRequestHandler from "src/functions/vacation-request/find-vacation-request";
+import listVacationRequestHandler from "src/functions/vacation-request/list-vacation-request";
+import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
 import getResourceAllocationHandler  from "src/functions/severa/list-resource-allocations-by-user";
 import  getPhasesHandler  from "src/functions/severa/list-phases-by-project";
 import  getWorkHoursHandler from "src/functions/severa/list-filtered-workhours";
+
 const isLocal = process.env.STAGE === "local";
 
 const serverlessConfiguration: AWS = {
@@ -140,20 +146,11 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
-          },
-          {
-            Effect: "Allow",
-            Action: [
-              "dynamodb:DescribeTable",
-              "dynamodb:Query",
-              "dynamodb:Scan",
-              "dynamodb:GetItem",
-              "dynamodb:PutItem",
-              "dynamodb:UpdateItem",
-              "dynamodb:DeleteItem",
-            ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires"
+            Resource: isLocal ? "*" : [
+              "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/VacationRequests"
+            ]
           }
         ]
       }
@@ -201,6 +198,11 @@ const serverlessConfiguration: AWS = {
     createCommentHandler,
     getContentPdfHandler,
     getFlextimeHandler,
+    createVacationRequestHandler,
+    deleteVacationRequestHandler,
+    findVacationRequestHandler,
+    listVacationRequestHandler,
+    updateVacationRequestHandler,
     getResourceAllocationHandler,
     getPhasesHandler,
     getWorkHoursHandler,
