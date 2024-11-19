@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/severa";
-import type ResourceAllocationModel from "../models/resourceAllocation";
+import type ResourceAllocation from "../models/resourceAllocation";
 import type Phase from "@database/models/phase";
 import type WorkHours from "@database/models/workHours";
 import * as process from "node:process";
@@ -11,7 +11,7 @@ import { DateTime } from "luxon";
  */
 export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
-  getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocationModel[]>;
+  getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<Phase[]>;
   getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?: string) => Promise<WorkHours[]>;
 }
