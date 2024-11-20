@@ -28,17 +28,15 @@ export namespace FilterUtilities {
     } else if (!parameters.endDate && currentDate > endDate) {
       return false;
     }
-
     return true;
   }
-
 
   /**
    * Compares severa dates to target dates
    * 
    * @param startDate Start date from Severa
    * @param endDate End date from Severa
-   * @returns 
+   * 
    */
   export const filterByDateSevera = (startDate?: string, endDate?: string): boolean => {
     if (startDate === null || endDate === null) {
@@ -52,7 +50,7 @@ export namespace FilterUtilities {
    * 
    * @param project Project id from Forecast
    * @param projectId Project id to compare
-   * @returns 
+   *  
    */
   export const filterByProject = (project?: number, projectId?: string): boolean => {
     if (projectId !== undefined && project?.toString() !== projectId) {
@@ -66,7 +64,7 @@ export namespace FilterUtilities {
    * 
    * @param severaProjectId Project id from Severa
    * @param targetProjectId Project id to compare
-   * @returns 
+   *  
    */
   export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) : boolean => {
     if(severaProjectId === null || targetProjectId === null) {
@@ -94,7 +92,7 @@ export namespace FilterUtilities {
    * 
    * @param severaUserId User id from Severa
    * @param targetUserId User id to compare
-   * @returns 
+   *  
    */
   export const filterByUserSevera = (severaUserId: string, targetUserId: string): boolean => {
     if(severaUserId === null || targetUserId === null) {
@@ -120,9 +118,9 @@ export namespace FilterUtilities {
    * 
    * @param severaPhaseId Phase id from Severa
    * @param targetPhaseId Phase id to compare
-   * @returns 
+   *  
    */
-  export const filterByPhaseSevera = (severaPhaseId: string, targetPhaseId: string): boolean => {
+  export const filterByPhaseSevera = (severaPhaseId: string, targetPhaseId: string) => {
     if(severaPhaseId === null || targetPhaseId === null) {
       return false;
     }

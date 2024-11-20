@@ -50,7 +50,7 @@ import listVacationRequestHandler from "src/functions/vacation-request/list-vaca
 import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
 import getResourceAllocationHandler  from "src/functions/severa/list-resource-allocations-by-user";
 import getPhasesHandler  from "src/functions/severa/list-phases-by-project";
-import getWorkHoursHandler from "src/functions/severa/list-filtered-workhours";
+import getWorkHoursHandler from "src/functions/severa/get-filtered-workhours";
 
 const isLocal = process.env.STAGE === "local";
 

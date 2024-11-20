@@ -24,6 +24,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
   return {
     /**
      * Gets flextime by severaUserId
+     * 
+     * @param severaUserId  Severa user id
+     * @returns Flextime of an user
      */
     getFlextimeBySeveraUserId: async (severaUserId: string) => {
 
@@ -50,6 +53,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
     /** 
      * Get resource allocation by userId
+     * 
+     * @param severaUserId Severa user id
+     * @returns Resource allocation of an user
      */
        getResourceAllocation: async (severaUserId: string) => {
         const url: string = `${baseUrl}/v1/users/${severaUserId}/resourceallocations/allocations`;
@@ -70,7 +76,10 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * Gets phases by userId
+     * Gets phases by projectId
+     * 
+     * @param severaProjectId Severa project id
+     * @returns Phases of a project
      */
     getPhasesBySeveraProjectId: async (severaProjectId: string) => {
       const url: string = `${baseUrl}/v1/projects/${severaProjectId}/phaseswithhierarchy`;
@@ -92,7 +101,15 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * Gets work hours by userId
+     * Gets work hours with multiple queryparameters
+     * 
+     * @param severaProjectId Severa project id
+     * @param severaUserId Severa user id
+     * @param severaPhaseId Severa phase id
+     * @param startDate Start date
+     * @param endDate End date
+     * 
+     * @returns Work hours of a user with multiple queryparameters
      */
     getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?: string) => {
       let url: string;
@@ -136,9 +153,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
  * @returns Access token as string
  */
 const getSeveraAccessToken = async (): Promise<string> => {
-  if (process.env.IS_OFFLINE) {
-    return "test-token";
-  }
+
   
   const url: string = `${process.env.SEVERA_DEMO_BASE_URL}/v1/token`;
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
@@ -147,7 +162,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "projects:read, resourceallocations:read, hours:read",
+    scope: "projects:read, resourceallocations:read, hours:read, users:read",
   };
 
   try {
