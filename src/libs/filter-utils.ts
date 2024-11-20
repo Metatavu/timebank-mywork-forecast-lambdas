@@ -28,19 +28,17 @@ export namespace FilterUtilities {
     } else if (!parameters.endDate && currentDate > endDate) {
       return false;
     }
-
     return true;
   }
-
 
   /**
    * Compares severa dates to target dates
    * 
    * @param startDate Start date from Severa
    * @param endDate End date from Severa
-   * @returns 
+   * 
    */
-  export const filterByDateSevera = (startDate?: string, endDate?: string): boolean => {
+  export const filterByDateSevera = (startDate?: string, endDate?: string) => {
     if (startDate === null || endDate === null) {
       return false;
     }
@@ -52,7 +50,7 @@ export namespace FilterUtilities {
    * 
    * @param project Project id from Forecast
    * @param projectId Project id to compare
-   * @returns 
+   *  
    */
   export const filterByProject = (project?: number, projectId?: string): boolean => {
     if (projectId !== undefined && project?.toString() !== projectId) {
@@ -66,9 +64,9 @@ export namespace FilterUtilities {
    * 
    * @param severaProjectId Project id from Severa
    * @param targetProjectId Project id to compare
-   * @returns 
+   *  
    */
-  export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) : boolean => {
+  export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) => {
     if(severaProjectId === null || targetProjectId === null) {
       return false;
     }
@@ -82,7 +80,7 @@ export namespace FilterUtilities {
    * @param personId Person id to compare
    * @returns If two parameters match or personId is null
    */
-  export const filterByPerson = (person?: number, personId?: string): boolean => {
+  export const filterByPerson = (person?: number, personId?: string) => {
     if (personId !== undefined && person.toString() !== personId) {
       return false;
     }
@@ -94,9 +92,9 @@ export namespace FilterUtilities {
    * 
    * @param severaUserId User id from Severa
    * @param targetUserId User id to compare
-   * @returns 
+   *  
    */
-  export const filterByUserSevera = (severaUserId: string, targetUserId: string): boolean => {
+  export const filterByUserSevera = (severaUserId: string, targetUserId: string) => {
     if(severaUserId === null || targetUserId === null) {
       return false;
     }
@@ -120,9 +118,9 @@ export namespace FilterUtilities {
    * 
    * @param severaPhaseId Phase id from Severa
    * @param targetPhaseId Phase id to compare
-   * @returns 
+   *  
    */
-  export const filterByPhaseSevera = (severaPhaseId: string, targetPhaseId: string): boolean => {
+  export const filterByPhaseSevera = (severaPhaseId: string, targetPhaseId: string) => {
     if(severaPhaseId === null || targetPhaseId === null) {
       return false;
     }

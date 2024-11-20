@@ -12,7 +12,7 @@ interface PhaseModel {
 }
 
 /**
- * Severa model for project
+ * Severa model for phases's project
  */
 interface PhaseProjectSubModel{
   severaProjectId: string;

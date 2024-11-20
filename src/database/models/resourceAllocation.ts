@@ -1,38 +1,38 @@
 /*
- *  ResourceAllocation model
+*  ResourceAllocation model
 */
 interface ResourceAllocationModel {
-    severaProjectId: string;
-    allocationHours: number;
-    calculatedAllocationHours: number;
-    phase: PhaseSubModel;
-    users: UserSubModel;
+  severaProjectId: string;
+  allocationHours: number;
+  calculatedAllocationHours: number;
+  phase: PhaseSubModel;
+  users: UserSubModel;
     projects: ResourceAllocationProjectSubModel;
 }
 
 /*
- * Interface for PhaseSubModel
+* Interface for PhaseSubModel
 */
 interface PhaseSubModel {
-    severaPhaseId: string;
-    name: string;
+  severaPhaseId: string;
+  name: string;
 }
 
 /*
- * Interface for UserSubModel
+* Interface for UserSubModel
 */
 interface UserSubModel {
-    severaUserId: string;
-    name: string;
+  severaUserId: string;
+  name: string;
 }
 
 /*
- * Interface for ResourceAllocationProjectSubModel
+* Interface for ResourceAllocationProjectSubModel
 */
 interface ResourceAllocationProjectSubModel {
-    severaProjectId: string;
-    name: string;
-    isInternal: boolean;
+  severaProjectId: string;
+  name: string;
+  isInternal: boolean;
 }
 
 export default ResourceAllocationModel;
