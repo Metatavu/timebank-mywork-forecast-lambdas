@@ -38,7 +38,7 @@ export namespace FilterUtilities {
    * @param endDate End date from Severa
    * 
    */
-  export const filterByDateSevera = (startDate?: string, endDate?: string): boolean => {
+  export const filterByDateSevera = (startDate?: string, endDate?: string) => {
     if (startDate === null || endDate === null) {
       return false;
     }
@@ -66,7 +66,7 @@ export namespace FilterUtilities {
    * @param targetProjectId Project id to compare
    *  
    */
-  export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) : boolean => {
+  export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) => {
     if(severaProjectId === null || targetProjectId === null) {
       return false;
     }
@@ -80,7 +80,7 @@ export namespace FilterUtilities {
    * @param personId Person id to compare
    * @returns If two parameters match or personId is null
    */
-  export const filterByPerson = (person?: number, personId?: string): boolean => {
+  export const filterByPerson = (person?: number, personId?: string) => {
     if (personId !== undefined && person.toString() !== personId) {
       return false;
     }
@@ -94,7 +94,7 @@ export namespace FilterUtilities {
    * @param targetUserId User id to compare
    *  
    */
-  export const filterByUserSevera = (severaUserId: string, targetUserId: string): boolean => {
+  export const filterByUserSevera = (severaUserId: string, targetUserId: string) => {
     if(severaUserId === null || targetUserId === null) {
       return false;
     }
