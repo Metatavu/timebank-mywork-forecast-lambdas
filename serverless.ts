@@ -48,8 +48,8 @@ import deleteVacationRequestHandler from "src/functions/vacation-request/delete-
 import findVacationRequestHandler from "src/functions/vacation-request/find-vacation-request";
 import listVacationRequestHandler from "src/functions/vacation-request/list-vacation-request";
 import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
-import getResourceAllocationHandler  from "src/functions/severa/list-resource-allocations-by-user";
-import getPhasesHandler  from "src/functions/severa/list-phases-by-project";
+import getResourceAllocationHandler  from "src/functions/severa/get-resource-allocations-by-user";
+import getPhasesHandler  from "src/functions/severa/get-phases-by-project";
 import getWorkHoursHandler from "src/functions/severa/get-filtered-workhours";
 
 const isLocal = process.env.STAGE === "local";
