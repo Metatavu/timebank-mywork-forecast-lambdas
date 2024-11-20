@@ -15,14 +15,22 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
 
   try {
     const api = CreateSeveraApiService();
-    const response: WorkHours[] = await api.getWorkHoursBySeveraId(severaProjectId, severaUserId, severaPhaseId, startDate, endDate);
+    let url: string;
+
+    if (severaProjectId) {
+      url = `projects/${severaProjectId}/workhours`; 
+    } else if (severaUserId) {
+      url = `users/${severaUserId}/workhours`;
+    } else {
+      url = `workhours`;
+    }
+
+    const response: WorkHours[] = await api.getWorkHoursBySeveraId(url, startDate, endDate);
 
     const filteredWorkHours = response.filter((workHours:any) => {
       return (
-        (!severaUserId || FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId)) &&
-        (!severaPhaseId || FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId)) &&
-        (!startDate || FilterUtilities.filterByDateSevera(workHours.startDate, startDate)) &&
-        (!endDate || FilterUtilities.filterByDateSevera(workHours.endDate, endDate))
+        (!(severaProjectId && severaUserId) || FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId)) &&
+        (!severaPhaseId || FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId)) 
       );
     });
 
@@ -47,6 +55,8 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       startTime: workHours.startTime,
       endTime: workHours.endTime,
     }));
+
+    console.log(JSON.parse(JSON.stringify(mappedWorkHours)));
 
     return {
       statusCode: 200,

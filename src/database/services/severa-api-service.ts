@@ -94,17 +94,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userId
      */
-    getWorkHoursBySeveraId: async (severaProjectId?:string, severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?: string) => {
-      let url: string;
-
-      if (severaProjectId) {
-        url = `${baseUrl}/v1/projects/${severaProjectId}/workhours`;
-      } else if (severaUserId) {
-        url = `${baseUrl}/v1/users/${severaUserId}/workhours`;
-      } else {
-        url = `${baseUrl}/v1/workhours`;
-      }
-      
+    getWorkHoursBySeveraId: async (url: string, startDate?: string, endDate?: string) => {
       const queryParams = new URLSearchParams();
       if (startDate) queryParams.append("startDate", startDate);
       if (endDate) queryParams.append("endDate", endDate);
@@ -112,7 +102,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         url += `?${queryParams.toString()}`;
       }
 
-      const response = await fetch(url, {
+      const response = await fetch(`${baseUrl}/v1/${url}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${await getSeveraAccessToken()}`,
@@ -136,9 +126,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
  * @returns Access token as string
  */
 const getSeveraAccessToken = async (): Promise<string> => {
-  if (process.env.IS_OFFLINE) {
-    return "test-token";
-  }
+  // if (process.env.IS_OFFLINE) {
+  //   return "test-token";
+  // }
   
   const url: string = `${process.env.SEVERA_DEMO_BASE_URL}/v1/token`;
   const client_Id: string = process.env.SEVERA_DEMO_CLIENT_ID;
