@@ -1,6 +1,5 @@
 import {VacationRequestStatus} from "@generated/client/model/vacationRequestStatus";
 
-
 /**
  * DynamoDB model for vacation request
  */
