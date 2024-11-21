@@ -1,11 +1,11 @@
 /**
- * Severa model for Work Hours
+ * Interface for WorkHoursModel
  */
 interface WorkHoursModel {
     severaWorkHoursId: string;
-    user: UserSubModel;
-    project: ProjectSubModel;
-    phase: PhaseSubModel;
+    user: WorkHoursUserModel;
+    project: WorkHoursProjectModel;
+    phase: WorkHoursPhaseModel;
     description: string;
     eventDate: string;
     quantity: number;
@@ -14,26 +14,26 @@ interface WorkHoursModel {
   }
   
   /**
-   * Severa sub model for user
+   * Interface for WorkHoursUserModel
    */
-  interface UserSubModel {
+  interface WorkHoursUserModel {
     severaUserId: string;
     name: string;
   }
   
   /**
-   * Severa sub model for project
+   * Interface for WorkHoursProjectModel
    */
-  interface ProjectSubModel {
+  interface WorkHoursProjectModel {
     severaProjectId: string;
     name: string;
     isClosed: boolean;
   }
   
   /**
-   * Severa sub model for phase
+   * Interface for WorkHoursPhaseModel
    */
-  interface PhaseSubModel {
+  interface WorkHoursPhaseModel {
     severaPhaseId: string;
     name: string;
   }

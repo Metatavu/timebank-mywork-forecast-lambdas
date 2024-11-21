@@ -13,7 +13,7 @@ export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
   getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<Phase[]>;
-  getWorkHoursBySeveraId: ( severaProjectId?: string, severaUserId?: string, severaPhaseId?: string, startDate?: string, endDate?: string) => Promise<WorkHours[]>;
+  getWorkHoursBySeveraId: (url: string, startDate?: string, endDate?: string) => Promise<WorkHours[]>;
 }
 
 /**

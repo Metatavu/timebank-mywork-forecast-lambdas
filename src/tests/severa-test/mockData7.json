@@ -5,8 +5,12 @@
   "body": "{\"name\": \"Fredasdasderic\"}",
   "pathParameters": {
       "severaUserId": "83ebc1fe-16a4-b070-975f-e21c4334197b",
-      "severaProjectId": "334a66c6-cb35-fb03-b209-18626a31047e",
-      "severaPhaseId": "2ba943b1-7053-0f87-44a7-0628d24f231c"
-  }
+      "severaProjectId": "334a66c6-cb35-fb03-b209-18626a31047e"
+    
+  },
+  "queryStringParameters": {
+      "startDate": "2024-08-01",
+      "endDate": "2024-08-03"
+    }
 
 }

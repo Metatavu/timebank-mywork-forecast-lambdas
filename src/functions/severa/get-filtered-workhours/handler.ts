@@ -10,11 +10,12 @@ import { FilterUtilities } from "src/libs/filter-utils";
  * @param event - API Gateway event containing the userId, projectId, and phaseId.
  */
 export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
-  const { severaUserId, severaProjectId, severaPhaseId } = event.pathParameters;
+  const { severaUserId, severaProjectId, severaPhaseId } = event.pathParameters || {};
   const { startDate, endDate } = event.queryStringParameters || {};
 
   try {
     const api = CreateSeveraApiService();
+
     let url: string;
 
     if (severaProjectId) {
@@ -22,7 +23,7 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
     } else if (severaUserId) {
       url = `users/${severaUserId}/workhours`;
     } else {
-      url = `workhours`;
+      url = "workhours";
     }
 
     console.log(`Getting work hours from Severa API with URL: ${url}`);

@@ -38,12 +38,12 @@ export namespace FilterUtilities {
    * @param endDate End date from Severa
    * 
    */
-  export const filterByDateSevera = (startDate?: string, endDate?: string) => {
-    if (startDate === null || endDate === null) {
-      return false;
-    }
-    return true;
-  }
+  // export const filterByDateSevera = (startDate?: string, endDate?: string) => {
+  //   if (startDate === null || endDate === null) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   /**
    * Compares Forecast project id to specified id
@@ -66,12 +66,12 @@ export namespace FilterUtilities {
    * @param targetProjectId Project id to compare
    *  
    */
-  export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) => {
-    if(severaProjectId === null || targetProjectId === null) {
-      return false;
-    }
-    return severaProjectId === targetProjectId;
-  }
+  // export const filterByProjectSevera = (severaProjectId?: string, targetProjectId?: string) => {
+  //   if(severaProjectId === null || targetProjectId === null) {
+  //     return false;
+  //   }
+  //   return severaProjectId === targetProjectId;
+  // }
 
   /**
    * Compares Forecast person id to specified id
