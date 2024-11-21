@@ -1,12 +1,12 @@
-import {VacationRequestStatuses} from "@generated/client/model/vacationRequestStatuses";
 import {VacationRequestStatus} from "@generated/client/model/vacationRequestStatus";
+
 
 /**
  * DynamoDB model for vacation request
  */
 interface VacationRequestModel {
   id: string;
-  personId: string;
+  userId: string;
   draft: boolean;
   startDate: string;
   endDate: string;
