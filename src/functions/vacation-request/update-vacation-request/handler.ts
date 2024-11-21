@@ -12,7 +12,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
   const { pathParameters} = event;
   const id = pathParameters?.id;
   const {
-    personId: userId,
+    userId,
     draft,
     startDate,
     endDate,

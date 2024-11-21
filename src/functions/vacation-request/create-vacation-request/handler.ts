@@ -18,7 +18,7 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
     };
   }
 
-  const { personId: userId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt} = event.body;
+  const { userId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt} = event.body;
 
   if (!userId || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
     return {
