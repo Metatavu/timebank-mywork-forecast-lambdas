@@ -1,23 +1,6 @@
 import fetch from "node-fetch";
+import type { KeycloakProfile } from "keycloak-js/lib/keycloak";
 
-/**
- * Interface for a KeycloakProfile. 
- * 
- * FIXME: This is from node_modules/keycloak-js/lib/keycloak.d.ts
- *  This a temporary solution to avoid the error: "Cannot find module 'keycloak-js'"  
- */
-export interface KeycloakProfile {
-  id?: string;
-  username?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  enabled?: boolean;
-  emailVerified?: boolean;
-  totp?: boolean;
-  createdTimestamp?: number;
-  attributes?: Record<string, unknown>;
-}
 /**
  * Custom Interface for a user in keycloak functions with severaUserId added.
  */

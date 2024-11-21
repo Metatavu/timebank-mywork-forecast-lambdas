@@ -43,16 +43,21 @@ import deleteTrelloCardHandler from "@/functions/memo-management/trello-cards/de
 import createTrelloCardHandler from "@/functions/memo-management/trello-cards/create-trello-card";
 import createCommentHandler from "@/functions/memo-management/trello-cards/comment-trello-card";
 import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
+import createVacationRequestHandler from "src/functions/vacation-request/create-vacation-request";
+import deleteVacationRequestHandler from "src/functions/vacation-request/delete-vacation-request";
+import findVacationRequestHandler from "src/functions/vacation-request/find-vacation-request";
+import listVacationRequestHandler from "src/functions/vacation-request/list-vacation-request";
+import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
 
 const isLocal = process.env.STAGE === "local";
 
 const serverlessConfiguration: AWS = {
-  service: 'home-lambdas',
-  frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-deployment-bucket', 'serverless-offline', 'serverless-dynamodb'],
+  service: "home-lambdas",
+  frameworkVersion: "3",
+  plugins: ["serverless-esbuild", "serverless-deployment-bucket", "serverless-offline", "serverless-dynamodb"],
   provider: {
-    name: 'aws',
-    runtime: 'nodejs16.x',
+    name: "aws",
+    runtime: "nodejs16.x",
     region: (env.AWS_DEFAULT_REGION as any) || "us-east-1",
     deploymentBucket: {
       name: isLocal ? "local-bucket" : "${self:service}-${opt:stage}-deploy"
@@ -74,8 +79,8 @@ const serverlessConfiguration: AWS = {
       },
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
+      NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
       FORECAST_API_KEY: env.FORECAST_API_KEY,
       AUTH_ISSUER: env.AUTH_ISSUER,
       PIPEDRIVE_API_KEY: env.PIPEDRIVE_API_KEY,
@@ -144,20 +149,11 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
-          },
-          {
-            Effect: "Allow",
-            Action: [
-              "dynamodb:DescribeTable",
-              "dynamodb:Query",
-              "dynamodb:Scan",
-              "dynamodb:GetItem",
-              "dynamodb:PutItem",
-              "dynamodb:UpdateItem",
-              "dynamodb:DeleteItem",
-            ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires"
+            Resource: isLocal ? "*" : [
+              "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/VacationRequests"
+            ]
           }
         ]
       }
@@ -205,6 +201,11 @@ const serverlessConfiguration: AWS = {
     createCommentHandler,
     getContentPdfHandler,
     getFlextimeHandler,
+    createVacationRequestHandler,
+    deleteVacationRequestHandler,
+    findVacationRequestHandler,
+    listVacationRequestHandler,
+    updateVacationRequestHandler,
   },
   package: { individually: true },
   custom: {
@@ -212,10 +213,10 @@ const serverlessConfiguration: AWS = {
       bundle: true,
       minify: false,
       sourcemap: true,
-      exclude: ['aws-sdk'],
-      target: 'node16',
-      define: { 'require.resolve': undefined },
-      platform: 'node',
+      exclude: ["aws-sdk"],
+      target: "node16",
+      define: { "require.resolve": undefined },
+      platform: "node",
       concurrency: 10,
     },
   },
@@ -235,20 +236,20 @@ const serverlessConfiguration: AWS = {
         }
       },
       Software: {
-        Type: 'AWS::DynamoDB::Table',
-        DeletionPolicy: 'Delete',
+        Type: "AWS::DynamoDB::Table",
+        DeletionPolicy: "Delete",
         Properties: {
-          TableName: 'SoftwareRegistry',
+          TableName: "SoftwareRegistry",
           AttributeDefinitions: [
             {
-              AttributeName: 'id',
-              AttributeType: 'S',
+              AttributeName: "id",
+              AttributeType: "S",
             },
           ],
           KeySchema: [
             {
-              AttributeName: 'id',
-              KeyType: 'HASH',
+              AttributeName: "id",
+              KeyType: "HASH",
             },
           ],
           ProvisionedThroughput: {
@@ -256,6 +257,19 @@ const serverlessConfiguration: AWS = {
             WriteCapacityUnits: 1,
           },
         },
+      },
+      VacationRequests: {
+        Type: "AWS::DynamoDB::Table",
+        DeletionPolicy: "Delete",
+        Properties: {
+          TableName: "VacationRequests",
+          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
+          KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1
+          },
+        }
       },
     },
   },
