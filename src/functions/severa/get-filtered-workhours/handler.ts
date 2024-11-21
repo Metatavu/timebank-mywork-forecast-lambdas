@@ -1,8 +1,8 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
 import { middyfy } from "src/libs/lambda";
-import type WorkHours from "@database/models/workHours";
 import { FilterUtilities } from "src/libs/filter-utils";
+import type WorkHours from "src/types/severa/workHour/workHour";
 
 /**
  * Handler for getting work hours from Severa REST API.
@@ -37,8 +37,8 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       );
     });
 
-    const mappedWorkHours = filteredWorkHours.map((workHours:any) => ({
-      severaWorkHoursId: workHours.guid,
+    const mappedWorkHours = filteredWorkHours.map((workHours:WorkHours) => ({
+      severaWorkHoursId: workHours.guid ,
       user: {
         severaUserId: workHours.user?.guid,
         name: workHours.user?.name,
