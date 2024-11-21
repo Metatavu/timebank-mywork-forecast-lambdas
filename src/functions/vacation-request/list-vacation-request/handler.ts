@@ -4,7 +4,7 @@ import { vacationRequestService } from "src/database/services";
 import { middyfy } from "src/libs/lambda";
 
 /**
- * Labmda for listing all questions from DynamoDB.
+ * Labmda for listing all vacation requests from DynamoDB.
  */
 const listVacationRequestHandler: APIGatewayProxyHandler = async () => {
   try {
