@@ -25,6 +25,8 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       url = `workhours`;
     }
 
+    console.log(`Getting work hours from Severa API with URL: ${url}`);
+
     const response: WorkHours[] = await api.getWorkHoursBySeveraId(url, startDate, endDate);
 
     const filteredWorkHours = response.filter((workHours:any) => {

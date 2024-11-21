@@ -40,6 +40,7 @@ try {
         isInternal: item.project?.isInternal,
       },
     }))
+    console.log(JSON.parse(JSON.stringify(resourceAllocation)));
     return {
       statusCode: 200,
       body: JSON.stringify(resourceAllocation),

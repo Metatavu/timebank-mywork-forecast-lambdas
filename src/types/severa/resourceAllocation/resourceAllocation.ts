@@ -5,9 +5,9 @@ interface ResourceAllocationModel {
     severaProjectId: string;
     allocationHours: number;
     calculatedAllocationHours: number;
-    phase: PhaseSubModel;
+    phase?: PhaseSubModel;
     users: UserSubModel;
-    projects: ResourceAllocationProjectSubModel;
+    projects?: ResourceAllocationProjectSubModel;
 }
 
 /*
