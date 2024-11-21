@@ -1,0 +1,7 @@
+{
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"name\": \"Frederic\"  }",
+  "pathParameters": {"severaUserId": "0c6b0b15-15eb-a77b-ad09-61527abc7be6"}
+}

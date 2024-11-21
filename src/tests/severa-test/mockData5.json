@@ -1,0 +1,8 @@
+{
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"name\": \"Frederic\"  }",
+  "pathParameters": {"severaUserId": "0c6b0b15-15eb-a77b-ad09-61527abc7be6",
+   "severaProjectId": "f7d6b20f-20a7-8abc-b9af-527537a6f197"}
+}
