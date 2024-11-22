@@ -4,6 +4,7 @@ import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
 import MessageUtilities from "../generic/message-utils";
+import { NotificationMessageResult } from "src/types/trello-notification";
 
 /**
  * Namespace for Slack utilities
@@ -15,6 +16,7 @@ namespace SlackUtilities {
   });
 
   const slackOverride = process.env.SLACK_USER_OVERRIDE ? process.env.SLACK_USER_OVERRIDE.split(",") : undefined;
+  const slackChannelId = process.env.CHANNEL_ID;
 
   /**
    * Get list of slack users
@@ -30,54 +32,88 @@ namespace SlackUtilities {
   };
 
   /**
+   * Gets Slack ID of card creator
+   *
+   * @param createdBy card creator full name
+   * @returns Slack user ID
+   */
+  const getSlackUserId = async (createdBy: string): Promise<string> => {
+    try {
+      const users = await getSlackUsers();
+      const matchedUser = users.find(user => user.real_name === createdBy);
+    
+      if (!matchedUser) throw new Error(`User with name ${createdBy} not found in Slack`);
+      return matchedUser.id;
+    } catch (error) {
+      console.error(`Error finding user ID for ${createdBy}:`, error);
+      return 
+    }
+  };
+
+  /**
    * Create message based on specific users timebank data
    *
-   * @param user timebank data
+   * @param user severa data
    * @param numberOfToday Todays number
    * @returns string message if id match
    */
-  const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
-    const { name, date, firstName, minimumBillableRate } = user;
+//   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
+//     const { name, date, firstName, minimumBillableRate } = user;
 
-    const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
+//     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
 
-    const {
-      logged,
-      loggedProject,
-      expected,
-      internal,
-      billableProject,
-      nonBillableProject
-    } = TimeUtilities.handleTimeFormatting(user);
+//     const {
+//       logged,
+//       loggedProject,
+//       expected,
+//       internal,
+//       billableProject,
+//       nonBillableProject
+    // } = TimeUtilities.handleTimeFormatting(user);
 
-    const {
-      message,
-      billableHoursPercentage
-    } = MessageUtilities.calculateWorkedTimeAndBillableHours(user);
+//     const {
+//       message,
+//       billableHoursPercentage
+//     } = MessageUtilities.calculateWorkedTimeAndBillableHours(user);
 
+//     const customMessage = `
+// Hi ${firstName},
+//     `;
+//     const customMessage = `
+// Hi ${firstName},
+// ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${logged} with an expected time of ${expected}.
+// ${message}
+// Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
+// Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
+// Have a great rest of the day!
+//     `;
+
+  //   return {
+  //     message: customMessage,
+  //     name: name,
+  //     displayDate: displayDate,
+  //     displayLogged: logged,
+  //     displayLoggedProject: loggedProject,
+  //     displayExpected: expected,
+  //     displayBillableProject: billableProject,
+  //     displayNonBillableProject: nonBillableProject,
+  //     displayInternal: internal,
+  //     billableHoursPercentage: billableHoursPercentage
+  //   };
+  // };
+
+  const constructDailyMessage = (user: { firstName: string }): { message: string } => {
+    const { firstName } = user;
+  
     const customMessage = `
-Hi ${firstName},
-${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${logged} with an expected time of ${expected}.
-${message}
-Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
-Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
-Have a great rest of the day!
+  Hi ${firstName},
+  Have a great rest of the day!
     `;
-
+  
     return {
-      message: customMessage,
-      name: name,
-      displayDate: displayDate,
-      displayLogged: logged,
-      displayLoggedProject: loggedProject,
-      displayExpected: expected,
-      displayBillableProject: billableProject,
-      displayNonBillableProject: nonBillableProject,
-      displayInternal: internal,
-      billableHoursPercentage: billableHoursPercentage
+      message: customMessage
     };
   };
-
   /**
    * Create weekly message from users timebank data
    *
@@ -137,6 +173,21 @@ Have a great week!
   };
 
   /**
+   * Create notification message about summary creation
+   * 
+   * @param summary text summary
+   * @param name file name
+   * @returns message
+   */
+  const constructMemoDocCreatedMessage = async (summary: string, name: string): Promise<string> => {
+    const cleanName = name.slice(0, -4);
+    const message = `
+:checkered_flag: New summary *${cleanName}* is available: \n\`${summary.split("\n")[0]}\`
+    `;  
+    return message;
+  };
+
+  /**
    * Sends given message to given slack channel
    *
    * @param channelId channel ID
@@ -181,8 +232,7 @@ Have a great week!
           //   message: message,
           //   response: await sendMessage(slackId, message.message)
           // });
-          console.log("messsage is: ", message.message);
-          console.log("slackoverride: ", slackId);
+          console.log("Message to send: ", message.message);
         }
         else {
           for (const stagingid of slackOverride) {
@@ -190,7 +240,7 @@ Have a great week!
             //   message: message,
             //   response: await sendMessage(stagingid, message.message)
             // });
-            console.log("messsage is: ", message.message);
+            console.log("Message to send: ", message.message);
           }
         }
       }
@@ -242,6 +292,23 @@ Have a great week!
     }
     return messageResults;
   };
+
+  /**
+   * Post an instant slack summary message to users
+   *
+   * @param summary text summary
+   * @param name file name
+   */
+  export const postSummaryToChannel = async (summary: string, name: string): Promise<NotificationMessageResult> => {
+    let message;
+      message = await constructMemoDocCreatedMessage(summary, name);
+  
+    const messageResults: NotificationMessageResult = {
+      message: message,
+      response: await sendMessage(slackChannelId, message)
+    };
+    return messageResults;
+  }
 }
 
 export default SlackUtilities;

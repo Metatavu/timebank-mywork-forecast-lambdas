@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import type { Flextime, getUsers } from "../models/severa";
+import type { Flextime, getWorkhours, SeveraUsers, WorkDays } from "../models/severa";
 import { DateTime } from "luxon";
 
 /**
@@ -7,7 +7,10 @@ import { DateTime } from "luxon";
  */
 export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string, eventDate: string) => Promise<Flextime>;
-  getUsers: () => Promise<getUsers>;
+  getWorkhours: () => Promise<getWorkhours>;
+  getWorkDays: (severaUserId: string) => Promise<WorkDays>;
+  getUsers: () => Promise<SeveraUsers>;
+  getResourceAllocations: () => Promise<SeveraUsers>;
 }
 
 
@@ -48,10 +51,66 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
+     * 
+     * Gets Workdays from Severa
+     */
+
+    getWorkDays: async (severaUserId: string) => {
+
+      const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
+      const today = DateTime.now().toISODate();
+      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${today}&endDate=${eventDateYesterday}`
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch workdays: ${response.status} - ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      return data;
+    },
+    /**
+     * 
+     * Gets resourceallocations from Severa
+     */
+
+    getResourceAllocations: async () => {
+      const url = `${baseUrl}/v1/resourceallocations`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch resourceallocations: ${response.status} - ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      // console.log("Users data:", data); // Log the response data
+      return data;
+    },
+
+    /**
+     * 
      * Gets users from Severa
      */
+
     getUsers: async () => {
-      const url: string = `${baseUrl}/v1/users`;
+      const url = `${baseUrl}/v1/users`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -68,12 +127,37 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         );
       }
       const data = await response.json();
-      console.log("Users data:", data); // Log the response data
+      // console.log("Users data:", data); // Log the response data
       return data;
-      // return response.json();
-  },
-  }
-};
+    },
+
+    /**
+     * Gets Workhours from Severa
+     */
+    getWorkhours: async () => {
+      const url = `${baseUrl}/v1/workhours`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch users: ${response.status} - ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      // console.log("Users data:", data); // Log the response data
+      return data;
+  }};
+}
+
+
 
 /**
  * Gets Severa access token
@@ -89,7 +173,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "users:read",
+    scope: "users:read,hours:read,resourceallocations:read",
   };
 
   try {
