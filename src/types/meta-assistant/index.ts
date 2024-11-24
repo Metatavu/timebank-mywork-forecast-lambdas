@@ -16,20 +16,27 @@ export default {
 /**
  * DailyCombinedData interface
  */
+// export interface DailyCombinedData {
+//   name: string;
+//   firstName: string;
+//   personId: number;
+//   minimumBillableRate: number;
+//   expected: number;
+//   logged: number;
+//   loggedProjectTime: number;
+//   billableProjectTime: number;
+//   nonBillableProjectTime: number;
+//   internalTime: number;
+//   date: string;
+//   balance: number;
+//   slackId?: string;
+// }
+
 export interface DailyCombinedData {
-  name: string;
+  userGuid: string;
   firstName: string;
-  personId: number;
-  minimumBillableRate: number;
-  expected: number;
-  logged: number;
-  loggedProjectTime: number;
-  billableProjectTime: number;
-  nonBillableProjectTime: number;
-  internalTime: number;
-  date: string;
-  balance: number;
-  slackId?: string;
+  enteredHours: number;
+  expectedHours: number;
 }
 
 /**
@@ -112,13 +119,8 @@ export interface DailyMessageData {
  * Interface for DisplayValues
  */
 export interface DisplayValues {
-  logged: string;
-  loggedProject: string;
-  expected: string;
-  difference: string;
-  billableProject: string;
-  nonBillableProject: string;
-  internal: string;
+  enteredHours: string;
+  expectedHours: string;
 }
 
 /**

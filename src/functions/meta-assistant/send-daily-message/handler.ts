@@ -105,14 +105,16 @@ import Auth from "src/meta-assistant/auth/auth-provider";
 //   }
 // };
 
-const constructDailyMessage = (user: { firstName: string, quantity: number, allocationHours: number }, numberOfToday: number, date: string): { message: string } => {
-  const { firstName, quantity, allocationHours } = user;
+const constructDailyMessage = (user: { firstName: string, enteredHours: number, expectedHours: number }, numberOfToday: number, date: string): { message: string } => {
+  const { firstName } = user;
+
+  const { enteredHours, expectedHours } = TimeUtilities.handleTimeFormatting(user);
 
   const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
 
   const customMessage = `
 Hi ${firstName},
-${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${quantity} with an expected time of ${allocationHours};
+${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${enteredHours} with an expected time of ${expectedHours};
 `;
 
   return {
@@ -124,46 +126,43 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
   try {
     const severaApi = CreateSeveraApiService();
     const severaUsers = await severaApi.getWorkhours();
-    const resourceAllocations = await severaApi.getResourceAllocations();
-    const workDays = await severaApi.getWorkDays(severaUsers[3].user.guid);
 
     if (!severaUsers) {
       throw new Error("No persons retrieved from Severa");
     }
 
-    console.log("Severa Users: ", severaUsers);
-    console.log("Resource Allocations: ", resourceAllocations);
-    console.log("Work Days: ", workDays);
+    const combinedUserData: DailyCombinedData[] = await Promise.all(
+      Array.isArray(severaUsers) ? severaUsers.map(async user => {
+        const workDays = await severaApi.getWorkDays(user.user.guid);
+        const firstWorkDay = workDays[0];
+        const expectedHours = firstWorkDay?.expectedHours || 0;
+        const enteredHours = firstWorkDay?.enteredHours || 0;
+        console.log(`Work Days for user ${user.user.guid}: `, workDays);
+        // console.log(`Expected Hours for user ${user.user.guid}: `, expectedHours);
+    
+        return {
+          userGuid: user.user.guid,
+          firstName: user.user.firstName,
+          enteredHours: enteredHours,
+          expectedHours: expectedHours,
+        };
+      }) : []
+    );
 
-    const filteredSeveraUsers = Array.isArray(severaUsers)
-      ? severaUsers.map(user => {
-          const allocation = Array.isArray(resourceAllocations) 
-            ? resourceAllocations.find(allocation => allocation.user.guid === user.user.guid) 
-            : undefined;
-          if (!allocation) {
-            console.log(`No allocation found for user: ${user.user.guid}`);
-          }
-          return {
-            firstName: allocation ? allocation.user.firstName : '',
-            quantity: user.quantity,
-            allocationHours: allocation ? allocation.allocationHours : 0
-          };
-        })
-      : [];
+    // console.log("Combined User Data: ", combinedUserData);
 
-    console.log("Filtered Severa Users: ", filteredSeveraUsers);
-
-    const dailyMessages = filteredSeveraUsers.map(user => constructDailyMessage(user, 1, DateTime.now().toISO()));
+    const dailyMessages = combinedUserData.map(user => constructDailyMessage(user, 1, DateTime.now().toISO()));
     return {
       message: "Daily messages constructed successfully",
       data: dailyMessages
     };
   } catch (error) {
     console.error(error.toString());
-    throw error;
+    return {
+      message: `Error while sending slack message: ${error}`
+    };
   }
 };
-
 /**
  * Lambda function for sending slack message
  *

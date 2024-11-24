@@ -59,7 +59,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
       const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
       const today = DateTime.now().toISODate();
-      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${today}&endDate=${eventDateYesterday}`
+      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=2024-08-29&endDate=2024-08-29`
 
       const response = await fetch(url, {
         method: "GET",

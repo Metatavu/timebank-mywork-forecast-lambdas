@@ -1,6 +1,7 @@
 import type { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
 import { DateTime, Duration } from "luxon";
 import type { PersonTotalTime } from "src/generated/client/api";
+import { TotalTime } from "./model";
 
 /**
  * Namespace for time utilities
@@ -14,7 +15,7 @@ namespace TimeUtilities {
    * @returns string of timebank data converted to hours and minutes
    */
   export const timeConversion = (duration: number): string => {
-    const dur = Duration.fromObject({ minutes: duration });
+    const dur = Duration.fromObject({ hours: duration });
     const time = dur.shiftTo("hours", "minutes");
     return time.toHuman();
   };
@@ -42,25 +43,15 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns human friendly time formats
    */
-  export const handleTimeFormatting = (user: PersonTotalTime): DisplayValues => {
-    const { logged, expected, internalTime, balance, loggedProjectTime, billableProjectTime, nonBillableProjectTime } = user;
+  export const handleTimeFormatting = (user: TotalTime): DisplayValues => {
+    const { enteredHours, expectedHours } = user;
 
-    const displayLogged = TimeUtilities.timeConversion(logged);
-    const displayLoggedProject = TimeUtilities.timeConversion(loggedProjectTime);
-    const displayExpected = TimeUtilities.timeConversion(expected);
-    const displayDifference = TimeUtilities.timeConversion(balance);
-    const displayBillableProject = TimeUtilities.timeConversion(billableProjectTime);
-    const displayNonBillableProjectTime = TimeUtilities.timeConversion(nonBillableProjectTime);
-    const displayInternal = TimeUtilities.timeConversion(internalTime);
+    const displayHours = TimeUtilities.timeConversion(enteredHours);
+    const displayExpectedHours = TimeUtilities.timeConversion(expectedHours);
 
     return {
-      logged: displayLogged,
-      loggedProject: displayLoggedProject,
-      expected: displayExpected,
-      difference: displayDifference,
-      billableProject: displayBillableProject,
-      nonBillableProject: displayNonBillableProjectTime,
-      internal: displayInternal
+      enteredHours: displayHours,
+      expectedHours: displayExpectedHours
     };
   };
 

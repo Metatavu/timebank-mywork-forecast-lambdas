@@ -20,6 +20,8 @@ export interface SeveraUsers {
 export interface WorkDays {
   id: string;
   name: string;
+  expectedHours: number;
+  enteredHours: number;
 }
 
 export interface ResourceAllocations {
