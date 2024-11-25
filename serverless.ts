@@ -62,7 +62,7 @@ const serverlessConfiguration: AWS = {
     deploymentBucket: {
       name: isLocal ? "local-bucket" : "${self:service}-${opt:stage}-deploy"
     },
-    memorySize: 128,
+    memorySize: 256,
     timeout: 60,
     apiGateway: {
       minimumCompressionSize: 1024,
