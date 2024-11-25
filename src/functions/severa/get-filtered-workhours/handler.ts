@@ -30,11 +30,25 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
 
     const response: WorkHours[] = await api.getWorkHoursBySeveraId(url, startDate, endDate);
 
-    const filteredWorkHours = response.filter((workHours:any) => {
-      return (
-        (!(severaProjectId && severaUserId) || FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId)) &&
-        (!severaPhaseId || FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId)) 
-      );
+    const filteredWorkHours = response.filter((workHours: any) => {
+      if (severaProjectId && severaUserId) {
+        // Check if the user and project filter passes
+        const userAndProjectMatch = FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId);
+        if (!userAndProjectMatch) {
+          return false;
+        }
+      }
+    
+      if (severaPhaseId) {
+        // Check if the phase filter passes
+        const phaseMatch = FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId);
+        if (!phaseMatch) {
+          return false;
+        }
+      }
+    
+      // If all conditions pass, include this workHours item
+      return true;
     });
 
     const mappedWorkHours = filteredWorkHours.map((workHours:WorkHours) => ({
