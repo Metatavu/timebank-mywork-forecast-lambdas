@@ -44,7 +44,7 @@ export const generateSummary = async (file: File): Promise<string> => {
       headers: headers,
       body : body(summarizeInFi)
     })).json()).choices[0].message.content;
-    return englishSummary + "\n\n" + finnishSummary;
+    return englishSummary + "|" + finnishSummary;
   } catch (error) {
     console.error("Error generating description:", error);
   }

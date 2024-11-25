@@ -48,7 +48,7 @@ const getSummaryMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewa
   }
   try {
     const summaryText =  await getSummaryMemoPdf(queryStringParameters.fileId);
-    const paragraphSeparator = /\r\n\r\n\r\n/;
+    const paragraphSeparator = "|";
     const splittedText = summaryText.split(paragraphSeparator);
     if (summaryText) 
       return {
