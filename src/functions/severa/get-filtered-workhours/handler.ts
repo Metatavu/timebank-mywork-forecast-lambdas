@@ -28,30 +28,9 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
 
     console.log(`Getting work hours from Severa API with URL: ${url}`);
 
-    const response: WorkHours[] = await api.getWorkHoursBySeveraId(url, startDate, endDate);
+    const response = await api.getWorkHoursBySeveraId(url, startDate, endDate);
 
-    const filteredWorkHours = response.filter((workHours: any) => {
-      if (severaProjectId && severaUserId) {
-        // Check if the user and project filter passes
-        const userAndProjectMatch = FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId);
-        if (!userAndProjectMatch) {
-          return false;
-        }
-      }
-    
-      if (severaPhaseId) {
-        // Check if the phase filter passes
-        const phaseMatch = FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId);
-        if (!phaseMatch) {
-          return false;
-        }
-      }
-    
-      // If all conditions pass, include this workHours item
-      return true;
-    });
-
-    const mappedWorkHours = filteredWorkHours.map((workHours:WorkHours) => ({
+    const mappedWorkHours  = response.map((workHours)   => ({
       severaWorkHoursId: workHours.guid ,
       user: {
         severaUserId: workHours.user?.guid,
@@ -73,11 +52,30 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       endTime: workHours.endTime,
     }));
 
-    console.log(JSON.parse(JSON.stringify(mappedWorkHours)));
+    const filteredWorkHours = mappedWorkHours.filter((workHours) => {
+      if (severaProjectId && severaUserId) {
+        const filteredWorkHoursUserProject = FilterUtilities.filterByUserSevera(workHours.user?.severaUserId, severaUserId);
+
+        if (!filteredWorkHoursUserProject) {
+          return false;
+        }
+      }
+    
+      if (severaPhaseId) {
+        const filteredWorkHoursPhase = FilterUtilities.filterByPhaseSevera(workHours.phase?.severaPhaseId, severaPhaseId);
+
+        if (!filteredWorkHoursPhase) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    console.log(JSON.parse(JSON.stringify(filteredWorkHours)));
 
     return {
       statusCode: 200,
-      body: JSON.stringify(mappedWorkHours),
+      body: JSON.stringify(filteredWorkHours),
     };
   } catch (error) {
     return {
