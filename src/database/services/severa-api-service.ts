@@ -1,8 +1,5 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/severa";
-import type ResourceAllocation from "../../types/severa/resourceAllocation/resourceAllocation";
-import type Phase from "../../types/severa/phase/phase";
-import type WorkHours from "../../types/severa/workHour/workHour";
 import * as process from "node:process";
 import { DateTime } from "luxon";
 import type SeveraResponse from "src/types/severa/workHour/severaResponseWorkHours";

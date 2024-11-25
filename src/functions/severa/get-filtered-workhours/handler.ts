@@ -18,11 +18,15 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
     const api = CreateSeveraApiService();
 
     const buildWorkHoursUrl = (severaProjectId?: string, severaUserId?: string, startDate?: string, endDate?: string) => {
-      const url = severaProjectId
-        ? `projects/${severaProjectId}/workhours`
-        : severaUserId
-        ? `users/${severaUserId}/workhours`
-        : "workhours";
+      let url: string;
+
+      if (severaProjectId) {
+        url = `projects/${severaProjectId}/workhours`;
+      } else if (severaUserId) {
+        url = `users/${severaUserId}/workhours`;
+      } else {
+        url = "workhours";
+      }
     
       const queryParams = new URLSearchParams();
     
