@@ -135,7 +135,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Gets Workhours from Severa
      */
     getWorkhours: async () => {
-      const url = `${baseUrl}/v1/workhours`;
+      const url = `${baseUrl}/v1/workhours?startDate=2024-08-29&endDate=2024-08-29`;
 
       const response = await fetch(url, {
         method: "GET",

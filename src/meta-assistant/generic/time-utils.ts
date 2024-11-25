@@ -44,14 +44,16 @@ namespace TimeUtilities {
    * @returns human friendly time formats
    */
   export const handleTimeFormatting = (user: TotalTime): DisplayValues => {
-    const { enteredHours, expectedHours } = user;
+    const { enteredHours, expectedHours, quantity } = user;
 
     const displayHours = TimeUtilities.timeConversion(enteredHours);
     const displayExpectedHours = TimeUtilities.timeConversion(expectedHours);
+    const displayQuantity = TimeUtilities.timeConversion(quantity);
 
     return {
       enteredHours: displayHours,
-      expectedHours: displayExpectedHours
+      expectedHours: displayExpectedHours,
+      quantity: displayQuantity
     };
   };
 

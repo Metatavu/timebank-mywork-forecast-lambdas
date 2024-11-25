@@ -102,16 +102,30 @@ namespace SlackUtilities {
   //   };
   // };
 
-  const constructDailyMessage = (user: { firstName: string }): { message: string } => {
-    const { firstName } = user;
+  const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
+    const { firstName, date } = user;
+
+    const { 
+      enteredHours, 
+      expectedHours, 
+      quantity,
+      billableTime 
+    } = TimeUtilities.handleTimeFormatting(user);
+
+    const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
   
     const customMessage = `
-  Hi ${firstName},
-  Have a great rest of the day!
-    `;
+Hi ${firstName},
+${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${enteredHours} with an expected time of ${expectedHours}.
+Logged project time: ${quantity}, Billable project time: ${billableTime},
+`;
   
     return {
-      message: customMessage
+      message: customMessage,
+      name: firstName,
+      displayLogged: enteredHours,
+      displayExpected: expectedHours
+
     };
   };
   /**
@@ -211,9 +225,9 @@ Have a great week!
    */
   export const postDailyMessageToUsers = async (
     dailyCombinedData: DailyCombinedData[],
-    timeRegistrations: TimeRegistrations[],
+    // timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]
+    // nonProjectTimes: NonProjectTime[]
   ): Promise<DailyMessageResult[]> => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
@@ -221,29 +235,29 @@ Have a great week!
     for (const userData of dailyCombinedData) {
       const { slackId, personId, expected } = userData;
 
-      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISODate(), nonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISODate(), nonProjectTimes);
+      // const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISODate(), nonProjectTimes);
+      // const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISODate(), nonProjectTimes);
 
       const message = constructDailyMessage(userData, numberOfToday);
-
-      if (!isAway && !firstDayBack) {
-        if (!slackOverride) {
-          // messageResults.push({
-          //   message: message,
-          //   response: await sendMessage(slackId, message.message)
-          // });
-          console.log("Message to send: ", message.message);
-        }
-        else {
-          for (const stagingid of slackOverride) {
-            // messageResults.push({
-            //   message: message,
-            //   response: await sendMessage(stagingid, message.message)
-            // });
-            console.log("Message to send: ", message.message);
-          }
-        }
-      }
+      console.log("Message to send: ", message.message);
+      // if (!isAway && !firstDayBack) {
+      //   if (!slackOverride) {
+      //     // messageResults.push({
+      //     //   message: message,
+      //     //   response: await sendMessage(slackId, message.message)
+      //     // });
+      //     console.log("Message to send: ", message.message);
+      //   }
+      //   else {
+      //     for (const stagingid of slackOverride) {
+      //       // messageResults.push({
+      //       //   message: message,
+      //       //   response: await sendMessage(stagingid, message.message)
+      //       // });
+      //       console.log("Message to send: ", message.message);
+      //     }
+      //   }
+      // }
     }
     return messageResults;
   };

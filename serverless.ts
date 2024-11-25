@@ -33,23 +33,36 @@ import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnai
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
 import listQuestionnaireHandler from "src/functions/questionnaire/list-questionnaire";
 import updateQuestionnaireHandler from "src/functions/questionnaire/update-questionnaire";
+import listMemoPdfHandler from "@/functions/memo-management/drive-memos/get-memos-pdf";
+import getTranslatedMemoPdfHandler from "@/functions/memo-management/drive-memos/get-translated-memo-pdf";
+import getSummaryMemoPdfHandler from "@/functions/memo-management/drive-memos/get-summary-memo-pdf";
+import getContentPdfHandler from "@/functions/memo-management/drive-memos/get-content-pdf";
+import getTrelloCardsOnListHandler from "@/functions/memo-management/trello-cards/get-trello-cards";
+import getBoardMembersHandler from "@/functions/memo-management/trello-cards/get-board-members";
+import deleteTrelloCardHandler from "@/functions/memo-management/trello-cards/delete-trello-card";
+import createTrelloCardHandler from "@/functions/memo-management/trello-cards/create-trello-card";
+import createCommentHandler from "@/functions/memo-management/trello-cards/comment-trello-card";
 import getFlextimeHandler from "src/functions/severa/get-flextime-by-user";
-import getUsersHandler from "src/functions/severa/get-users";
+import createVacationRequestHandler from "src/functions/vacation-request/create-vacation-request";
+import deleteVacationRequestHandler from "src/functions/vacation-request/delete-vacation-request";
+import findVacationRequestHandler from "src/functions/vacation-request/find-vacation-request";
+import listVacationRequestHandler from "src/functions/vacation-request/list-vacation-request";
+import updateVacationRequestHandler from "src/functions/vacation-request/update-vacation-request";
 
 const isLocal = process.env.STAGE === "local";
 
 const serverlessConfiguration: AWS = {
-  service: 'home-lambdas',
-  frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-deployment-bucket', 'serverless-offline', 'serverless-dynamodb'],
+  service: "home-lambdas",
+  frameworkVersion: "3",
+  plugins: ["serverless-esbuild", "serverless-deployment-bucket", "serverless-offline", "serverless-dynamodb"],
   provider: {
-    name: 'aws',
-    runtime: 'nodejs16.x',
+    name: "aws",
+    runtime: "nodejs16.x",
     region: (env.AWS_DEFAULT_REGION as any) || "us-east-1",
     deploymentBucket: {
       name: isLocal ? "local-bucket" : "${self:service}-${opt:stage}-deploy"
     },
-    memorySize: 128,
+    memorySize: 256,
     timeout: 60,
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -66,8 +79,8 @@ const serverlessConfiguration: AWS = {
       },
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
+      NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
       FORECAST_API_KEY: env.FORECAST_API_KEY,
       AUTH_ISSUER: env.AUTH_ISSUER,
       PIPEDRIVE_API_KEY: env.PIPEDRIVE_API_KEY,
@@ -92,10 +105,20 @@ const serverlessConfiguration: AWS = {
       SPLUNK_SCHEDULE_POLICY_NAME: env.SPLUNK_SCHEDULE_POLICY_NAME,
       SPLUNK_TEAM_ONCALL_URL: env.SPLUNK_TEAM_ONCALL_URL,
       ONCALL_WEEKLY_SCHEDULE_TIMER: env.ONCALL_WEEKLY_SCHEDULE_TIMER,
+      GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID: env.GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID,
+      GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL: env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
+      GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
+      GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+      GOOGLE_CLOUD_PROJECT_ID: env.GOOGLE_CLOUD_PROJECT_ID,
       SEVERA_DEMO_BASE_URL: env.SEVERA_DEMO_BASE_URL,
       SEVERA_DEMO_CLIENT_ID: env.SEVERA_DEMO_CLIENT_ID,
       SEVERA_DEMO_CLIENT_SECRET: env.SEVERA_DEMO_CLIENT_SECRET,
       DYNAMODB_ENDPOINT: isLocal ? "http://localhost:8000" : undefined,
+      TRELLO_API_KEY: env.TRELLO_API_KEY,
+      TRELLO_TOKEN: env.TRELLO_TOKEN,
+      TRELLO_MANAGEMENT_BOARD_ID: env.TRELLO_MANAGEMENT_BOARD_ID,
+      CHANNEL_ID: env.CHANNEL_ID,
+      OPENAI_API_KEY: env.OPENAI_API_KEY,
     },
     s3: {
       "on-call": {
@@ -126,20 +149,11 @@ const serverlessConfiguration: AWS = {
               "dynamodb:UpdateItem",
               "dynamodb:DeleteItem",
             ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry"
-          },
-          {
-            Effect: "Allow",
-            Action: [
-              "dynamodb:DescribeTable",
-              "dynamodb:Query",
-              "dynamodb:Scan",
-              "dynamodb:GetItem",
-              "dynamodb:PutItem",
-              "dynamodb:UpdateItem",
-              "dynamodb:DeleteItem",
-            ],
-            Resource: isLocal ? "*" : "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires"
+            Resource: isLocal ? "*" : [
+              "arn:aws:dynamodb:${self:provider.region}:*:table/SoftwareRegistry",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/Questionnaires",
+              "arn:aws:dynamodb:${self:provider.region}:*:table/VacationRequests"
+            ]
           }
         ]
       }
@@ -177,8 +191,21 @@ const serverlessConfiguration: AWS = {
     deleteQuestionnaireHandler,
     listQuestionnaireHandler,
     updateQuestionnaireHandler,
+    listMemoPdfHandler,
+    getTranslatedMemoPdfHandler,
+    getSummaryMemoPdfHandler,
+    getTrelloCardsOnListHandler,
+    getBoardMembersHandler,
+    deleteTrelloCardHandler,
+    createTrelloCardHandler,
+    createCommentHandler,
+    getContentPdfHandler,
     getFlextimeHandler,
-    getUsersHandler,
+    createVacationRequestHandler,
+    deleteVacationRequestHandler,
+    findVacationRequestHandler,
+    listVacationRequestHandler,
+    updateVacationRequestHandler,
   },
   package: { individually: true },
   custom: {
@@ -186,10 +213,10 @@ const serverlessConfiguration: AWS = {
       bundle: true,
       minify: false,
       sourcemap: true,
-      exclude: ['aws-sdk'],
-      target: 'node16',
-      define: { 'require.resolve': undefined },
-      platform: 'node',
+      exclude: ["aws-sdk"],
+      target: "node16",
+      define: { "require.resolve": undefined },
+      platform: "node",
       concurrency: 10,
     },
   },
@@ -209,20 +236,20 @@ const serverlessConfiguration: AWS = {
         }
       },
       Software: {
-        Type: 'AWS::DynamoDB::Table',
-        DeletionPolicy: 'Delete',
+        Type: "AWS::DynamoDB::Table",
+        DeletionPolicy: "Delete",
         Properties: {
-          TableName: 'SoftwareRegistry',
+          TableName: "SoftwareRegistry",
           AttributeDefinitions: [
             {
-              AttributeName: 'id',
-              AttributeType: 'S',
+              AttributeName: "id",
+              AttributeType: "S",
             },
           ],
           KeySchema: [
             {
-              AttributeName: 'id',
-              KeyType: 'HASH',
+              AttributeName: "id",
+              KeyType: "HASH",
             },
           ],
           ProvisionedThroughput: {
@@ -230,6 +257,19 @@ const serverlessConfiguration: AWS = {
             WriteCapacityUnits: 1,
           },
         },
+      },
+      VacationRequests: {
+        Type: "AWS::DynamoDB::Table",
+        DeletionPolicy: "Delete",
+        Properties: {
+          TableName: "VacationRequests",
+          AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
+          KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1
+          },
+        }
       },
     },
   },

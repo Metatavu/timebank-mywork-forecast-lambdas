@@ -35,8 +35,11 @@ export default {
 export interface DailyCombinedData {
   userGuid: string;
   firstName: string;
+  date: string;
   enteredHours: number;
   expectedHours: number;
+  quantity: number;
+  billableTime: number;
 }
 
 /**
@@ -107,12 +110,11 @@ export interface DailyMessageData {
   name: string;
   displayDate?: string;
   displayLogged: string;
-  displayLoggedProject: string;
   displayExpected: string;
-  displayBillableProject: string;
-  displayNonBillableProject: string;
-  displayInternal: string;
-  billableHoursPercentage: string;
+  // displayBillableProject: string;
+  // displayNonBillableProject: string;
+  // displayInternal: string;
+  // billableHoursPercentage: string;
 }
 
 /**
@@ -121,6 +123,8 @@ export interface DailyMessageData {
 export interface DisplayValues {
   enteredHours: string;
   expectedHours: string;
+  quantity: string;
+  billableTime: string;
 }
 
 /**
