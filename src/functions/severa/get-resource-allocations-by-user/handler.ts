@@ -1,6 +1,8 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
 import { middyfy } from "src/libs/lambda";
+import type ResourceAllocationModel from "src/types/severa/resourceAllocation/resourceAllocation";
+import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
 
 /**
  * Handler for getting resourceAllocation by user from Severa REST API.
@@ -22,25 +24,31 @@ try {
 
     const response = await api.getResourceAllocation(severaUserId);
 
-    const resourceAllocation = response.map((item:any) => ({
-      severaResourceAllocationId: item.guid,
-      allocationHours: item.allocationHours,
-      calculatedAllocationHours: item.calculatedAllocationHours,
+    const resourceAllocation = (severaData : SeveraResponseResourceAllocation[]) :ResourceAllocationModel[] => {
+      return severaData.map((resourceAllocation) => ({
+      severaResourceAllocationId: resourceAllocation.guid,
+      allocationHours: resourceAllocation.allocationHours,
+      calculatedAllocationHours: resourceAllocation.calculatedAllocationHours,
       phase: {
-        severaPhaseId: item.phase?.guid,
-        name: item.phase?.name,
+        severaPhaseId: resourceAllocation.phase?.guid,
+        name: resourceAllocation.phase?.name,
       },
       users: {
-        severaUserId: item.user?.guid,
-        name: item.user?.name,
+        severaUserId: resourceAllocation.users?.guid,
+        name: resourceAllocation.users?.name,
       },
       projects: {
-        severaProjectId: item.project?.guid,
-        name: item.project?.name,
-        isInternal: item.project?.isInternal,
+        severaProjectId: resourceAllocation.projects?.guid,
+        name: resourceAllocation.projects?.name,
+        isInternal: resourceAllocation.projects?.isInternal,
       },
-    }))
-    console.log(JSON.parse(JSON.stringify(resourceAllocation)));
+    }));
+  }
+
+    const resourceallocations = resourceAllocation(response);
+
+
+    console.log(JSON.parse(JSON.stringify(resourceallocations)));
     return {
       statusCode: 200,
       body: JSON.stringify(resourceAllocation),

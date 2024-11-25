@@ -1,19 +1,22 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/severa";
-import type ResourceAllocation from "../models/resourceAllocation";
-import type Phase from "@database/models/phase";
-import type WorkHours from "@database/models/workHours";
+import type ResourceAllocation from "../../types/severa/resourceAllocation/resourceAllocation";
+import type Phase from "../../types/severa/phase/phase";
+import type WorkHours from "../../types/severa/workHour/workHour";
 import * as process from "node:process";
 import { DateTime } from "luxon";
+import type SeveraResponse from "src/types/severa/workHour/severaResponseWorkHours";
+import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
+import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
 
 /**
  * Interface for a SeveraApiService.
  */
 export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
-  getResourceAllocation: (severaUserId: string) => Promise<ResourceAllocation[]>;
-  getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<Phase[]>;
-  getWorkHoursBySeveraId: (url: string, startDate?: string, endDate?: string) => Promise<WorkHours[]>;
+  getResourceAllocation: (severaUserId: string) => Promise<SeveraResponseResourceAllocation[]>;
+  getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<SeveraResponsePhases[]>;
+  getWorkHoursBySeveraId: (url: string, startDate?: string, endDate?: string) => Promise<SeveraResponse[]>;
 }
 
 /**
@@ -111,14 +114,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * 
      * @returns Work hours of a user with multiple queryparameters
      */
-    getWorkHoursBySeveraId: async (url: string, startDate?: string, endDate?: string) => {
-      const queryParams = new URLSearchParams();
-      if (startDate) queryParams.append("startDate", startDate);
-      if (endDate) queryParams.append("endDate", endDate);
-      if (queryParams.toString()) {
-        url += `?${queryParams.toString()}`;
-      }
-
+    getWorkHoursBySeveraId: async (url: string) => {
       const response = await fetch(`${baseUrl}/v1/${url}`, {
         method: "GET",
         headers: {

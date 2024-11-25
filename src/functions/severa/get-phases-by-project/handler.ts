@@ -1,6 +1,8 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { middyfy } from "src/libs/lambda";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
+import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
+import type PhaseModel from "src/types/severa/phase/phase";
 
 /**
  * Handler for getting Phases by project from Severa REST API.
@@ -22,19 +24,23 @@ export const getPhasesHandler: APIGatewayProxyHandler = async (event) => {
 
     const response = await api.getPhasesBySeveraProjectId(severaProjectId);
 
-    const phases =  response.map((item: any) => ({
-      severaPhaseId: item.guid,
-      name: item.name,
-      isCompleted: item.isCompleted,
-      workHoursEstimate: item.workHoursEstimate,
-      startDate: item.startDate,
-      deadLine: item.deadline,
+    const mappedPhases = (severaData : SeveraResponsePhases[]) :PhaseModel[] => {
+      return severaData.map((phases) => ({
+      severaPhaseId: phases.guid,
+      name: phases.name,
+      isCompleted: phases.isCompleted,
+      workHoursEstimate: phases.workHoursEstimate,
+      startDate: phases.startDate,
+      deadLine: phases.deadLine,
       project: {
-        severaProjectId: item.project.guid,
-        name: item.project.name,
-        isClosed: item.project.isClosed,
-      },
+        severaProjectId: phases.project.guid,
+        name: phases.project.name,
+        isClosed: phases.project.isClosed,
+      }
     }));
+  }
+    const phases = mappedPhases(response);
+
     return {
       statusCode: 200,
       body: JSON.stringify(phases),

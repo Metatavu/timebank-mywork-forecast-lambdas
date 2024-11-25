@@ -3,6 +3,7 @@ import { CreateSeveraApiService } from "src/database/services/severa-api-service
 import { middyfy } from "src/libs/lambda";
 import { FilterUtilities } from "src/libs/filter-utils";
 import type WorkHours from "src/types/severa/workHour/workHour";
+import type SeveraResponse from "src/types/severa/workHour/severaResponseWorkHours";
 
 /**
  * Handler for getting work hours from Severa REST API.
@@ -16,45 +17,28 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
   try {
     const api = CreateSeveraApiService();
 
-    let url: string;
+    const buildWorkHoursUrl = (severaProjectId?: string, severaUserId?: string, startDate?: string, endDate?: string) => {
+      const url = severaProjectId
+        ? `projects/${severaProjectId}/workhours`
+        : severaUserId
+        ? `users/${severaUserId}/workhours`
+        : "workhours";
+    
+      const queryParams = new URLSearchParams();
+    
+      if (startDate) queryParams.append("startDate", startDate);
+      if (endDate) queryParams.append("endDate", endDate);
+    
+      return queryParams.toString() ? `${url}?${queryParams.toString()}` : url;
+    };
 
-    if (severaProjectId) {
-      url = `projects/${severaProjectId}/workhours`; 
-    } else if (severaUserId) {
-      url = `users/${severaUserId}/workhours`;
-    } else {
-      url = "workhours";
-    }
+    const url = buildWorkHoursUrl(severaProjectId, severaUserId, startDate, endDate);
+    
+    const response = await api.getWorkHoursBySeveraId(url);
 
-    console.log(`Getting work hours from Severa API with URL: ${url}`);
-
-    const response = await api.getWorkHoursBySeveraId(url, startDate, endDate);
-
-    const mappedWorkHours  = response.map((workHours)   => ({
-      severaWorkHoursId: workHours.guid ,
-      user: {
-        severaUserId: workHours.user?.guid,
-        name: workHours.user?.name,
-      },
-      project: {
-        severaProjectId: workHours.project?.guid,
-        name: workHours.project?.name,
-        isClosed: workHours.project?.isClosed,
-      },
-      phase: {
-        severaPhaseId: workHours.phase?.guid,
-        name: workHours.phase?.name,
-      },
-      description: workHours.description,
-      eventDate: workHours.eventDate,
-      quantity: workHours.quantity,
-      startTime: workHours.startTime,
-      endTime: workHours.endTime,
-    }));
-
-    const filteredWorkHours = mappedWorkHours.filter((workHours) => {
+    const filteredWorkHours = response.filter((workHours:SeveraResponse) => {
       if (severaProjectId && severaUserId) {
-        const filteredWorkHoursUserProject = FilterUtilities.filterByUserSevera(workHours.user?.severaUserId, severaUserId);
+        const filteredWorkHoursUserProject = FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId);
 
         if (!filteredWorkHoursUserProject) {
           return false;
@@ -62,7 +46,7 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       }
     
       if (severaPhaseId) {
-        const filteredWorkHoursPhase = FilterUtilities.filterByPhaseSevera(workHours.phase?.severaPhaseId, severaPhaseId);
+        const filteredWorkHoursPhase = FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId);
 
         if (!filteredWorkHoursPhase) {
           return false;
@@ -71,11 +55,37 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       return true;
     });
 
-    console.log(JSON.parse(JSON.stringify(filteredWorkHours)));
+    const mappedWorkHours = (severaData : SeveraResponse[]) :WorkHours[] => {
+      return severaData.map((workHours) => ({
+        severaWorkHoursId: workHours.guid,
+        user: {
+          severaUserId: workHours.user?.guid,
+          name: workHours.user?.name,
+        },
+        project: {
+          severaProjectId: workHours.project?.guid,
+          name: workHours.project?.name,
+          isClosed: workHours.project?.isClosed,
+        },
+        phase: {
+          severaPhaseId: workHours.phase?.guid,
+          name: workHours.phase?.name,
+        },
+        description: workHours.description,
+        eventDate: workHours.eventDate,
+        quantity: workHours.quantity,
+        startTime: workHours.startTime,
+        endTime: workHours.endTime,
+      }));
+    }
+
+    const workHours = mappedWorkHours(filteredWorkHours)
+
+    console.log(JSON.parse(JSON.stringify(workHours)));
 
     return {
       statusCode: 200,
-      body: JSON.stringify(filteredWorkHours),
+      body: JSON.stringify(workHours),
     };
   } catch (error) {
     return {
