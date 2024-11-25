@@ -87,7 +87,6 @@ const getFolders = async (folderId: string) => {
       q: `"${folderId}" in parents and mimeType = "application/vnd.google-apps.folder"`,
       fields: "files(id, name, mimeType)"
     })).data?.files;
-    console.log(folderIds)
     return folderIds;
   } catch (error) {
     console.error(`Error retrieving folder IDs: ${error}`)
@@ -121,18 +120,19 @@ export const getFilesInYear = async (year: string, mimeType: string = "applicati
   try {
     const drive = await getDriveService();
     const yearFolder = await getBaseFolderByName(year);
-    const monthFolders = await getFolders(yearFolder);
-
-    const allFiles: File[] = (await Promise.all(
-      monthFolders.map(async (month) => {
-        const files: File[] = (await drive.files.list({
-          q: `'${month.id}' in parents and mimeType = '${mimeType}'`,
-          fields: "files(id, name, mimeType)"
-        })).data?.files;
-        return files;
-    }))).flat();
-
-    return allFiles;
+    if (yearFolder) {
+      const monthFolders = await getFolders(yearFolder);
+      const allFiles: File[] = (await Promise.all(
+        monthFolders.map(async (month) => {
+          const files: File[] = (await drive.files.list({
+            q: `'${month.id}' in parents and mimeType = '${mimeType}'`,
+            fields: "files(id, name, mimeType)"
+          })).data?.files;
+          return files;
+      }))).flat();
+      return allFiles;
+    }
+    return [];
   } catch (error) {
     console.error(`Error retrieving files for year: ${year}`, error);
   }
@@ -151,10 +151,9 @@ export const getFileSummaries = async (): Promise<File[]> => {
       q: `"${summariesFolder}" in parents and mimeType = "application/vnd.google-apps.document"`,
       fields: "files(id, name, mimeType)"
     })).data?.files;
-    console.log(summaries)
     return summaries;
   } catch(error) {
-    console.log(`Error retrieving summaries files: ${error}`)
+    console.error(`Error retrieving summaries files: ${error}`)
   } 
 }
 
@@ -173,7 +172,7 @@ export const getFileTranslated = async (): Promise<File[]> => {
     })).data?.files;
     return translatedFiles;
   } catch(error) {
-    console.log(`Error retrieving summaries files: ${error}`)
+    console.error(`Error retrieving summaries files: ${error}`)
   } 
 }
 
