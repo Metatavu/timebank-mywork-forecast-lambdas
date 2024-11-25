@@ -62,7 +62,7 @@ const serverlessConfiguration: AWS = {
     deploymentBucket: {
       name: isLocal ? "local-bucket" : "${self:service}-${opt:stage}-deploy"
     },
-    memorySize: 128,
+    memorySize: 256,
     timeout: 60,
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -109,10 +109,16 @@ const serverlessConfiguration: AWS = {
       GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL: env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
       GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID,
       GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+      GOOGLE_CLOUD_PROJECT_ID: env.GOOGLE_CLOUD_PROJECT_ID,
       SEVERA_DEMO_BASE_URL: env.SEVERA_DEMO_BASE_URL,
       SEVERA_DEMO_CLIENT_ID: env.SEVERA_DEMO_CLIENT_ID,
       SEVERA_DEMO_CLIENT_SECRET: env.SEVERA_DEMO_CLIENT_SECRET,
       DYNAMODB_ENDPOINT: isLocal ? "http://localhost:8000" : undefined,
+      TRELLO_API_KEY: env.TRELLO_API_KEY,
+      TRELLO_TOKEN: env.TRELLO_TOKEN,
+      TRELLO_MANAGEMENT_BOARD_ID: env.TRELLO_MANAGEMENT_BOARD_ID,
+      CHANNEL_ID: env.CHANNEL_ID,
+      OPENAI_API_KEY: env.OPENAI_API_KEY,
     },
     s3: {
       "on-call": {
