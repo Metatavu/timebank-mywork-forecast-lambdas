@@ -24,7 +24,7 @@ try {
 
     const response = await api.getResourceAllocation(severaUserId);
 
-    const resourceAllocation = (severaData : SeveraResponseResourceAllocation[]) :ResourceAllocationModel[] => {
+    const mappedResourceAllocations = (severaData : SeveraResponseResourceAllocation[]) :ResourceAllocationModel[] => {
       return severaData.map((resourceAllocation) => ({
       severaResourceAllocationId: resourceAllocation.guid,
       allocationHours: resourceAllocation.allocationHours,
@@ -45,13 +45,11 @@ try {
     }));
   }
 
-    const resourceallocations = resourceAllocation(response);
+    const resourceAllocations = mappedResourceAllocations(response);
 
-
-    console.log(JSON.parse(JSON.stringify(resourceallocations)));
     return {
       statusCode: 200,
-      body: JSON.stringify(resourceAllocation),
+      body: JSON.stringify(resourceAllocations),
     }
   } catch (error) {
     return {

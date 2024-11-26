@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import type Flextime from "../models/severa";
 import * as process from "node:process";
 import { DateTime } from "luxon";
-import type SeveraResponse from "src/types/severa/workHour/severaResponseWorkHours";
+import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
 import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
 
@@ -13,7 +13,7 @@ export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
   getResourceAllocation: (severaUserId: string) => Promise<SeveraResponseResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<SeveraResponsePhases[]>;
-  getWorkHoursBySeveraId: (url: string, startDate?: string, endDate?: string) => Promise<SeveraResponse[]>;
+  getWorkHoursBySeveraId: (url: string, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
 }
 
 /**
@@ -67,6 +67,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
                 "Content-Type": "application/json",
             },
         });
+
         if (!response.ok) {
             throw new Error(
                 `Failed to fetch resource allocation: ${response.status} - ${response.statusText}`,
@@ -92,6 +93,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           "Content-Type": "application/json",
         },
       });
+
       if (!response.ok) {
         throw new Error(
           `Failed to fetch phases: ${response.status} - ${response.statusText}`,
@@ -103,12 +105,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userId
      * 
-     * @param severaProjectId Severa project id
-     * @param severaUserId Severa user id
-     * @param severaPhaseId Severa phase id
-     * @param startDate Start date
-     * @param endDate End date
-     * 
+     * @param url url for fetching work hours
      * @returns Work hours of a user with multiple queryparameters
      */
     getWorkHoursBySeveraId: async (url: string) => {
@@ -120,6 +117,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           "Content-Type": "application/json",
         },
       });
+      
       if (!response.ok) {
         throw new Error(
           `Failed to fetch work hours: ${response.status} - ${response.statusText}`,

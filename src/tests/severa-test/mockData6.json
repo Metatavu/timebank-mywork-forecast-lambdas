@@ -1,8 +1,0 @@
-{
-  "headers": {
-    "Content-Type": "application/json"
-  },
-  "body": "{\"name\": \"Frederic\"  }",
-  "pathParameters": {"severaUserId": "83ebc1fe-16a4-b070-975f-e21c4334197b", 
-  "severaPhaseId": "0e510dfc-377e-54cb-a697-5409bdc48326"}
-}

@@ -43,19 +43,14 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
     const filteredWorkHours = response.filter((workHours:SeveraResponse) => {
       if (severaProjectId && severaUserId) {
         const filteredWorkHoursUserProject = FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId);
-
-        if (!filteredWorkHoursUserProject) {
-          return false;
-        }
+        if (!filteredWorkHoursUserProject) return false ;
       }
     
       if (severaPhaseId) {
         const filteredWorkHoursPhase = FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId);
-
-        if (!filteredWorkHoursPhase) {
-          return false;
-        }
+        if (!filteredWorkHoursPhase) return false ;
       }
+
       return true;
     });
 
@@ -84,8 +79,6 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
     }
 
     const workHours = mappedWorkHours(filteredWorkHours)
-
-    console.log(JSON.parse(JSON.stringify(workHours)));
 
     return {
       statusCode: 200,
