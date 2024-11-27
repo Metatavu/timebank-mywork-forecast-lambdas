@@ -11,14 +11,26 @@ import type vacationRequestSchema from "src/schema/vacationRequest";
  * @returns Response object with status code
  */
 export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof vacationRequestSchema> = async (event) => {
-  if (!event.body) {
+  const { body } = event;
+  if (!body) {
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Request body is required." })
     };
   }
-
-  const { userId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt} = event.body;
+  const {
+    createdAt,
+    createdBy,
+    days,
+    draft,
+    endDate,
+    message,
+    startDate,
+    status,
+    type,
+    updatedAt,
+    userId
+  } = body;
 
   if (!userId || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
     return {
