@@ -4,8 +4,8 @@ import { getFilesInYear } from "src/service/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 
 /**
- * Lambda for retriving content of memos PDF
- * 
+ * Lambda for retriving list of memos PDF
+ *
  * @param event event
  */
 const listMemoPdfHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
