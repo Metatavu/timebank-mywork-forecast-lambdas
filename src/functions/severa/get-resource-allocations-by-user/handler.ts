@@ -51,7 +51,6 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
       }))
   );
   
-
     const resourceAllocations = mappedResourceAllocations(response);
 
     return {

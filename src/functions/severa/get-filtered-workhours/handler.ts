@@ -17,7 +17,6 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
   try {
     const api = CreateSeveraApiService();
 
-
     /**
      * Construct a custom url for fetching workHours with required queryParams.
      *
@@ -44,12 +43,11 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       if (startDate) customUrl.searchParams.append("startDate", startDate);
       if (endDate) customUrl.searchParams.append("endDate", endDate);
     
-      return customUrl.toString();
+      return customUrl;
     };
 
     const url = buildWorkHoursUrl(severaProjectId, severaUserId, startDate, endDate);
-
-    const response = await api.getWorkHoursBySeveraId(url);
+    const response = await api.getWorkHours(url);
 
     const filteredWorkHours = response.filter((workHours: SeveraResponseWorkHours) => {
     /**
@@ -98,7 +96,6 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       }))
     );
     
-
     const workHours = mappedWorkHours(filteredWorkHours)
 
     return {

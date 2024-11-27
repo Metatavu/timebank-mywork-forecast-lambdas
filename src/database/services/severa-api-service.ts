@@ -1,6 +1,5 @@
 import fetch from "node-fetch";
 import type Flextime from "../models/severa";
-import * as process from "node:process";
 import { DateTime } from "luxon";
 import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
 import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
@@ -13,7 +12,7 @@ export interface SeveraApiService {
   getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
   getResourceAllocation: (severaUserId: string) => Promise<SeveraResponseResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<SeveraResponsePhases[]>;
-  getWorkHoursBySeveraId: (url: string, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
+  getWorkHours: (endpointPath: URL, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
 }
 
 /**
@@ -103,12 +102,12 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * Gets work hours by userId
+     * Gets work hours
      * 
      * @param url custom url for fetching work hours depending on queryparameters requirements
-     * @returns Work hours of a user with multiple queryparameters
+     * @returns Work hours  
      */
-    getWorkHoursBySeveraId: async (endpointPath: string) => {
+    getWorkHours: async (endpointPath: URL) => {
       const response = await fetch(`${endpointPath}`, {
         method: "GET",
         headers: {
