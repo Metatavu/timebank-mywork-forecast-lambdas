@@ -123,29 +123,38 @@ import Auth from "src/meta-assistant/auth/auth-provider";
 // };
 
 export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
+  let totalBillableTime = 0;
+
   try {
     const severaApi = CreateSeveraApiService();
     const severaUsers = await severaApi.getWorkhours();
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
-
+    const projectHours = await severaApi.getProjectHours("f7d6b20f-20a7-8abc-b9af-527537a6f197");
     if (!severaUsers) {
       throw new Error("No persons retrieved from Severa");
     }
 
-    console.log("Severa Users: ", severaUsers);
+    // console.log("Severa Users: ", severaUsers);
+    console.log("Project Hours: ", projectHours);
 
     const combinedUserData: DailyCombinedData[] = await Promise.all(
       Array.isArray(severaUsers) ? severaUsers.map(async user => {
-        const workDays = await severaApi.getWorkDays(user.user.guid);
+        const workDays = await severaApi.getProjectHours(user.user.guid);
         const firstWorkDay = workDays[0];
         const quantity = user.quantity;
         const isBillable = user.isBillable;
-        const billableTime = isBillable ? quantity : 0;
-        const expectedHours = firstWorkDay?.expectedHours || 0;
         const enteredHours = firstWorkDay?.enteredHours || 0;
+        const billableTime = isBillable ? enteredHours + quantity : enteredHours - quantity;
+        const expectedHours = firstWorkDay?.expectedHours || 0;
+        const minimumBillableRate = 0;
+
+        if (isBillable) {
+          totalBillableTime += quantity;
+        }
         // console.log(`Work Days for user ${user.user.guid}: `, workDays);
         // console.log(`Expected Hours for user ${user.user.guid}: `, expectedHours);
-    
+        console.log(totalBillableTime);
+        console.log ('quantity: ', quantity);
         return {
           userGuid: user.user.guid,
           firstName: user.user.firstName,
@@ -153,7 +162,9 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
           expectedHours: expectedHours,
           quantity: quantity,
           billableTime: billableTime,
-          date: DateTime.now().toISO(),
+          minimumBillableRate: minimumBillableRate,
+          totalBillableTime: totalBillableTime,
+          date: DateTime.now().minus({ days: 1 }).toISODate()
         };
       }) : []
     );

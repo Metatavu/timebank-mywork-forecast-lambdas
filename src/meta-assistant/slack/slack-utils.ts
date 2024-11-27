@@ -103,22 +103,31 @@ namespace SlackUtilities {
   // };
 
   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
-    const { firstName, date } = user;
+    const { firstName, date, minimumBillableRate } = user;
 
     const { 
       enteredHours, 
       expectedHours, 
       quantity,
-      billableTime 
+      billableTime,
+      totalBillableTime 
     } = TimeUtilities.handleTimeFormatting(user);
+
+    const {
+      message,
+      billableHoursPercentage
+    } = MessageUtilities.calculateWorkedTimeAndBillableHours(user);
 
     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
   
     const customMessage = `
 Hi ${firstName},
 ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${enteredHours} with an expected time of ${expectedHours}.
-Logged project time: ${quantity}, Billable project time: ${billableTime},
-`;
+${message}
+Logged project time: ${quantity}, Billable project time: ${totalBillableTime},
+Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
+Have a great rest of the day!
+    `;
   
     return {
       message: customMessage,

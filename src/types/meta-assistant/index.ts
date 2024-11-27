@@ -40,6 +40,8 @@ export interface DailyCombinedData {
   expectedHours: number;
   quantity: number;
   billableTime: number;
+  minimumBillableRate: number;
+  totalBillableTime: number;
 }
 
 /**
@@ -125,6 +127,7 @@ export interface DisplayValues {
   expectedHours: string;
   quantity: string;
   billableTime: string;
+  totalBillableTime: string;
 }
 
 /**

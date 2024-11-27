@@ -11,6 +11,7 @@ export interface SeveraApiService {
   getWorkDays: (severaUserId: string) => Promise<WorkDays>;
   getUsers: () => Promise<SeveraUsers>;
   getResourceAllocations: () => Promise<SeveraUsers>;
+  getProjectHours: (projectGuid: string) => Promise<getWorkhours>;
 }
 
 
@@ -59,7 +60,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
       const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
       const today = DateTime.now().toISODate();
-      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=2024-08-29&endDate=2024-08-29`
+      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=2024-11-26&endDate=2024-11-26`
 
       const response = await fetch(url, {
         method: "GET",
@@ -104,6 +105,28 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       return data;
     },
 
+    getProjectHours: async (projectGuid: string) => {
+      const url = `${baseUrl}/v1/projects/${projectGuid}/workhours?startDate=2024-11-26&endDate=2024-11-26`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch projecthours: ${response.status} - ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      // console.log("Users data:", data); // Log the response data
+      return data;
+    },
+
     /**
      * 
      * Gets users from Severa
@@ -135,7 +158,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Gets Workhours from Severa
      */
     getWorkhours: async () => {
-      const url = `${baseUrl}/v1/workhours?startDate=2024-08-29&endDate=2024-08-29`;
+      const url = `${baseUrl}/v1/workhours?startDate=2024-11-26&endDate=2024-11-26`;
 
       const response = await fetch(url, {
         method: "GET",
