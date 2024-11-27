@@ -15,7 +15,7 @@ const vacationRequestStatusSchema = Type.Object({
  * Schema for the vacation request table
  */
 const vacationRequestSchema = Type.Object({
-  personId: Type.String(),
+  userId: Type.String(),
   days: Type.Number(),
   startDate: Type.String(),
   endDate: Type.String(),

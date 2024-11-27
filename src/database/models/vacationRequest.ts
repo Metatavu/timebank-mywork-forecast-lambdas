@@ -1,4 +1,3 @@
-import {VacationRequestStatuses} from "@generated/client/model/vacationRequestStatuses";
 import {VacationRequestStatus} from "@generated/client/model/vacationRequestStatus";
 
 /**
@@ -6,7 +5,7 @@ import {VacationRequestStatus} from "@generated/client/model/vacationRequestStat
  */
 interface VacationRequestModel {
   id: string;
-  personId: string;
+  userId: string;
   draft: boolean;
   startDate: string;
   endDate: string;
