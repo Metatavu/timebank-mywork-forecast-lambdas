@@ -127,37 +127,47 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
 
   try {
     const severaApi = CreateSeveraApiService();
-    const severaUsers = await severaApi.getWorkhours();
+    const severaUsers = await severaApi.getUsers();
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const projectHours = await severaApi.getProjectHours("f7d6b20f-20a7-8abc-b9af-527537a6f197");
+    const workHours = await severaApi.getWorkhours();
     if (!severaUsers) {
       throw new Error("No persons retrieved from Severa");
     }
-
+    // console.log("Work Hours: ", workHours);
     // console.log("Severa Users: ", severaUsers);
-    console.log("Project Hours: ", projectHours);
+
+    // Extract user GUIDs from projectHours
+    const projectUserGuids = Array.isArray(projectHours) ? projectHours.map(hour => hour.user.guid) : [];
+
+    // Filter severaUsers to include only those found in projectHours
+    const filteredSeveraUsers = Array.isArray(severaUsers) ? severaUsers.filter(user => projectUserGuids.includes(user.guid)) : [];
+
+    // Filter workHours to specific date
+    const filteredWorkHours = Array.isArray(workHours) ? workHours.filter(hour => hour.eventDate === "2024-11-26") : [];
+    // console.log("Project Hours: ", projectHours);
+    // console.log("Filtered Severa Users: ", filteredSeveraUsers);
+    // console.log("Filtered Work Hours: ", filteredWorkHours);
 
     const combinedUserData: DailyCombinedData[] = await Promise.all(
-      Array.isArray(severaUsers) ? severaUsers.map(async user => {
-        const workDays = await severaApi.getProjectHours(user.user.guid);
-        const firstWorkDay = workDays[0];
-        const quantity = user.quantity;
+      Array.isArray(filteredSeveraUsers) ? filteredSeveraUsers.map(async user => {
+        const userWorkHours = filteredWorkHours.filter(hour => hour.user.guid === user.guid);
+        const workDays = await severaApi.getWorkDays(user.guid);
+        const quantity = user.quantity || 0;
         const isBillable = user.isBillable;
-        const enteredHours = firstWorkDay?.enteredHours || 0;
-        const billableTime = isBillable ? enteredHours + quantity : enteredHours - quantity;
-        const expectedHours = firstWorkDay?.expectedHours || 0;
+        const enteredHours = workDays[0]?.enteredHours || 0;
+        const billableTime = isBillable ? enteredHours + quantity : enteredHours - quantity || 0;
+        const expectedHours = workDays[0]?.expectedHours || 0;
         const minimumBillableRate = 0;
 
         if (isBillable) {
           totalBillableTime += quantity;
         }
-        // console.log(`Work Days for user ${user.user.guid}: `, workDays);
+        console.log(userWorkHours);
         // console.log(`Expected Hours for user ${user.user.guid}: `, expectedHours);
-        console.log(totalBillableTime);
-        console.log ('quantity: ', quantity);
         return {
-          userGuid: user.user.guid,
-          firstName: user.user.firstName,
+          userGuid: user.guid,
+          firstName: user.firstName,
           enteredHours: enteredHours,
           expectedHours: expectedHours,
           quantity: quantity,
@@ -169,7 +179,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
       }) : []
     );
 
-    // console.log("Combined User Data: ", combinedUserData);
+    console.log("Combined User Data: ", combinedUserData);
     const messageSent = await SlackUtilities.postDailyMessageToUsers(combinedUserData, previousWorkDays);
 
     // const dailyMessages = combinedUserData.map(user => constructDailyMessage(user, 1, DateTime.now().toISO()));
