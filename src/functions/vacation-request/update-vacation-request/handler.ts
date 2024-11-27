@@ -9,7 +9,8 @@ import type vacationRequestSchema from "src/schema/vacationRequest";
  * @param event event
  */
 const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof vacationRequestSchema> = async event => {
-  const { pathParameters, body: {
+  const { pathParameters, body } = event;
+  const {
     createdAt,
     createdBy,
     days,
@@ -21,7 +22,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     type,
     updatedAt,
     userId
-  }} = event;
+  } = body;
   const id = pathParameters?.id;
 
   if (!id) {
