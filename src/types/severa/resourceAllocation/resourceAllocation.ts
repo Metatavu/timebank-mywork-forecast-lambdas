@@ -1,38 +1,38 @@
-/*
- *  Interface for ResourceAllocationModel
-*/
+/**
+ * Interface for ResourceAllocationModel.
+ */
 interface ResourceAllocationModel {
-    severaResourceAllocationId: string;
-    allocationHours: number;
-    calculatedAllocationHours: number;
-    phase?: ResourceAllocationPhaseModel;
-    users: ResourceAllocationUserModel;
-    projects?: ResourceAllocationProjectModel;
+  severaResourceAllocationId: string;
+  allocationHours: number;
+  calculatedAllocationHours: number;
+  phase?: ResourceAllocationPhaseModel;
+  users: ResourceAllocationUserModel;
+  projects?: ResourceAllocationProjectModel;
 }
 
-/*
- * Interface for ResourceAllocationPhaseModel
-*/
+/**
+ * Interface for ResourceAllocationPhaseModel.
+ */
 interface ResourceAllocationPhaseModel {
-    severaPhaseId: string;
-    name: string;
+  severaPhaseId: string;
+  name: string;
 }
 
-/*
- * Interface for ResourceAllocationUserModel
-*/
+/**
+ * Interface for ResourceAllocationUserModel.
+ */
 interface ResourceAllocationUserModel {
-    severaUserId: string;
-    name: string;
+  severaUserId: string;
+  name: string;
 }
 
-/*
- * Interface for ResourceAllocationProjectModel
-*/
+/**
+ * Interface for ResourceAllocationProjectModel.
+ */
 interface ResourceAllocationProjectModel {
-    severaProjectId: string;
-    name: string;
-    isInternal: boolean;
+  severaProjectId: string;
+  name: string;
+  isInternal: boolean;
 }
 
 export default ResourceAllocationModel;

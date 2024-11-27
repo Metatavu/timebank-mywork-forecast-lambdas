@@ -10,40 +10,47 @@ import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllo
  * @param event - API Gateway event containing the userId.
  */
 export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event) => {
-const {severaUserId} = event.pathParameters
+  const {severaUserId} = event.pathParameters
 
-try {
+  if(!severaUserId) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: "User Id is required" }),
+    };
+  }
+
+  try {
     const api = CreateSeveraApiService();
-
-    if(!severaUserId) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: "User Id is required" }),
-      };
-    }
 
     const response = await api.getResourceAllocation(severaUserId);
 
-    const mappedResourceAllocations = (severaData : SeveraResponseResourceAllocation[]) :ResourceAllocationModel[] => {
-      return severaData.map((resourceAllocation) => ({
-      severaResourceAllocationId: resourceAllocation.guid,
-      allocationHours: resourceAllocation.allocationHours,
-      calculatedAllocationHours: resourceAllocation.calculatedAllocationHours,
-      phase: {
-        severaPhaseId: resourceAllocation.phase?.guid,
-        name: resourceAllocation.phase?.name,
-      },
-      users: {
-        severaUserId: resourceAllocation.users?.guid,
-        name: resourceAllocation.users?.name,
-      },
-      projects: {
-        severaProjectId: resourceAllocation.projects?.guid,
-        name: resourceAllocation.projects?.name,
-        isInternal: resourceAllocation.projects?.isInternal,
-      },
-    }));
-  }
+    /**
+     * Maps the Severa API response data to the ResourceAllocation model.
+     *
+     * @param {SeveraResponseResourceAllocation[]} severaData - Array of resourceAllocation data from the Severa API.
+     * @returns {ResourceAllocationModel[]} - An array of resourceAllocations mapped to the ResourceAllocation model.
+     */
+    const mappedResourceAllocations = (severaData : SeveraResponseResourceAllocation[]): ResourceAllocationModel[] => (
+      severaData.map((resourceAllocation) => ({
+        severaResourceAllocationId: resourceAllocation.guid,
+        allocationHours: resourceAllocation.allocationHours,
+        calculatedAllocationHours: resourceAllocation.calculatedAllocationHours,
+        phase: {
+          severaPhaseId: resourceAllocation.phase?.guid,
+          name: resourceAllocation.phase?.name,
+        },
+        users: {
+          severaUserId: resourceAllocation.users?.guid,
+          name: resourceAllocation.users?.name,
+        },
+        projects: {
+          severaProjectId: resourceAllocation.projects?.guid,
+          name: resourceAllocation.projects?.name,
+          isInternal: resourceAllocation.projects?.isInternal,
+        },
+      }))
+  );
+  
 
     const resourceAllocations = mappedResourceAllocations(response);
 

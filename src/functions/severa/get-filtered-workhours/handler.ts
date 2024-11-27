@@ -3,7 +3,7 @@ import { CreateSeveraApiService } from "src/database/services/severa-api-service
 import { middyfy } from "src/libs/lambda";
 import { FilterUtilities } from "src/libs/filter-utils";
 import type WorkHours from "src/types/severa/workHour/workHour";
-import type SeveraResponse from "src/types/severa/workHour/severaResponseWorkHours";
+import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
 
 /**
  * Handler for getting work hours from Severa REST API.
@@ -17,30 +17,45 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
   try {
     const api = CreateSeveraApiService();
 
+
+    /**
+     * Construct a custom url for fetching workHours with required queryParams.
+     *
+     * @param severaProjectId - Severa project id
+     * @param severaUserId - Severa user id
+     * @param startDate - Start date for work hours
+     * @param endDate - End date for work hours
+     * 
+     * @returns {string} - The constructed custom URL for fetching work hours.
+     */
     const buildWorkHoursUrl = (severaProjectId?: string, severaUserId?: string, startDate?: string, endDate?: string) => {
-      let url: string;
+      let endpointPath: string;
 
       if (severaProjectId) {
-        url = `projects/${severaProjectId}/workhours`;
+        endpointPath = `projects/${severaProjectId}/workhours`;
       } else if (severaUserId) {
-        url = `users/${severaUserId}/workhours`;
+        endpointPath = `users/${severaUserId}/workhours`;
       } else {
-        url = "workhours";
+        endpointPath = "workhours";
       }
+
+      const customUrl = new URL(`${process.env.SEVERA_DEMO_BASE_URL}/v1/${endpointPath}`);
+        
+      if (startDate) customUrl.searchParams.append("startDate", startDate);
+      if (endDate) customUrl.searchParams.append("endDate", endDate);
     
-      const queryParams = new URLSearchParams();
-    
-      if (startDate) queryParams.append("startDate", startDate);
-      if (endDate) queryParams.append("endDate", endDate);
-    
-      return queryParams.toString() ? `${url}?${queryParams.toString()}` : url;
+      return customUrl.toString();
     };
 
     const url = buildWorkHoursUrl(severaProjectId, severaUserId, startDate, endDate);
-    
+
     const response = await api.getWorkHoursBySeveraId(url);
 
-    const filteredWorkHours = response.filter((workHours:SeveraResponse) => {
+    const filteredWorkHours = response.filter((workHours: SeveraResponseWorkHours) => {
+    /**
+     * Note: If severaProjectId and severaUserId are both true, the work hours data 
+     * will be filtered by project in the Severa API call due to workHours custom url.
+     */
       if (severaProjectId && severaUserId) {
         const filteredWorkHoursUserProject = FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId);
         if (!filteredWorkHoursUserProject) return false ;
@@ -50,12 +65,17 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
         const filteredWorkHoursPhase = FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId);
         if (!filteredWorkHoursPhase) return false ;
       }
-
       return true;
     });
 
-    const mappedWorkHours = (severaData : SeveraResponse[]) :WorkHours[] => {
-      return severaData.map((workHours) => ({
+    /**
+     * Maps the Severa API response data to the WorkHours model.
+     *
+     * @param {SeveraResponseWorkHours[]} severaData - Array of work hours from the Severa API.
+     * @returns {WorkHours[]} - An array of work hours mapped to the WorkHours model.
+     */
+    const mappedWorkHours = (severaData : SeveraResponseWorkHours[]): WorkHours[] => (
+      severaData.map((workHours) => ({
         severaWorkHoursId: workHours.guid,
         user: {
           severaUserId: workHours.user?.guid,
@@ -75,8 +95,9 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
         quantity: workHours.quantity,
         startTime: workHours.startTime,
         endTime: workHours.endTime,
-      }));
-    }
+      }))
+    );
+    
 
     const workHours = mappedWorkHours(filteredWorkHours)
 

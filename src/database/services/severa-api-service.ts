@@ -26,7 +26,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Gets flextime by severaUserId
      * 
      * @param severaUserId  Severa user id
-     * @returns Flextime of an user
+     * @returns Flextime of a user
      */
     getFlextimeBySeveraUserId: async (severaUserId: string) => {
 
@@ -55,7 +55,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Get resource allocation by userId
      * 
      * @param severaUserId Severa user id
-     * @returns Resource allocation of an user
+     * @returns Resource allocation of a user
      */
        getResourceAllocation: async (severaUserId: string) => {
         const url: string = `${baseUrl}/v1/users/${severaUserId}/resourceallocations/allocations`;
@@ -105,11 +105,11 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     /**
      * Gets work hours by userId
      * 
-     * @param url url for fetching work hours
+     * @param url custom url for fetching work hours depending on queryparameters requirements
      * @returns Work hours of a user with multiple queryparameters
      */
-    getWorkHoursBySeveraId: async (url: string) => {
-      const response = await fetch(`${baseUrl}/v1/${url}`, {
+    getWorkHoursBySeveraId: async (endpointPath: string) => {
+      const response = await fetch(`${endpointPath}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${await getSeveraAccessToken()}`,

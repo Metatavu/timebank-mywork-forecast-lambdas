@@ -2,8 +2,12 @@
   "headers": {
     "Content-Type": "application/json"
   },
-  "body": "{\"name\": \"Fredasdasderic\"}",
+  "body": "{\"name\": \"TestUser\"}",
   "pathParameters": {
-      "severaUserId": "83ebc1fe-16a4-b070-975f-e21c4334197b"
+      "severaUserId": "Insert your Severa User ID here",
+      "severaProjectId": "Insert your Severa Project ID here"
+  },
+  "queryStringParameters": {
+    "startDate": "2024-08-01"
   }
 }

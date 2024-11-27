@@ -24,21 +24,27 @@ export const getPhasesHandler: APIGatewayProxyHandler = async (event) => {
 
     const response = await api.getPhasesBySeveraProjectId(severaProjectId);
 
-    const mappedPhases = (severaData : SeveraResponsePhases[]) :PhaseModel[] => {
-      return severaData.map((phases) => ({
-      severaPhaseId: phases.guid,
-      name: phases.name,
-      isCompleted: phases.isCompleted,
-      workHoursEstimate: phases.workHoursEstimate,
-      startDate: phases.startDate,
-      deadLine: phases.deadLine,
-      project: {
-        severaProjectId: phases.project.guid,
-        name: phases.project.name,
-        isClosed: phases.project.isClosed,
-      }
-    }));
-  }
+    /**
+     * Maps the Severa API response data to the Phase model.
+     *
+     * @param {SeveraResponsePhases[]} severaData - Array of phases from the Severa API.
+     * @returns {PhaseModel[]} - An array of phases mapped to the Phase model.
+     */
+    const mappedPhases = (severaData: SeveraResponsePhases[]): PhaseModel[] => (
+      severaData.map((phases) => ({
+        severaPhaseId: phases.guid,
+        name: phases.name,
+        isCompleted: phases.isCompleted,
+        workHoursEstimate: phases.workHoursEstimate,
+        startDate: phases.startDate,
+        deadLine: phases.deadLine,
+        project: {
+          severaProjectId: phases.project.guid,
+          name: phases.project.name,
+          isClosed: phases.project.isClosed,
+        }
+      }))
+    );
     const phases = mappedPhases(response);
 
     return {

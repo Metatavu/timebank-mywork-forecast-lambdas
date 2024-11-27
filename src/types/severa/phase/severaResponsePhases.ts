@@ -1,3 +1,6 @@
+/**
+ * Interface for Severa Response Phases.
+ */
 interface SeveraResponsePhases {
   guid: string;
   name: string;
