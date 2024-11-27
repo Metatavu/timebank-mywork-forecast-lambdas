@@ -1,7 +1,6 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { vacationRequestService } from "src/database/services";
-import VacationRequestModel from "src/database/models/vacationRequest";
 import type vacationRequestSchema from "src/schema/vacationRequest";
 
 /**
@@ -10,10 +9,10 @@ import type vacationRequestSchema from "src/schema/vacationRequest";
  * @param event event
  */
 const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof vacationRequestSchema> = async event => {
-  const { pathParameters, body } = event;
+  const { pathParameters } = event;
   const id = pathParameters?.id;
   const {
-    personId,
+    userId,
     draft,
     startDate,
     endDate,
@@ -33,7 +32,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     };
   }
 
-  if(!personId || !draft || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
+  if(!userId || !draft || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
     return {
       statusCode: 400,
       body: "Invalid request body. Some data is missing."
@@ -50,7 +49,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
 
   const vacationRequestUpdates = {
     id: existingVacationRequest.id,
-    personId: existingVacationRequest.personId,
+    userId: existingVacationRequest.userId,
     draft: draft ? draft : false,
     startDate: startDate,
     endDate: endDate,
