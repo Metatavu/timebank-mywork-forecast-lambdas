@@ -3,4 +3,5 @@ export interface TotalTime {
     enteredHours: number;
     quantity: number;
     billableTime: number;
+    totalBillableTime: number;
 }
