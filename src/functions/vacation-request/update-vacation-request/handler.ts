@@ -9,21 +9,21 @@ import type vacationRequestSchema from "src/schema/vacationRequest";
  * @param event event
  */
 const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof vacationRequestSchema> = async event => {
-  const { pathParameters } = event;
-  const id = pathParameters?.id;
+  const { pathParameters, body } = event;
   const {
-    userId,
-    draft,
-    startDate,
-    endDate,
-    days,
-    type,
-    status,
-    message,
-    createdBy,
     createdAt,
+    createdBy,
+    days,
+    draft,
+    endDate,
+    message,
+    startDate,
+    status,
+    type,
     updatedAt,
-  } = event.body;
+    userId
+  } = body;
+  const id = pathParameters?.id;
 
   if (!id) {
     return {
@@ -32,7 +32,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     };
   }
 
-  if(!userId || !draft || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
+  if(!userId || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
     return {
       statusCode: 400,
       body: "Invalid request body. Some data is missing."
