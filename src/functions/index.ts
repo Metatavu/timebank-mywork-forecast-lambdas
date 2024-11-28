@@ -42,4 +42,3 @@ export { default as getFlextimeHandler } from "./severa/get-flextime-by-user";
 export { default as getPhasesHandler} from "./severa/get-phases-by-project";
 export {default as getResourceAllocationHandler} from "./severa/get-resource-allocations-by-user";
 
-
