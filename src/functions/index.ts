@@ -28,7 +28,6 @@ export { default as findQuestionnaireHandler } from "./questionnaire/find-questi
 export { default as deleteQuestionnaireHandler } from "./questionnaire/delete-questionnaire";
 export { default as listQuestionnaireHandler } from "./questionnaire/list-questionnaire";   
 export { default as updateQuestionnaireHandler } from "./questionnaire/update-questionnaire";
-export { default as getFlextimeHandler } from "./severa/get-flextime-by-user";
 export { default as listMemoPdfHandler } from "./memo-management/drive-memos/get-memos-pdf";
 export { default as getTranslatedMemoPdfHandler } from "./memo-management/drive-memos/get-translated-memo-pdf";
 export { default as getSummaryMemoPdfHandler } from "./memo-management/drive-memos/get-summary-memo-pdf";
@@ -38,3 +37,9 @@ export { default as getBoardMembersHandler } from "./memo-management/trello-card
 export { default as deleteTrelloCardHandler } from "./memo-management/trello-cards/delete-trello-card";
 export { default as createTrelloCardHandler } from "./memo-management/trello-cards/create-trello-card";
 export { default as createCommentHandler } from "./memo-management/trello-cards/comment-trello-card";
+export {default as getWorkHoursHandler} from "./severa/get-filtered-workhours";
+export { default as getFlextimeHandler } from "./severa/get-flextime-by-user";
+export { default as getPhasesHandler} from "./severa/get-phases-by-project";
+export {default as getResourceAllocationHandler} from "./severa/get-resource-allocations-by-user";
+
+
