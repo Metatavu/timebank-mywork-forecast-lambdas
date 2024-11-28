@@ -6,7 +6,7 @@ import type WorkHours from "src/types/severa/workHour/workHour";
 import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
 
 /**
- * Handler for getting work hours from Severa REST API.
+ * Handler for getting work hours from Severa API.
  *
  * @param event - API Gateway event containing the userId, projectId, and phaseId.
  */
@@ -24,7 +24,7 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
      * @param severaUserId - Severa user id
      * @param startDate - Start date for work hours
      * @param endDate - End date for work hours
-     * 
+     *
      * @returns {string} - The constructed custom URL for fetching work hours.
      */
     const buildWorkHoursUrl = (severaProjectId?: string, severaUserId?: string, startDate?: string, endDate?: string) => {
@@ -39,10 +39,10 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
       }
 
       const customUrl = new URL(`${process.env.SEVERA_DEMO_BASE_URL}/v1/${endpointPath}`);
-        
+
       if (startDate) customUrl.searchParams.append("startDate", startDate);
       if (endDate) customUrl.searchParams.append("endDate", endDate);
-    
+
       return customUrl;
     };
 
@@ -51,14 +51,14 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
 
     const filteredWorkHours = response.filter((workHours: SeveraResponseWorkHours) => {
     /**
-     * Note: If severaProjectId and severaUserId are both true, the work hours data 
+     * Note: If severaProjectId and severaUserId are both true, the work hours data
      * will be filtered by project in the Severa API call due to workHours custom url.
      */
       if (severaProjectId && severaUserId) {
         const filteredWorkHoursUserProject = FilterUtilities.filterByUserSevera(workHours.user?.guid, severaUserId);
         if (!filteredWorkHoursUserProject) return false ;
       }
-    
+
       if (severaPhaseId) {
         const filteredWorkHoursPhase = FilterUtilities.filterByPhaseSevera(workHours.phase?.guid, severaPhaseId);
         if (!filteredWorkHoursPhase) return false ;
@@ -95,7 +95,7 @@ export const getWorkHoursHandler: APIGatewayProxyHandler = async (event) => {
         endTime: workHours.endTime,
       }))
     );
-    
+
     const workHours = mappedWorkHours(filteredWorkHours)
 
     return {
