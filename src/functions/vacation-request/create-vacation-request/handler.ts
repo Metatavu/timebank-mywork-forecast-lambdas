@@ -11,16 +11,28 @@ import type vacationRequestSchema from "src/schema/vacationRequest";
  * @returns Response object with status code
  */
 export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof vacationRequestSchema> = async (event) => {
-  if (!event.body) {
+  const { body } = event;
+  if (!body) {
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Request body is required." })
     };
   }
+  const {
+    createdAt,
+    createdBy,
+    days,
+    draft,
+    endDate,
+    message,
+    startDate,
+    status,
+    type,
+    updatedAt,
+    userId
+  } = body;
 
-  const { personId, draft, startDate, endDate, days, type, status, message, createdBy, createdAt, updatedAt} = event.body;
-
-  if (!personId || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
+  if (!userId || !startDate || !endDate || !days || !type || !status || !message || !createdBy || !createdAt || !updatedAt) {
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Invalid request body. Some data is missing." })
@@ -32,7 +44,7 @@ export const createVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<ty
   try {
     const createdVacationRequest = await vacationRequestService.createVacationRequest({
       id: newVacationRequestId,
-      personId: personId,
+      userId: userId,
       draft: draft,
       startDate: startDate,
       endDate: endDate,

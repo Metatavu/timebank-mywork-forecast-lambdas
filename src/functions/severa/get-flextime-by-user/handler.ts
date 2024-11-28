@@ -5,7 +5,7 @@ import { middyfy } from "src/libs/lambda";
 /**
  * Handler for getting flextime by user from Severa REST API.
  * 
- * @param event - API Gateway event containing the user GUID.
+ * @param event - API Gateway event containing the user Id.
  */
 export const getFlextimeHandler: APIGatewayProxyHandler = async (event) => {
   const severaUserId = event.pathParameters?.severaUserId;

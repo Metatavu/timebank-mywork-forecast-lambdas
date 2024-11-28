@@ -5,11 +5,11 @@ export default {
   events: [
     {
       httpApi: {
-        method: "put",
-        path: "/vacationRequests/{id}",
+        method: "get",
+        path: "/severa/projects/{severaProjectId}/phases",
         authorizer: {
-          name: "timebankKeycloakAuthorizer",
-        },
+          name: "timebankKeycloakAuthorizer"
+        }
       },
     },
   ],

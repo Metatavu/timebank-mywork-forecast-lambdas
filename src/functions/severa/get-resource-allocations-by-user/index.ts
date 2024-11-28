@@ -5,8 +5,8 @@ export default {
   events: [
     {
       httpApi: {
-        method: "put",
-        path: "/vacationRequests/{id}",
+        method: "get",
+        path: "/severa/users/{severaUserId}/resourceallocations",
         authorizer: {
           name: "timebankKeycloakAuthorizer",
         },
