@@ -42,6 +42,7 @@ export interface DailyCombinedData {
   billableTime: number;
   minimumBillableRate: number;
   totalBillableTime: number;
+  nonBillableProject: number;
 }
 
 /**
@@ -114,7 +115,7 @@ export interface DailyMessageData {
   displayLogged: string;
   displayExpected: string;
   // displayBillableProject: string;
-  // displayNonBillableProject: string;
+  displayNonBillableProject: string;
   // displayInternal: string;
   // billableHoursPercentage: string;
 }
@@ -128,6 +129,7 @@ export interface DisplayValues {
   quantity: string;
   billableTime: string;
   totalBillableTime: string;
+  nonBillableProject: string;
 }
 
 /**

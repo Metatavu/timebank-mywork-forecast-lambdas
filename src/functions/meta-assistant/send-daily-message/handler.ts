@@ -129,7 +129,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const severaApi = CreateSeveraApiService();
     const severaUsers = await severaApi.getUsers();
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
-    const projectHours = await severaApi.getProjectHours("f7d6b20f-20a7-8abc-b9af-527537a6f197");
+    // const projectHours = await severaApi.getProjectHours("f7d6b20f-20a7-8abc-b9af-527537a6f197");
     const workHours = await severaApi.getWorkhours();
     if (!severaUsers) {
       throw new Error("No persons retrieved from Severa");
@@ -138,15 +138,15 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     // console.log("Severa Users: ", severaUsers);
 
     // Extract user GUIDs from projectHours
-    const projectUserGuids = Array.isArray(projectHours) ? projectHours.map(hour => hour.user.guid) : [];
+    const workHoursUserGuids = Array.isArray(workHours) ? workHours.map(hour => hour.user.guid) : [];
 
     // Filter severaUsers to include only those found in projectHours
-    const filteredSeveraUsers = Array.isArray(severaUsers) ? severaUsers.filter(user => projectUserGuids.includes(user.guid)) : [];
+    const filteredSeveraUsers = Array.isArray(severaUsers) ? severaUsers.filter(user => workHoursUserGuids.includes(user.guid)) : [];
 
     // Filter workHours to specific date
     // const filteredWorkHours = Array.isArray(workHours) ? workHours.filter(hour => hour.eventDate === "2024-11-26") : [];
     // console.log("Project Hours: ", projectHours);
-    console.log("Filtered Severa Users: ", filteredSeveraUsers);
+    // console.log("Filtered Severa Users: ", filteredSeveraUsers);
     // console.log("Filtered Work Hours: ", filteredWorkHours);
 
     const combinedUserData: DailyCombinedData[] = await Promise.all(
@@ -166,8 +166,10 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
         }
         });
 
+        const nonBillableProject = enteredHours - totalBillableTime;
+
         // console.log("User Workdays: ", workDays);
-        console.log("Total BillableTime: ", totalBillableTime);
+        // console.log("Total BillableTime: ", totalBillableTime);
         // console.log(`Expected Hours for user ${user.user.guid}: `, expectedHours);
         return {
           userGuid: user.guid,
@@ -178,6 +180,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
           billableTime: billableTime,
           minimumBillableRate: minimumBillableRate,
           totalBillableTime: totalBillableTime,
+          nonBillableProject: nonBillableProject,
           date: DateTime.now().minus({ days: 1 }).toISODate()
         };
       }) : []

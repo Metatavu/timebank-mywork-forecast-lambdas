@@ -110,7 +110,8 @@ namespace SlackUtilities {
       expectedHours, 
       quantity,
       billableTime,
-      totalBillableTime 
+      totalBillableTime,
+      nonBillableProject,
     } = TimeUtilities.handleTimeFormatting(user);
 
     const {
@@ -124,7 +125,7 @@ namespace SlackUtilities {
       Hi ${firstName},
       ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${enteredHours} with an expected time of ${expectedHours}.
       ${message}
-      Logged project time: ${quantity}, Billable project time: ${totalBillableTime},
+      Logged project time: ${quantity}, Billable project time: ${totalBillableTime}, Non billable project time: ${nonBillableProject}, Internal time: ${nonBillableProject}.
       Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
       Have a great rest of the day!
       `;
@@ -133,7 +134,8 @@ namespace SlackUtilities {
       message: customMessage,
       name: firstName,
       displayLogged: enteredHours,
-      displayExpected: expectedHours
+      displayExpected: expectedHours,
+      displayNonBillableProject: nonBillableProject,
 
     };
   };

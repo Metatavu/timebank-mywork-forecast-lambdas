@@ -4,4 +4,5 @@ export interface TotalTime {
     quantity: number;
     billableTime: number;
     totalBillableTime: number;
+    nonBillableProject: number;
 }
