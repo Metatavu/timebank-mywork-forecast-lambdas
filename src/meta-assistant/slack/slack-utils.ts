@@ -121,13 +121,13 @@ namespace SlackUtilities {
     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
   
     const customMessage = `
-Hi ${firstName},
-${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${enteredHours} with an expected time of ${expectedHours}.
-${message}
-Logged project time: ${quantity}, Billable project time: ${totalBillableTime},
-Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
-Have a great rest of the day!
-    `;
+      Hi ${firstName},
+      ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${enteredHours} with an expected time of ${expectedHours}.
+      ${message}
+      Logged project time: ${quantity}, Billable project time: ${totalBillableTime},
+      Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
+      Have a great rest of the day!
+      `;
   
     return {
       message: customMessage,

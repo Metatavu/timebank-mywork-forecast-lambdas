@@ -144,28 +144,30 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const filteredSeveraUsers = Array.isArray(severaUsers) ? severaUsers.filter(user => projectUserGuids.includes(user.guid)) : [];
 
     // Filter workHours to specific date
-    const filteredWorkHours = Array.isArray(workHours) ? workHours.filter(hour => hour.eventDate === "2024-11-26") : [];
+    // const filteredWorkHours = Array.isArray(workHours) ? workHours.filter(hour => hour.eventDate === "2024-11-26") : [];
     // console.log("Project Hours: ", projectHours);
-    // console.log("Filtered Severa Users: ", filteredSeveraUsers);
-    console.log("Filtered Work Hours: ", filteredWorkHours);
+    console.log("Filtered Severa Users: ", filteredSeveraUsers);
+    // console.log("Filtered Work Hours: ", filteredWorkHours);
 
     const combinedUserData: DailyCombinedData[] = await Promise.all(
       Array.isArray(filteredSeveraUsers) ? filteredSeveraUsers.map(async user => {
-        const userWorkHours = filteredWorkHours.filter(hour => hour.user.guid === user.guid);
+        const userWorkHours = Array.isArray(workHours) ? workHours.filter(hour => hour.user.guid === user.guid) : [];
         const workDays = await severaApi.getWorkDays(user.guid);
-        const quantity = userWorkHours.reduce((sum, hour) => sum + (hour.quantity || 0), 0);
+        const quantity = userWorkHours[0]?.quantity || 0;
         const isBillable = user.isBillable;
         const enteredHours = workDays[0]?.enteredHours || 0;
         const billableTime = isBillable ? enteredHours + quantity : enteredHours - quantity || 0;
-        const expectedHours = workDays[0]?.expectedHours || 0;
+        const expectedHours = user.workContract.dailyHours || 0;
         const minimumBillableRate = 0;
 
-        if (isBillable) {
-          totalBillableTime += quantity;
+        Array.isArray(workHours) && workHours.forEach(hour => {
+        if (hour.isBillable) {
+          totalBillableTime += hour.quantity;
         }
+        });
 
         // console.log("User Workdays: ", workDays);
-        // console.log(userWorkHours);
+        console.log("Total BillableTime: ", totalBillableTime);
         // console.log(`Expected Hours for user ${user.user.guid}: `, expectedHours);
         return {
           userGuid: user.guid,
