@@ -15,25 +15,23 @@ const listVacationRequestHandler: APIGatewayProxyHandler = async (event) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify(filteredVacationRequests),
-      }
-    } else {
-      const allVacationRequests: VacationRequestModel[] =
-        await vacationRequestService.listVacationRequests();
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(allVacationRequests),
+        body: JSON.stringify(filteredVacationRequests)
       };
     }
+    const allVacationRequests: VacationRequestModel[] =
+      await vacationRequestService.listVacationRequests();
 
+    return {
+      statusCode: 200,
+      body: JSON.stringify(allVacationRequests)
+    };
   } catch (error) {
     return {
       statusCode: 500,
       body: JSON.stringify({
         error: "Failed to retrieve vacation requests.",
-        details: error.message,
-      }),
+        details: error.message
+      })
     };
   }
 };

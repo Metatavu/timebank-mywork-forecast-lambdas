@@ -1,5 +1,5 @@
+import type VacationRequestModel from "@database/models/vacationRequest";
 import type { DocumentClient } from "aws-sdk/clients/dynamodb";
-import VacationRequestModel from "@database/models/vacationRequest";
 
 const TABLE_NAME = "VacationRequests";
 
@@ -7,7 +7,6 @@ const TABLE_NAME = "VacationRequests";
  * Database service for vacation requests
  */
 class VacationRequestService {
-
   /**
    * Constructor
    * @param docClient DynamoDB client
@@ -20,7 +19,9 @@ class VacationRequestService {
    * @param vacationRequest vacation request
    * @returns created vacationRequest
    */
-  public createVacationRequest = async (vacationRequest: VacationRequestModel): Promise<VacationRequestModel> => {
+  public createVacationRequest = async (
+    vacationRequest: VacationRequestModel
+  ): Promise<VacationRequestModel> => {
     await this.docClient
       .put({
         TableName: TABLE_NAME,
@@ -29,7 +30,7 @@ class VacationRequestService {
       .promise();
 
     return vacationRequest;
-  }
+  };
 
   /**
    * Finds a single vacation request
@@ -43,12 +44,12 @@ class VacationRequestService {
         TableName: TABLE_NAME,
         Key: {
           id: id
-        },
+        }
       })
       .promise();
 
     return result.Item as VacationRequestModel;
-  }
+  };
 
   /**
    * Lists all vacation requests
@@ -56,29 +57,27 @@ class VacationRequestService {
    * @returns list of vacation requests
    */
   public listVacationRequests = async (userId?: string): Promise<VacationRequestModel[]> => {
-
-    if (userId){
+    if (userId) {
       const filteredResult = await this.docClient
         .scan({
           TableName: TABLE_NAME,
-          FilterExpression: 'user = :userId',
+          FilterExpression: "user = :userId",
           ExpressionAttributeValues: {
-            ':userId': userId,
-          },
+            ":userId": userId
+          }
         })
         .promise();
 
       return filteredResult.Items as VacationRequestModel[];
-    } else {
-      const result = await this.docClient
-        .scan({
-          TableName: TABLE_NAME
-        })
-        .promise();
-
-      return result.Items as VacationRequestModel[];
     }
-  }
+    const result = await this.docClient
+      .scan({
+        TableName: TABLE_NAME
+      })
+      .promise();
+
+    return result.Items as VacationRequestModel[];
+  };
 
   /**
    * Updates a vacation request
@@ -86,7 +85,9 @@ class VacationRequestService {
    * @param vacationRequest vacation request to be updated
    * @returns updated vacation request
    */
-  public updateVacationRequest = async (vacationRequest: VacationRequestModel): Promise<VacationRequestModel> => {
+  public updateVacationRequest = async (
+    vacationRequest: VacationRequestModel
+  ): Promise<VacationRequestModel> => {
     await this.docClient
       .put({
         TableName: TABLE_NAME,
@@ -95,7 +96,7 @@ class VacationRequestService {
       .promise();
 
     return vacationRequest;
-  }
+  };
 
   /**
    * Deletes a vacation request
@@ -108,10 +109,10 @@ class VacationRequestService {
         TableName: TABLE_NAME,
         Key: {
           id: id
-        },
+        }
       })
       .promise();
-  }
+  };
 }
 
 export default VacationRequestService;
