@@ -44,12 +44,11 @@ namespace TimeUtilities {
    * @returns human friendly time formats
    */
   export const handleTimeFormatting = (user: TotalTime): DisplayValues => {
-    const { enteredHours, expectedHours, quantity, billableTime, totalBillableTime, nonBillableProject } = user;
+    const { enteredHours, expectedHours, quantity, totalBillableTime, nonBillableProject } = user;
 
     const displayHours = TimeUtilities.timeConversion(enteredHours);
     const displayExpectedHours = TimeUtilities.timeConversion(expectedHours);
     const displayQuantity = TimeUtilities.timeConversion(quantity);
-    const displayBillable = TimeUtilities.timeConversion(billableTime);
     const displayTotalBillableTime = TimeUtilities.timeConversion(totalBillableTime);
     const displayNonBillableProject = TimeUtilities.timeConversion(nonBillableProject);
 
@@ -57,7 +56,6 @@ namespace TimeUtilities {
       enteredHours: displayHours,
       expectedHours: displayExpectedHours,
       quantity: displayQuantity,
-      billableTime: displayBillable,
       totalBillableTime: displayTotalBillableTime,
       nonBillableProject: displayNonBillableProject
     };

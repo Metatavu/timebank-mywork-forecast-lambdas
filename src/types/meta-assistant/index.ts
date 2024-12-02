@@ -39,7 +39,6 @@ export interface DailyCombinedData {
   enteredHours: number;
   expectedHours: number;
   quantity: number;
-  billableTime: number;
   minimumBillableRate: number;
   totalBillableTime: number;
   nonBillableProject: number;
@@ -127,7 +126,6 @@ export interface DisplayValues {
   enteredHours: string;
   expectedHours: string;
   quantity: string;
-  billableTime: string;
   totalBillableTime: string;
   nonBillableProject: string;
 }
