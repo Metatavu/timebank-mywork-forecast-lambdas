@@ -69,15 +69,15 @@ class VacationRequestService {
         .promise();
 
       return filteredResult.Items as VacationRequestModel[];
+    } else {
+      const result = await this.docClient
+        .scan({
+          TableName: TABLE_NAME
+        })
+        .promise();
+
+      return result.Items as VacationRequestModel[];
     }
-
-    const result = await this.docClient
-      .scan({
-        TableName: TABLE_NAME
-      })
-      .promise();
-
-    return result.Items as VacationRequestModel[];
   }
 
   /**
