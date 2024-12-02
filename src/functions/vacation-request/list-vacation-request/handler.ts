@@ -1,7 +1,7 @@
-import type {APIGatewayProxyHandler} from "aws-lambda";
+import type { APIGatewayProxyHandler } from "aws-lambda";
 import type VacationRequestModel from "src/database/models/vacationRequest";
-import {vacationRequestService} from "src/database/services";
-import {middyfy} from "src/libs/lambda";
+import { vacationRequestService } from "src/database/services";
+import { middyfy } from "src/libs/lambda";
 
 /**
  * Labmda for listing all vacation requests from DynamoDB.
