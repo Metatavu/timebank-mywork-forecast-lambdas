@@ -55,7 +55,22 @@ class VacationRequestService {
    *
    * @returns list of vacation requests
    */
-  public listVacationRequests = async (): Promise<VacationRequestModel[]> => {
+  public listVacationRequests = async (userId?: string): Promise<VacationRequestModel[]> => {
+
+    if (userId){
+      const filteredResult = await this.docClient
+        .scan({
+          TableName: TABLE_NAME,
+          FilterExpression: 'user = :userId',
+          ExpressionAttributeValues: {
+            ':userId': userId,
+          },
+        })
+        .promise();
+
+      return filteredResult.Items as VacationRequestModel[];
+    }
+
     const result = await this.docClient
       .scan({
         TableName: TABLE_NAME
