@@ -57,25 +57,18 @@ class VacationRequestService {
    * @returns list of vacation requests
    */
   public listVacationRequests = async (userId?: string): Promise<VacationRequestModel[]> => {
+    const scanParams: AWS.DynamoDB.DocumentClient.ScanInput = {
+      TableName: TABLE_NAME
+    };
+
     if (userId) {
-      const filteredResult = await this.docClient
-        .scan({
-          TableName: TABLE_NAME,
-          FilterExpression: "user = :userId",
-          ExpressionAttributeValues: {
-            ":userId": userId
-          }
-        })
-        .promise();
-
-      return filteredResult.Items as VacationRequestModel[];
+      scanParams.FilterExpression = "userId = :userId";
+      scanParams.ExpressionAttributeValues = {
+        ":userId": userId
+      };
     }
-    const result = await this.docClient
-      .scan({
-        TableName: TABLE_NAME
-      })
-      .promise();
 
+    const result = await this.docClient.scan(scanParams).promise();
     return result.Items as VacationRequestModel[];
   };
 
