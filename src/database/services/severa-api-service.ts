@@ -276,7 +276,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "projects:read, resourceallocations:read, hours:read, users:read,hours:read,resourceallocations:read",
+    scope: "projects:read, resourceallocations:read, hours:read, users:read",
   };
 
   try {
