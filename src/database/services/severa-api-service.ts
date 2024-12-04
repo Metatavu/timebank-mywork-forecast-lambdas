@@ -13,7 +13,7 @@ export interface SeveraApiService {
   getResourceAllocation: (severaUserId: string) => Promise<SeveraResponseResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<SeveraResponsePhases[]>;
   getWorkHours: (endpointPath: URL, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
-  getWorkhours: () => Promise<getWorkhours>;
+  getPreviousWorkHours: () => Promise<getWorkhours>;
   getWorkDays: (severaUserId: string) => Promise<WorkDays>;
   getUsers: () => Promise<SeveraUsers>;
   getResourceAllocations: () => Promise<SeveraUsers>;
@@ -62,7 +62,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * @param severaUserId Severa user id
      * @returns Resource allocation of a user
      */
-       getResourceAllocation: async (severaUserId: string) => {
+      getResourceAllocation: async (severaUserId: string) => {
         const url: string = `${baseUrl}/v1/users/${severaUserId}/resourceallocations/allocations`;
         const response = await fetch(url,{
             method: "GET",
@@ -128,9 +128,8 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
         );
       }      const data = await response.json();
-      console.log("Flextime data:", data); // Log the response data
+      console.log("Flextime data:", data);
       return data;
-      // return response.json();
     },
 
     /**
@@ -183,7 +182,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         );
       }
       const data = await response.json();
-      // console.log("Users data:", data); // Log the response data
       return data;
     },
 
@@ -205,7 +203,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         );
       }
       const data = await response.json();
-      // console.log("Users data:", data); // Log the response data
       return data;
     },
 
@@ -232,14 +229,13 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         );
       }
       const data = await response.json();
-      // console.log("Users data:", data); // Log the response data
       return data;
     },
 
     /**
      * Gets Workhours from Severa
      */
-    getWorkhours: async () => {
+    getPreviousWorkHours: async () => {
       const url = `${baseUrl}/v1/workhours?eventDateStart=2024-11-26&eventDateEnd=2024-11-26`;
 
       const response = await fetch(url, {
@@ -257,7 +253,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         );
       }
       const data = await response.json();
-      // console.log("Users data:", data); // Log the response data
       return data;
   }};
 }

@@ -1,7 +1,7 @@
 import type { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
 import { DateTime, Duration } from "luxon";
 import type { PersonTotalTime } from "src/generated/client/api";
-import { TotalTime } from "./model";
+import { TotalTime } from "src/database/models/severa";
 
 /**
  * Namespace for time utilities

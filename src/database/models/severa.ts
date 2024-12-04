@@ -29,3 +29,11 @@ export interface ResourceAllocations {
   name: string;
   allocationHours: number;
 }
+
+export interface TotalTime {
+  expectedHours: number;
+  enteredHours: number;
+  quantity: number;
+  totalBillableTime: number;
+  nonBillableProject: number;
+}

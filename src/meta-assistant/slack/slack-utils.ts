@@ -132,6 +132,7 @@ namespace SlackUtilities {
     return {
       message: customMessage,
       name: firstName,
+      displayDate: displayDate,
       displayLogged: enteredHours,
       displayExpected: expectedHours,
       displayNonBillableProject: nonBillableProject,
@@ -243,7 +244,7 @@ Have a great week!
 
     const messageResults: DailyMessageResult[] = [];
     for (const userData of dailyCombinedData) {
-      const { slackId, personId, expected } = userData;
+      const { slackId, userGuid, enteredHours } = userData;
 
       // const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISODate(), nonProjectTimes);
       // const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISODate(), nonProjectTimes);
@@ -251,21 +252,21 @@ Have a great week!
       const message = constructDailyMessage(userData, numberOfToday);
       console.log("Message to send: ", message.message);
       // if (!isAway && !firstDayBack) {
-      //   if (!slackOverride) {
-      //     // messageResults.push({
-      //     //   message: message,
-      //     //   response: await sendMessage(slackId, message.message)
-      //     // });
-      //     console.log("Message to send: ", message.message);
-      //   }
+        // if (!slackOverride) {
+        //   messageResults.push({
+        //     message: message,
+        //     response: await sendMessage(slackId, message.message)
+        //   });
+        //   console.log("Message to send: ", message.message);
+        // }
       //   else {
-      //     for (const stagingid of slackOverride) {
-      //       // messageResults.push({
-      //       //   message: message,
-      //       //   response: await sendMessage(stagingid, message.message)
-      //       // });
-      //       console.log("Message to send: ", message.message);
-      //     }
+          for (const stagingid of slackOverride) {
+            messageResults.push({
+              message: message,
+              response: await sendMessage(stagingid, message.message)
+            });
+            console.log("Message to send: ", message.message);
+          }
       //   }
       // }
     }
