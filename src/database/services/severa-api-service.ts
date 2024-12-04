@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import type { Flextime } from "../models/severa";
 import { DateTime } from "luxon";
+import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
 import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
@@ -140,9 +141,13 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      */
     getWorkDays: async (severaUserId: string) => {
 
-      const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
+      const eventDateYesterday = TimeUtilities.getPreviousTwoWorkdays().yesterday.toISODate();
       const today = DateTime.now().toISODate();
-      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=2024-11-26&endDate=2024-11-26`
+      const startDate = process.env.SET_DATES === 'true' ? '2024-11-26' : eventDateYesterday;
+      const endDate = process.env.SET_DATES === 'true' ? '2024-11-26' : today;
+
+      // Dates are hardcoded for demo purposes
+      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${startDate}&endDate=${endDate}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -160,7 +165,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const data = await response.json();
       return data;
     },
-    
+
     /**
      * 
      * Gets resourceallocations from Severa
@@ -215,7 +220,13 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Gets previous workdays Workhours from Severa
      */
     getPreviousWorkHours: async () => {
-      const url = `${baseUrl}/v1/workhours?eventDateStart=2024-11-26&eventDateEnd=2024-11-26`;
+      const eventDateYesterday = TimeUtilities.getPreviousTwoWorkdays().yesterday.toISODate();
+      const today = DateTime.now().toISODate();
+      const startDate = process.env.SET_DATES === 'true' ? '2024-11-26' : eventDateYesterday;
+      const endDate = process.env.SET_DATES === 'true' ? '2024-11-26' : today;
+
+      // Dates are hardcoded for demo purposes
+      const url = `${baseUrl}/v1/workhours?eventDateStart=${startDate}&eventDateEnd=${endDate}`;
 
       const response = await fetch(url, {
         method: "GET",
