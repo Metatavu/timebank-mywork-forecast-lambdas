@@ -55,7 +55,7 @@ const updateVacationRequestHandler: ValidatedEventAPIGatewayProxyEvent<typeof va
     endDate: endDate,
     days: days,
     type: type,
-    status: existingVacationRequest.status,
+    status: status ? status : existingVacationRequest.status,
     message: message,
     createdBy: existingVacationRequest.createdBy,
     createdAt: existingVacationRequest.createdAt,
