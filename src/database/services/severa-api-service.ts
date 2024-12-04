@@ -136,7 +136,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * 
      * Gets Workdays from Severa
      */
-
     getWorkDays: async (severaUserId: string) => {
 
       const eventDateYesterday = DateTime.now().minus({ days: 1 }).toISODate();
@@ -163,7 +162,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * 
      * Gets resourceallocations from Severa
      */
-
     getResourceAllocations: async () => {
       const url = `${baseUrl}/v1/resourceallocations`;
 
@@ -190,7 +188,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * @param projectGuid Severa project id
      * @returns 
      */
-
     getProjectHours: async (projectGuid: string) => {
       const url = `${baseUrl}/v1/projects/${projectGuid}/workhours?startDate=2024-11-26&endDate=2024-11-26`;
 
@@ -216,7 +213,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * 
      * Gets users from Severa
      */
-
     getUsers: async () => {
       const url = `${baseUrl}/v1/users`;
 
