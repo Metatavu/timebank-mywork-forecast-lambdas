@@ -1,7 +1,7 @@
 import { PersonTotalTime } from "src/generated/client/api";
 import { CalculateWorkedTimeAndBillableHoursResponse, DailyCombinedData } from "src/types/meta-assistant";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
-import { TotalTime } from "./model";
+import { TotalTime } from "src/database/models/severa";
 
 /**
  * Namespace for message utilities
@@ -14,7 +14,7 @@ namespace MessageUtilities {
    * @returns a message based on the worked time and the percentage of billable hours
    */
   export const calculateWorkedTimeAndBillableHours = (user: TotalTime| DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
-    const { quantity, billableTime, enteredHours, expectedHours, totalBillableTime } = user;
+    const { enteredHours, expectedHours, totalBillableTime } = user;
 
     const billableHoursPercentage = enteredHours === 0 ? "0" : (totalBillableTime/enteredHours * 100).toFixed(0);
     const totalOverTime = enteredHours - expectedHours;

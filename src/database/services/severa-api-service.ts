@@ -184,6 +184,12 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const data = await response.json();
       return data;
     },
+    /**
+     * Gets projecthours from Severa
+     * 
+     * @param projectGuid Severa project id
+     * @returns 
+     */
 
     getProjectHours: async (projectGuid: string) => {
       const url = `${baseUrl}/v1/projects/${projectGuid}/workhours?startDate=2024-11-26&endDate=2024-11-26`;
@@ -233,7 +239,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * Gets Workhours from Severa
+     * Gets previous workdays Workhours from Severa
      */
     getPreviousWorkHours: async () => {
       const url = `${baseUrl}/v1/workhours?eventDateStart=2024-11-26&eventDateEnd=2024-11-26`;

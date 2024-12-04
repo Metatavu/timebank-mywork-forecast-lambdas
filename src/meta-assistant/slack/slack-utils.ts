@@ -57,51 +57,6 @@ namespace SlackUtilities {
    * @param numberOfToday Todays number
    * @returns string message if id match
    */
-//   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
-//     const { name, date, firstName, minimumBillableRate } = user;
-
-//     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
-
-//     const {
-//       logged,
-//       loggedProject,
-//       expected,
-//       internal,
-//       billableProject,
-//       nonBillableProject
-    // } = TimeUtilities.handleTimeFormatting(user);
-
-//     const {
-//       message,
-//       billableHoursPercentage
-//     } = MessageUtilities.calculateWorkedTimeAndBillableHours(user);
-
-//     const customMessage = `
-// Hi ${firstName},
-//     `;
-//     const customMessage = `
-// Hi ${firstName},
-// ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${logged} with an expected time of ${expected}.
-// ${message}
-// Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
-// Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
-// Have a great rest of the day!
-//     `;
-
-  //   return {
-  //     message: customMessage,
-  //     name: name,
-  //     displayDate: displayDate,
-  //     displayLogged: logged,
-  //     displayLoggedProject: loggedProject,
-  //     displayExpected: expected,
-  //     displayBillableProject: billableProject,
-  //     displayNonBillableProject: nonBillableProject,
-  //     displayInternal: internal,
-  //     billableHoursPercentage: billableHoursPercentage
-  //   };
-  // };
-
   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
     const { firstName, date, minimumBillableRate } = user;
 
@@ -236,18 +191,13 @@ Have a great week!
    */
   export const postDailyMessageToUsers = async (
     dailyCombinedData: DailyCombinedData[],
-    // timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    // nonProjectTimes: NonProjectTime[]
   ): Promise<DailyMessageResult[]> => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
     const messageResults: DailyMessageResult[] = [];
     for (const userData of dailyCombinedData) {
       const { slackId, userGuid, enteredHours } = userData;
-
-      // const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISODate(), nonProjectTimes);
-      // const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISODate(), nonProjectTimes);
 
       const message = constructDailyMessage(userData, numberOfToday);
       console.log("Message to send: ", message.message);
