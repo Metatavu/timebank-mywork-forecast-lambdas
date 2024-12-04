@@ -1,9 +1,12 @@
 import fetch from "node-fetch";
-import type { Flextime, getWorkhours, SeveraUsers, WorkDays } from "../models/severa";
+import type { Flextime } from "../models/severa";
 import { DateTime } from "luxon";
 import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
 import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
+import type SeveraResponsePreviousWorkHours from "src/types/severa/previousWorkHours/severaResponsePreviousWorkHours";
+import type SeveraResponseWorkDays from "src/types/severa/workDays/severaResponseWorkDays";
+import type SeveraResponseUsers from "src/types/severa/users/severaResponseUsers";
 
 /**
  * Interface for a SeveraApiService.
@@ -13,11 +16,10 @@ export interface SeveraApiService {
   getResourceAllocation: (severaUserId: string) => Promise<SeveraResponseResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<SeveraResponsePhases[]>;
   getWorkHours: (endpointPath: URL, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
-  getPreviousWorkHours: () => Promise<getWorkhours>;
-  getWorkDays: (severaUserId: string) => Promise<WorkDays>;
-  getUsers: () => Promise<SeveraUsers>;
-  getResourceAllocations: () => Promise<SeveraUsers>;
-  getProjectHours: (projectGuid: string) => Promise<getWorkhours>;
+  getPreviousWorkHours: () => Promise<SeveraResponsePreviousWorkHours>;
+  getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
+  getUsers: () => Promise<SeveraResponseUsers>;
+  getResourceAllocations: () => Promise<SeveraResponseUsers>;
 }
 
 
@@ -158,6 +160,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const data = await response.json();
       return data;
     },
+    
     /**
      * 
      * Gets resourceallocations from Severa
@@ -177,32 +180,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       if (!response.ok) {
         throw new Error(
           `Failed to fetch resourceallocations: ${response.status} - ${response.statusText}`,
-        );
-      }
-      const data = await response.json();
-      return data;
-    },
-    /**
-     * Gets projecthours from Severa
-     * 
-     * @param projectGuid Severa project id
-     * @returns 
-     */
-    getProjectHours: async (projectGuid: string) => {
-      const url = `${baseUrl}/v1/projects/${projectGuid}/workhours?startDate=2024-11-26&endDate=2024-11-26`;
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${await getSeveraAccessToken()}`,
-          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch projecthours: ${response.status} - ${response.statusText}`,
         );
       }
       const data = await response.json();

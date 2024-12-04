@@ -25,6 +25,8 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
       throw new Error("No persons retrieved from Severa");
     }
 
+    console.log("Work hours", workHours);
+
     // Get the user's guid from workHours
     const workHoursUserGuids = Array.isArray(workHours) ? workHours.map(hour => hour.user.guid) : [];
 
