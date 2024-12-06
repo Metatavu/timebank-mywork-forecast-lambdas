@@ -8,10 +8,10 @@ import { vacationRequestService } from "src/database/services";
  * @param event event
  * @returns vacation request information as object
  */
-const findVacationRequestHandler: APIGatewayProxyHandler = async(event: APIGatewayProxyEvent) => {
+const findVacationRequestHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const {id} = event.pathParameters || {};
 
-  if (!id){
+  if (!id) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -23,7 +23,7 @@ const findVacationRequestHandler: APIGatewayProxyHandler = async(event: APIGatew
   try {
     const vacationRequestById = await vacationRequestService.findVacationRequest(id);
 
-    if (!vacationRequestById){
+    if (!vacationRequestById) {
       return {
         statusCode: 404,
         body: JSON.stringify({
@@ -39,7 +39,7 @@ const findVacationRequestHandler: APIGatewayProxyHandler = async(event: APIGatew
   } catch (error) {
     return {
       statusCode: 500,
-      body:JSON.stringify({
+      body: JSON.stringify({
         error: "Failed to retrieve vacation request",
         details: error.message
       })

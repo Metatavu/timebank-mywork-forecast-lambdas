@@ -1,7 +1,13 @@
 {
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "body": "{\"name\": \"Frederic\"}",
-    "queryStringParameters": { "startDate": "2023-11-03", "endDate": "2021-11-03" }
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"name\": \"TestUser\"}",
+  "pathParameters": {
+      "severaUserId": "Insert your Severa User ID here",
+      "severaProjectId": "Insert your Severa Project ID here"
+  },
+  "queryStringParameters": {
+    "startDate": "2024-08-01"
+  }
 }
