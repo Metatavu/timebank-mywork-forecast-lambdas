@@ -77,8 +77,6 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
       }) : []
     );
 
-    console.log("Combined user data: ", combinedUserData);
-
     const messageSent = await SlackUtilities.postDailyMessageToUsers(combinedUserData, previousWorkDays);
 
     return {

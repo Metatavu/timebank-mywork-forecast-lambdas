@@ -210,13 +210,13 @@ Have a great week!
         //   console.log("Message to send: ", message.message);
         // }
       //   else {
-          for (const stagingid of slackOverride) {
-            messageResults.push({
-              message: message,
-              response: await sendMessage(stagingid, message.message)
-            });
-            console.log("Message to send: ", message.message);
-          }
+          // for (const stagingid of slackOverride) {
+          //   messageResults.push({
+          //     message: message,
+          //     response: await sendMessage(stagingid, message.message)
+          //   });
+          //   console.log("Message to send: ", message.message);
+          // }
       //   }
       // }
     }
