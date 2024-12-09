@@ -3,6 +3,7 @@ import { CreateKeycloakApiService } from "src/database/services/keycloak-api-ser
 import { middyfy } from "src/libs/lambda";
 
 /**
+ * Lambda handler to update a user's attributes
  * 
  * @param event API Gateway event 
  * @returns Response message as JSON string

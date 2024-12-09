@@ -13,8 +13,9 @@ export interface CustomKeycloakProfile extends KeycloakProfile {
 export interface KeycloakApiService {
   getUsers: () => Promise<CustomKeycloakProfile[]>;
   findUser: (id: string) => Promise<CustomKeycloakProfile>;
-  updateUserAttribute: (id: string, attribute: Record<string, string[]> ) => Promise<void>;
+  updateUserAttribute: (id: string, attribute: Record<string, string[]>) => Promise<void>;
 }
+
 /**
  * Creates KeycloakApiService
  */
