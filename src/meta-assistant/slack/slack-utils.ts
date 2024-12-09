@@ -4,7 +4,7 @@ import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
 import MessageUtilities from "../generic/message-utils";
-import { NotificationMessageResult } from "src/types/trello-notification";
+import type { NotificationMessageResult } from "src/types/trello-notification";
 
 /**
  * Namespace for Slack utilities
@@ -91,9 +91,9 @@ namespace SlackUtilities {
       displayLogged: enteredHours,
       displayExpected: expectedHours,
       displayNonBillableProject: nonBillableProject,
-
     };
   };
+
   /**
    * Create weekly message from users timebank data
    *
@@ -193,15 +193,13 @@ Have a great week!
     dailyCombinedData: DailyCombinedData[],
     previousWorkDays: PreviousWorkdayDates,
   ): Promise<DailyMessageResult[]> => {
-    const { numberOfToday, yesterday, today } = previousWorkDays;
+    const { numberOfToday } = previousWorkDays;
 
     const messageResults: DailyMessageResult[] = [];
     for (const userData of dailyCombinedData) {
-      const { slackId, userGuid, enteredHours } = userData;
-
+      const { slackId } = userData;
       const message = constructDailyMessage(userData, numberOfToday);
       console.log("Message to send: ", message.message);
-      // if (!isAway && !firstDayBack) {
         // if (!slackOverride) {
         //   messageResults.push({
         //     message: message,

@@ -1,9 +1,11 @@
 /**
  * Interface for UsersModel
  */
-interface UsersModel {
-  guid: string;
+interface UserModel {
+  id: string;
   name: string;
   firstName: string;
   lastName: string;
 }
+
+export default UserModel;

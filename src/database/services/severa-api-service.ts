@@ -7,7 +7,7 @@ import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhas
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
 import type SeveraResponsePreviousWorkHours from "src/types/severa/previousWorkHours/severaResponsePreviousWorkHours";
 import type SeveraResponseWorkDays from "src/types/severa/workDays/severaResponseWorkDays";
-import type SeveraResponseUsers from "src/types/severa/users/severaResponseUsers";
+import type SeveraResponseUsers from "src/types/severa/user/severaResponseUsers";
 
 /**
  * Interface for a SeveraApiService.
@@ -22,7 +22,6 @@ export interface SeveraApiService {
   getOptInUsers: () => Promise<SeveraResponseUsers>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
 }
-
 
 /**
  * Creates SeveraApiService
@@ -130,14 +129,16 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         throw new Error(
           `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
         );
-      }      const data = await response.json();
-      console.log("Flextime data:", data);
-      return data;
+      }
+      return response.json();
     },
 
     /**
      * 
      * Gets Workdays from Severa
+     * 
+     * @param severaUserId Severa user id
+     * @returns Workdays of a user
      */
     getWorkDays: async (severaUserId: string) => {
 
@@ -162,8 +163,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           `Failed to fetch workdays: ${response.status} - ${response.statusText}`,
         );
       }
-      const data = await response.json();
-      return data;
+      return response.json();
     },
 
     /**
@@ -187,8 +187,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           `Failed to fetch resourceallocations: ${response.status} - ${response.statusText}`,
         );
       }
-      const data = await response.json();
-      return data;
+      return response.json();
     },
 
     /**
@@ -196,7 +195,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * Gets users from Severa
      */
     getOptInUsers: async () => {
-      const url = `${baseUrl}/v1/users`;
+      const url = `${baseUrl}/v1/users?keywordGuids=8e7b363e-aa8c-34b1-478f-0a9633848fde`;
     
       const response = await fetch(url, {
         method: "GET",
@@ -212,14 +211,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           `Failed to fetch users: ${response.status} - ${response.statusText}`,
         );
       }
-      const data = await response.json();
-    
-      // Filter users based on the keyword
-      const filteredUsers = data.filter(user => 
-        Array.isArray(user.keywords) && user.keywords.some(keyword => keyword.value === "userDataProcessingPermissionGranted")
-      );
-    
-      return filteredUsers;
+      return response.json();
     },
 
     /**
@@ -248,12 +240,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           `Failed to fetch users: ${response.status} - ${response.statusText}`,
         );
       }
-      const data = await response.json();
-      return data;
+      return response.json();
   }};
 }
-
-
 
 /**
  * Gets Severa access token

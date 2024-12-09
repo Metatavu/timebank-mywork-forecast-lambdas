@@ -1,12 +1,9 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, DailyHandlerResponse } from "src/libs/api-gateway";
-import { middyfy } from "src/libs/lambda";
+import { type ValidatedAPIGatewayProxyEvent, type ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, type DailyHandlerResponse } from "src/libs/api-gateway";
 import type { DailyCombinedData } from "src/types/meta-assistant/index";
-import schema from "src/types/meta-assistant/index";
+import type schema from "src/types/meta-assistant/index";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import { CreateSeveraApiService } from "src/database/services/severa-api-service";
-import MessageUtilities from "src/meta-assistant/generic/message-utils";
-import Auth from "src/meta-assistant/auth/auth-provider";
 
 /**
  * AWS-less handler for sendDailyMessage
@@ -60,7 +57,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
         const slackUser = findSlackUser(user.firstName, user.lastName);
 
         const result = {
-          userGuid: user.guid,
+          userId: user.guid,
           firstName: user.firstName,
           lastName: user.lastName,
           enteredHours: enteredHours,

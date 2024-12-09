@@ -1,6 +1,6 @@
-import { ChatPostMessageResponse } from "@slack/web-api/dist/response/ChatPostMessageResponse";
-import { DateTime } from "luxon";
-import { PersonTotalTime } from "src/generated/client/api";
+import type { ChatPostMessageResponse } from "@slack/web-api/dist/response/ChatPostMessageResponse";
+import type { DateTime } from "luxon";
+import type { PersonTotalTime } from "src/generated/client/api";
 
 /**
  * Serverless schema type
@@ -17,7 +17,7 @@ export default {
  * DailyCombinedData interface
  */
 export interface DailyCombinedData {
-  userGuid: string;
+  userId: string;
   firstName: string;
   lastName: string;
   date: string;

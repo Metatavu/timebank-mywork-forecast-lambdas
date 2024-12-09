@@ -2,7 +2,7 @@
  * Interface for WorkDaysModel
  */
 interface WorkDaysModel {
-  userGuid: string;
+  severaUserId: string;
   expectedHours: number;
   enteredHours: number;
 }

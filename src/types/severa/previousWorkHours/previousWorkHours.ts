@@ -2,7 +2,7 @@
  * Interface for PreviousWorkHoursModel
  */
 interface PreviousWorkHoursModel {
-  guid: string;
+  id: string;
   user: PreviousWorkHoursUserModel;
   project: PreviousWorkHoursProjectModel;
   phase: PreviousWorkHoursPhaseModel;
@@ -15,7 +15,7 @@ interface PreviousWorkHoursModel {
  * Interface for PreviousWorkHoursUserModel
  */
 interface PreviousWorkHoursUserModel {
-  guid: string;
+  id: string;
   name: string;
   firstName: string;
   lastName: string;
@@ -35,3 +35,5 @@ interface PreviousWorkHoursPhaseModel {
   guid: string;
   name: string;
 }
+
+export default PreviousWorkHoursModel;

@@ -1,7 +1,6 @@
-import { PersonTotalTime } from "src/generated/client/api";
-import { CalculateWorkedTimeAndBillableHoursResponse, DailyCombinedData } from "src/types/meta-assistant";
+import type { CalculateWorkedTimeAndBillableHoursResponse, DailyCombinedData } from "src/types/meta-assistant";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
-import { TotalTime } from "src/database/models/severa";
+import type { TotalTime } from "src/types/severa/totalTime/totalTime";
 
 /**
  * Namespace for message utilities
