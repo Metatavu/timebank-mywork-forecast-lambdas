@@ -25,14 +25,14 @@ interface PreviousWorkHoursUserModel {
  * Interface for PreviousWorkHoursProjectModel
  */
 interface PreviousWorkHoursProjectModel {
-  guid: string;
+  id: string;
 }
 
 /**
  * Interface for PreviousWorkHoursPhaseModel
  */
 interface PreviousWorkHoursPhaseModel {
-  guid: string;
+  id: string;
   name: string;
 }
 

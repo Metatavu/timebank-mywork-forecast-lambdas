@@ -10,7 +10,6 @@ import { CreateSeveraApiService } from "src/database/services/severa-api-service
  *
  * @returns Promise of DailyHandlerResponse
  */
-
 export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
   try {
     const severaApi = CreateSeveraApiService();

@@ -19,6 +19,6 @@ interface SeveraResponsePreviousWorkHours {
   isBillable: boolean;
   eventDate: string;
   quantity: number;
-  }
+}
 
 export default SeveraResponsePreviousWorkHours;
