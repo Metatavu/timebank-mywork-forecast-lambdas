@@ -167,7 +167,7 @@ Have a great week!
   const constructMemoDocCreatedMessage = async (summary: string, name: string): Promise<string> => {
     const cleanName = name.slice(0, -4);
     const message = `
-:checkered_flag: New summary *${cleanName}* is available: \n\`${summary.split("\n")[0]}\`
+:checkered_flag: New summary *${cleanName}* is available: \n\`${summary.split("|")[0]}\`
     `;  
     return message;
   };
