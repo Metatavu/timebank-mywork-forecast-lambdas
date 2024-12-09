@@ -1,18 +1,12 @@
 import fetch from "node-fetch";
-import type { KeycloakProfile } from "keycloak-js/lib/keycloak";
+import type {KeycloakProfile} from "keycloak-js/lib/keycloak";
 
-/**
- * Custom Interface for a user in keycloak functions with severaUserId added.
- */
-export interface CustomKeycloakProfile extends KeycloakProfile {
-  severaUserId: string;
-}
 /**
  * Interface for a KeycloakApiService.
  */
 export interface KeycloakApiService {
-  getUsers: () => Promise<CustomKeycloakProfile[]>;
-  findUser: (id: string) => Promise<CustomKeycloakProfile>;
+  getUsers: () => Promise<KeycloakProfile[]>;
+  findUser: (id: string) => Promise<KeycloakProfile>;
 }
 /**
  * Creates KeycloakApiService
@@ -27,7 +21,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      *
      * @returns List of users
      */
-    getUsers: async (): Promise<CustomKeycloakProfile[]> => {
+    getUsers: async (): Promise<KeycloakProfile[]> => {
       const response = await fetch(`${baseUrl}/admin/realms/${realm}/users`, {
         method: "GET",
         headers: {
@@ -40,12 +34,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
           `Failed to fetch users: ${response.status} - ${response.statusText}`,
         );
       }
-
-      const users: KeycloakProfile[] = await response.json();
-      return users.map((user) => ({
-        ...user,
-        severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
-      })) as CustomKeycloakProfile[];
+      return await response.json();
     },
 
     /**
@@ -54,7 +43,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      * @param id string
      * @returns user by Id
      */
-    findUser: async (id: string): Promise<CustomKeycloakProfile> => {
+    findUser: async (id: string): Promise<KeycloakProfile> => {
       const response = await fetch(
         `${baseUrl}/admin/realms/${realm}/users/${id}`,
         {
@@ -69,11 +58,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         throw new Error(`Failed to find user with id: ${id}`);
       }
 
-      const user: KeycloakProfile = await response.json();
-      return {
-        ...user,
-        severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
-      } as CustomKeycloakProfile;
+      return await response.json();
     },
   };
 };
