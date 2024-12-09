@@ -14,7 +14,7 @@ export interface User {
  */
 export interface Attribute {
     isActive: boolean;
-    severaOptIn: boolean;
+    isSeveraOptIn: boolean;
     severaUserId: string;
     vacationDaysByYear: string;
     unspentVacationDaysByYear: string;
