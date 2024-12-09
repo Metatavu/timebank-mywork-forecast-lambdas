@@ -1,4 +1,4 @@
-import { DateRange } from "src/types";
+import type { DateRange } from "src/types";
 
 export namespace FilterUtilities {
   /**
@@ -28,7 +28,6 @@ export namespace FilterUtilities {
     } else if (!parameters.endDate && currentDate > endDate) {
       return false;
     }
-
     return true;
   }
 
@@ -37,13 +36,12 @@ export namespace FilterUtilities {
    * 
    * @param project Project id from Forecast
    * @param projectId Project id to compare
-   * @returns 
+   *  
    */
   export const filterByProject = (project?: number, projectId?: string): boolean => {
     if (projectId !== undefined && project?.toString() !== projectId) {
       return false;
     }
-
     return true;
   }
 
@@ -54,12 +52,25 @@ export namespace FilterUtilities {
    * @param personId Person id to compare
    * @returns If two parameters match or personId is null
    */
-  export const filterByPerson = (person?: number, personId?: string): boolean => {
+  export const filterByPerson = (person?: number, personId?: string) => {
     if (personId !== undefined && person.toString() !== personId) {
       return false;
     }
-
     return true;
+  }
+
+  /**
+   * Compares severa User id to targetUser id
+   * 
+   * @param severaUserId User id from Severa
+   * @param targetUserId User id to compare
+   *  
+   */
+  export const filterByUserSevera = (severaUserId: string, targetUserId: string) => {
+    if(severaUserId === null || targetUserId === null) {
+      return false;
+    }
+    return targetUserId === severaUserId;
   }
 
   /**
@@ -72,5 +83,19 @@ export namespace FilterUtilities {
   export const filterByTask = (task?: number, taskId?: string) => {
     if (taskId && task?.toString() !== taskId || !task) return false;
     return true;
+  }
+
+  /**
+   * Compares severa phase id to targetPhase id
+   * 
+   * @param severaPhaseId Phase id from Severa
+   * @param targetPhaseId Phase id to compare
+   *  
+   */
+  export const filterByPhaseSevera = (severaPhaseId: string, targetPhaseId: string) => {
+    if(severaPhaseId === null || targetPhaseId === null) {
+      return false;
+    }
+    return severaPhaseId === targetPhaseId;
   }
 }
