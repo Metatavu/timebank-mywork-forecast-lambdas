@@ -28,6 +28,7 @@ import updateSoftwareHandler from "@/functions/software-registry/update-software
 import deleteSoftwareHandler from "@/functions/software-registry/delete-software";
 import listUsersHandler from "@/functions/keycloak/list-users";
 import findUserHandler from "@/functions/keycloak/find-user";
+import updateUserAttributeHandler from "src/functions/keycloak/update-user";
 import createQuestionnaireHandler from "@/functions/questionnaire/create-questionnaire";
 import findQuestionnaireHandler from "@/functions/questionnaire/find-questionnaire";
 import deleteQuestionnaireHandler from "src/functions/questionnaire/delete-questionnaire";
@@ -186,6 +187,7 @@ const serverlessConfiguration: AWS = {
     deleteSoftwareHandler,
     listUsersHandler,
     findUserHandler,
+    updateUserAttributeHandler,
     createQuestionnaireHandler,
     findQuestionnaireHandler,
     deleteQuestionnaireHandler,

@@ -13,6 +13,7 @@ export interface CustomKeycloakProfile extends KeycloakProfile {
 export interface KeycloakApiService {
   getUsers: () => Promise<CustomKeycloakProfile[]>;
   findUser: (id: string) => Promise<CustomKeycloakProfile>;
+  updateUserAttribute: (id: string, attribute: Record<string, string[]> ) => Promise<void>;
 }
 /**
  * Creates KeycloakApiService
@@ -20,7 +21,7 @@ export interface KeycloakApiService {
 export const CreateKeycloakApiService = (): KeycloakApiService => {
   const baseUrl: string = process.env.KEYCLOAK_BASE_URL;
   const realm: string = process.env.KEYCLOAK_REALM;
-
+  
   return {
     /**
      * Gets all users from keycloak
@@ -75,6 +76,49 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
       } as CustomKeycloakProfile;
     },
+
+    /**
+     * Updates a user's attributes
+     * 
+     * @param id string
+     * @param attributes  Record<string, string[]>
+     */
+    updateUserAttribute: async (
+      id: string,
+      attributes: Record<string, string[]> 
+    ): Promise<void> => {
+      const bodyContent = {
+        attributes: attributes,
+      };
+
+      try {
+        const response = await fetch(
+          `${baseUrl}/admin/realms/${realm}/users/${id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${await getAccessToken()}`, 
+            },
+            body: JSON.stringify(bodyContent),
+          }
+        );
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(
+            `Failed to update user attribute: ${response.status} - ${response.statusText}. Details: ${errorText}`
+          );
+        }
+
+      } catch (error) {
+        throw new Error(
+          error instanceof Error
+            ? error.message
+            : "An unknown error occurred while updating user attribute."
+        );
+      }
+    }
   };
 };
 
