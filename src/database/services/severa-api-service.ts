@@ -19,8 +19,8 @@ export interface SeveraApiService {
   getWorkHours: (endpointPath: URL, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
   getPreviousWorkHours: () => Promise<SeveraResponsePreviousWorkHours>;
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
-  getUsers: () => Promise<SeveraResponseUsers>;
-  getResourceAllocations: () => Promise<SeveraResponseUsers>;
+  getOptInUsers: () => Promise<SeveraResponseUsers>;
+  getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
 }
 
 
@@ -195,9 +195,9 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * 
      * Gets users from Severa
      */
-    getUsers: async () => {
+    getOptInUsers: async () => {
       const url = `${baseUrl}/v1/users`;
-
+    
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -206,14 +206,20 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           "Content-Type": "application/json",
         },
       });
-
+    
       if (!response.ok) {
         throw new Error(
           `Failed to fetch users: ${response.status} - ${response.statusText}`,
         );
       }
       const data = await response.json();
-      return data;
+    
+      // Filter users based on the keyword
+      const filteredUsers = data.filter(user => 
+        Array.isArray(user.keywords) && user.keywords.some(keyword => keyword.value === "userDataProcessingPermissionGranted")
+      );
+    
+      return filteredUsers;
     },
 
     /**

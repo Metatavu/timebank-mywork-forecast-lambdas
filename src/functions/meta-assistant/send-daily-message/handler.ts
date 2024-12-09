@@ -17,7 +17,7 @@ import Auth from "src/meta-assistant/auth/auth-provider";
 export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
   try {
     const severaApi = CreateSeveraApiService();
-    const severaUsers = await severaApi.getUsers();
+    const severaUsers = await severaApi.getOptInUsers();
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const workHours = await severaApi.getPreviousWorkHours();
     const slackUsers = await SlackUtilities.getSlackUsers();
@@ -76,6 +76,8 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
         return result;
       }) : []
     );
+
+    console.log("Combined user data: ", combinedUserData);
 
     const messageSent = await SlackUtilities.postDailyMessageToUsers(combinedUserData, previousWorkDays);
 
