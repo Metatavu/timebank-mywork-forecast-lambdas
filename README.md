@@ -195,3 +195,54 @@ Multiple ids must be divided by `,` for example `SLACK_USER_OVERRIDE=xxxxxxx,xxx
 2. Click on "View full profile" in the menu that appears.
 3. Click the ellipses (three dots).
 4. Click on `Copy Member ID`.
+
+## Management Memos
+
+This section covers the configuration of various services used for management memos purposes. The project uses the existing `SLACK_USER_OVERRIDE=<slackid>` and `METATAVU_BOT_TOKEN` environment variables.
+
+### Google Cloud usage (Google Translation API, Google Drive API, Google Docs API)
+
+#### GOOGLE_CLOUD_PROJECT_ID
+1. Go to `Google Cloud Console`.
+2. Click `Dashboard` > Create Project.
+3. Copy the Project ID from the Project Info section.
+
+#### GOOGLE_MANAGEMENT_MINUTES_FOLDER_ID
+1. Go to `Google Drive`.
+2. Click `New` > Folder to create a folder.
+3. Right-click the folder > Share > Copy link.
+4. Copy the Folder ID from the URL.
+
+#### GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID & GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+1. Go to `IAM & Admin`.
+2. Select Service Accounts > Create Service Account.
+3. Click `Create Key` > JSON.
+4. Download the key and extract the Private Key ID and Private Key from the JSON file.
+
+#### GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL
+1. Go to `IAM & Admin`.
+2. Select Service Accounts.
+3. Copy the Client Email from the service account details.
+
+### Open AI Chat GPT usage
+
+#### OPENAI_API_KEY
+1. Go to OpenAI Platform.
+2. Click `API` > Create New Secret Key.
+3. Copy the generated API Key.
+
+### Trello usage
+
+#### TRELLO_API_KEY & TRELLO_TOKEN
+1. Go to `https://trello.com/power-ups/admin`.
+2. Create a Power-Up and generate the API Key and API Secret.
+
+#### TRELLO_MANAGEMENT_BOARD_ID
+1. Go to Trello and create a board.
+3. Copy the Board ID from the URL.
+
+### Slack usage
+
+#### CHANNEL_ID
+1. Open Slack and create a channel.
+3. Copy the Channel ID from the URL.
