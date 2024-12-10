@@ -3,10 +3,11 @@ import type { DailyCombinedData } from "src/types/meta-assistant/index";
 import type schema from "src/types/meta-assistant/index";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
-import { CreateSeveraApiService } from "src/database/services/severa-api-service";
+import { CreateSeveraApiService } from "src/services/severa-api-service";
+import type SeveraResponsePreviousWorkHours from "src/types/severa/previousWorkHours/severaResponsePreviousWorkHours";
 
 /**
- * AWS-less handler for sendDailyMessage
+ * Handler for sendDailyMessage
  *
  * @returns Promise of DailyHandlerResponse
  */
@@ -15,22 +16,17 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const severaApi = CreateSeveraApiService();
     const severaUsers = await severaApi.getOptInUsers();
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
-    const workHours = await severaApi.getPreviousWorkHours();
-    const slackUsers = await SlackUtilities.getSlackUsers();
+    const workHours = await severaApi.getPreviousWorkHours() as SeveraResponsePreviousWorkHours[];
+    const slackUsers = await SlackUtilities.findSlackUser(firstName, lastName);
     if (!severaUsers) {
-      throw new Error("No persons retrieved from Severa");
+      throw new Error("No users retrieved from Severa");
     }
 
-    // Get the user's guid from workHours
-    const workHoursUserGuids = Array.isArray(workHours) ? workHours.map(hour => hour.user.guid) : [];
+    // Get the user's guids from workHours
+    const workHoursUserGuids = workHours.map(hour => hour.user.guid);
 
-    // Filter severaUsers to include only those found in WorkHours
-    const filteredSeveraUsers = Array.isArray(severaUsers) ? severaUsers.filter(user => workHoursUserGuids.includes(user.guid)) : [];
-
-    // Function to find Slack user by firstName and lastName
-    const findSlackUser = (firstName: string, lastName: string) => {
-      return slackUsers.find(slackUser => slackUser.profile.first_name === firstName && slackUser.profile.last_name === lastName);
-    };
+    // Filter severaUsers to include only those who worked in the selected time frame
+    const filteredSeveraUsers = severaUsers.filter(user => workHoursUserGuids.includes(user.guid));
 
     // Combine user data
     const combinedUserData: DailyCombinedData[] = await Promise.all(
@@ -53,7 +49,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
         const nonBillableProject = enteredHours - totalBillableTime;
 
         // Find the corresponding Slack user
-        const slackUser = findSlackUser(user.firstName, user.lastName);
+        const slackUser = slackUsers(user.firstName, user.lastName);
 
         const result = {
           userId: user.guid,

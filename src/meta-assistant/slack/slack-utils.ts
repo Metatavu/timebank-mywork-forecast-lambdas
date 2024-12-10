@@ -51,6 +51,18 @@ namespace SlackUtilities {
   };
 
   /**
+    * Find the corresponding Slack user
+    */
+  export const findSlackUser = async (firstName: string, lastName: string) => {
+    try {
+      const users = await getSlackUsers();
+      return users.find(slackUser => slackUser.profile.first_name === firstName && slackUser.profile.last_name === lastName);
+    } catch (error) {
+      console.error(`Error finding user ID for ${firstName} ${lastName}:`, error);
+      return 
+    }
+  };
+  /**
    * Create message based on specific users timebank data
    *
    * @param user severa data

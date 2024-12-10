@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import type { Flextime } from "../models/severa";
+import type { Flextime } from "../types/severa/flexTime/flexTime";
 import { DateTime } from "luxon";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
@@ -17,9 +17,9 @@ export interface SeveraApiService {
   getResourceAllocation: (severaUserId: string) => Promise<SeveraResponseResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<SeveraResponsePhases[]>;
   getWorkHours: (endpointPath: URL, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
-  getPreviousWorkHours: () => Promise<SeveraResponsePreviousWorkHours>;
+  getPreviousWorkHours: () => Promise<SeveraResponsePreviousWorkHours[]>;
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
-  getOptInUsers: () => Promise<SeveraResponseUsers>;
+  getOptInUsers: () => Promise<SeveraResponseUsers[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
 }
 
@@ -144,10 +144,10 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
       const eventDateYesterday = TimeUtilities.getPreviousTwoWorkdays().yesterday.toISODate();
       const today = DateTime.now().toISODate();
-      const startDate = process.env.SET_DATES === 'true' ? '2024-11-26' : eventDateYesterday;
-      const endDate = process.env.SET_DATES === 'true' ? '2024-11-26' : today;
+      const isProduction = process.env.NODE_ENV === "production";
+      const startDate = isProduction ? eventDateYesterday : "2024-11-26";
+      const endDate = isProduction ? today : "2024-11-26";
 
-      // Dates are hardcoded for demo purposes
       const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${startDate}&endDate=${endDate}`;
 
       const response = await fetch(url, {
@@ -167,7 +167,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * 
      * Gets resourceallocations from Severa
      */
     getResourceAllocations: async () => {
@@ -191,11 +190,11 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * 
      * Gets users from Severa
      */
     getOptInUsers: async () => {
-      const url = `${baseUrl}/v1/users?keywordGuids=8e7b363e-aa8c-34b1-478f-0a9633848fde`;
+      const optInKeywordId = "8e7b363e-aa8c-34b1-478f-0a9633848fde";
+      const url = `${baseUrl}/v1/users?keywordGuids=${optInKeywordId}`;
     
       const response = await fetch(url, {
         method: "GET",

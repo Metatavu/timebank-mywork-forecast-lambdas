@@ -1,5 +1,5 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
-import { CreateSeveraApiService } from "src/database/services/severa-api-service";
+import { CreateSeveraApiService } from "src/services/severa-api-service";
 import { middyfy } from "src/libs/lambda";
 import { FilterUtilities } from "src/libs/filter-utils";
 import type WorkHours from "src/types/severa/workHour/workHour";

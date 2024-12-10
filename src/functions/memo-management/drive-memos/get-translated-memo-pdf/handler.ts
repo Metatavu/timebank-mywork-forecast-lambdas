@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-import { createPdfFile, getBaseFolderByName, getFile, getFileContentPdf, getFileTranslated } from "src/service/google-drive-api-service";
+import { createPdfFile, getBaseFolderByName, getFile, getFileContentPdf, getFileTranslated } from "src/services/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
-import { getTranslatedPdf } from "src/service/google-translation-api-service";
+import { getTranslatedPdf } from "src/services/google-translation-api-service";
 
 /**
  * Gets content of translated pdf memos as buffer object

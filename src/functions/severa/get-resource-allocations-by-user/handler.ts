@@ -1,5 +1,5 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
-import { CreateSeveraApiService } from "src/database/services/severa-api-service";
+import { CreateSeveraApiService } from "src/services/severa-api-service";
 import { middyfy } from "src/libs/lambda";
 import type ResourceAllocationModel from "src/types/severa/resourceAllocation/resourceAllocation";
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";

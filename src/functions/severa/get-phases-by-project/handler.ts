@@ -1,6 +1,6 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import { middyfy } from "src/libs/lambda";
-import { CreateSeveraApiService } from "src/database/services/severa-api-service";
+import { CreateSeveraApiService } from "src/services/severa-api-service";
 import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
 import type PhaseModel from "src/types/severa/phase/phase";
 
