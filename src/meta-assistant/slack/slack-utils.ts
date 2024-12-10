@@ -73,9 +73,9 @@ namespace SlackUtilities {
     const { firstName, date, minimumBillableRate } = user;
 
     const { 
-      enteredHours, 
+      totalLoggedTime, 
       expectedHours, 
-      quantity,
+      projectTime,
       totalBillableTime,
       nonBillableProject,
     } = TimeUtilities.handleTimeFormatting(user);
@@ -86,12 +86,12 @@ namespace SlackUtilities {
     } = MessageUtilities.calculateWorkedTimeAndBillableHours(user);
 
     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
-  
+    
     const customMessage = `
       Hi ${firstName},
-      ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${enteredHours} with an expected time of ${expectedHours}.
+      ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${totalLoggedTime} with an expected time of ${expectedHours}.
       ${message}
-      Logged project time: ${quantity}, Billable project time: ${totalBillableTime}, Non billable project time: ${nonBillableProject}.
+      Logged project time: ${projectTime}, Billable project time: ${totalBillableTime}, Non billable project time: ${nonBillableProject}.
       Your percentage of billable hours was: ${billableHoursPercentage}% ${Number.parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
       Have a great rest of the day!
       `;
@@ -100,7 +100,7 @@ namespace SlackUtilities {
       message: customMessage,
       name: firstName,
       displayDate: displayDate,
-      displayLogged: enteredHours,
+      displayTotalLoggedTime: totalLoggedTime,
       displayExpected: expectedHours,
       displayNonBillableProject: nonBillableProject,
     };
@@ -211,27 +211,25 @@ Have a great week!
     for (const userData of dailyCombinedData) {
       const { slackId } = userData;
       const message = constructDailyMessage(userData, numberOfToday);
-      console.log("Message to send: ", message.message);
-        // if (!slackOverride) {
-        //   messageResults.push({
-        //     message: message,
-        //     response: await sendMessage(slackId, message.message)
-        //   });
-        //   console.log("Message to send: ", message.message);
-        // }
-      //   else {
-          // for (const stagingid of slackOverride) {
-          //   messageResults.push({
-          //     message: message,
-          //     response: await sendMessage(stagingid, message.message)
-          //   });
-          //   console.log("Message to send: ", message.message);
-          // }
-      //   }
-      // }
-    }
-    return messageResults;
-  };
+        if (!slackOverride) {
+          messageResults.push({
+            message: message,
+            response: await sendMessage(slackId, message.message)
+          });
+          console.log("Message to send: ", message.message);
+        }
+        else {
+          for (const stagingid of slackOverride) {
+            messageResults.push({
+              message: message,
+              response: await sendMessage(stagingid, message.message)
+            });
+            console.log("Message to send: ", message.message);
+          }
+        }
+      }
+      return messageResults;
+    };
 
   /**
    * Post a weekly summary slack message to users

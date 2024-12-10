@@ -7,7 +7,7 @@ import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhas
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
 import type SeveraResponsePreviousWorkHours from "src/types/severa/previousWorkHours/severaResponsePreviousWorkHours";
 import type SeveraResponseWorkDays from "src/types/severa/workDays/severaResponseWorkDays";
-import type SeveraResponseUsers from "src/types/severa/user/severaResponseUsers";
+import type SeveraResponseUser from "src/types/severa/user/severaResponseUser";
 
 /**
  * Interface for a SeveraApiService.
@@ -19,7 +19,7 @@ export interface SeveraApiService {
   getWorkHours: (endpointPath: URL, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
   getPreviousWorkHours: () => Promise<SeveraResponsePreviousWorkHours[]>;
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
-  getOptInUsers: () => Promise<SeveraResponseUsers[]>;
+  getOptInUsers: () => Promise<SeveraResponseUser[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
 }
 
@@ -219,10 +219,10 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     getPreviousWorkHours: async () => {
       const eventDateYesterday = TimeUtilities.getPreviousTwoWorkdays().yesterday.toISODate();
       const today = DateTime.now().toISODate();
-      const startDate = process.env.SET_DATES === 'true' ? '2024-11-26' : eventDateYesterday;
-      const endDate = process.env.SET_DATES === 'true' ? '2024-11-26' : today;
+      const isProduction = process.env.NODE_ENV === "production";
+      const startDate = isProduction ? eventDateYesterday : "2024-11-26";
+      const endDate = isProduction ? today : "2024-11-26";
 
-      // Dates are hardcoded for demo purposes
       const url = `${baseUrl}/v1/workhours?eventDateStart=${startDate}&eventDateEnd=${endDate}`;
 
       const response = await fetch(url, {
@@ -236,7 +236,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch users: ${response.status} - ${response.statusText}`,
+          `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
         );
       }
       return response.json();

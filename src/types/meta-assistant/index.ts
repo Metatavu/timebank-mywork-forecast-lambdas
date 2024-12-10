@@ -21,9 +21,9 @@ export interface DailyCombinedData {
   firstName: string;
   lastName: string;
   date: string;
-  enteredHours: number;
+  totalLoggedTime: number;
   expectedHours: number;
-  quantity: number;
+  projectTime: number;
   minimumBillableRate: number;
   totalBillableTime: number;
   nonBillableProject: number;
@@ -97,7 +97,7 @@ export interface DailyMessageData {
   message: string;
   name: string;
   displayDate?: string;
-  displayLogged: string;
+  displayTotalLoggedTime: string;
   displayExpected: string;
   displayNonBillableProject: string;
 }
@@ -106,9 +106,9 @@ export interface DailyMessageData {
  * Interface for DisplayValues
  */
 export interface DisplayValues {
-  enteredHours: string;
+  totalLoggedTime: string;
   expectedHours: string;
-  quantity: string;
+  projectTime: string;
   totalBillableTime: string;
   nonBillableProject: string;
 }

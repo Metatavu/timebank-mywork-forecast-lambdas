@@ -3,8 +3,8 @@
  */
 export interface TotalTime {
   expectedHours: number;
-  enteredHours: number;
-  quantity: number;
+  totalLoggedTime: number;
+  projectTime: number;
   totalBillableTime: number;
   nonBillableProject: number;
 }

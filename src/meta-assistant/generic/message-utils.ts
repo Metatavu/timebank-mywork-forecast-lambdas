@@ -13,10 +13,10 @@ namespace MessageUtilities {
    * @returns a message based on the worked time and the percentage of billable hours
    */
   export const calculateWorkedTimeAndBillableHours = (user: TotalTime| DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
-    const { enteredHours, expectedHours, totalBillableTime } = user;
+    const { totalLoggedTime, expectedHours, totalBillableTime } = user;
 
-    const billableHoursPercentage = enteredHours === 0 ? "0" : (totalBillableTime/enteredHours * 100).toFixed(0);
-    const totalOverTime = enteredHours - expectedHours;
+    const billableHoursPercentage = totalLoggedTime === 0 ? "0" : (totalBillableTime/totalLoggedTime * 100).toFixed(0);
+    const totalOverTime = totalLoggedTime - expectedHours;
 
     const undertime = TimeUtilities.timeConversion(totalOverTime * -1);
     const overtime = TimeUtilities.timeConversion(totalOverTime);
