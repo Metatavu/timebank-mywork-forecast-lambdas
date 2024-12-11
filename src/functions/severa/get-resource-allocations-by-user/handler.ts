@@ -39,11 +39,11 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
           severaPhaseId: resourceAllocation.phase?.guid,
           name: resourceAllocation.phase?.name,
         },
-        users: {
+        user: {
           severaUserId: resourceAllocation.user?.guid,
           name: resourceAllocation.user?.name,
         },
-        projects: {
+        project: {
           severaProjectId: resourceAllocation.project?.guid,
           name: resourceAllocation.project?.name,
           isInternal: resourceAllocation.project?.isInternal,
