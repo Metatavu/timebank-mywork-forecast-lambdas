@@ -6,8 +6,8 @@ interface ResourceAllocationModel {
   allocationHours: number;
   calculatedAllocationHours: number;
   phase?: ResourceAllocationPhaseModel;
-  users: ResourceAllocationUserModel;
-  projects?: ResourceAllocationProjectModel;
+  user: ResourceAllocationUserModel;
+  project?: ResourceAllocationProjectModel;
 }
 
 /**
