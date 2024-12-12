@@ -40,7 +40,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
 
         let totalBillableTime = 0;
 
-        workHours.forEach(hour => {
+        userWorkHours.forEach(hour => {
           if (hour.isBillable && hour.user.guid === user.guid) {
             totalBillableTime += hour.quantity;
           }

@@ -51,8 +51,8 @@ namespace SlackUtilities {
   };
 
   /**
-    * Find the corresponding Slack user
-    */
+  * Find the corresponding Slack user
+  */
   export const findSlackUser = async (firstName: string, lastName: string) => {
     try {
       const users = await getSlackUsers();
@@ -216,7 +216,6 @@ Have a great week!
             message: message,
             response: await sendMessage(slackId, message.message)
           });
-          console.log("Message to send: ", message.message);
         }
         else {
           for (const stagingid of slackOverride) {
@@ -224,7 +223,6 @@ Have a great week!
               message: message,
               response: await sendMessage(stagingid, message.message)
             });
-            console.log("Message to send: ", message.message);
           }
         }
       }
