@@ -52,6 +52,8 @@ namespace SlackUtilities {
 
   /**
   * Find the corresponding Slack user
+  * @param firstName user first name
+  * @param lastName user last name
   */
   export const findSlackUser = async (firstName: string, lastName: string) => {
     try {
