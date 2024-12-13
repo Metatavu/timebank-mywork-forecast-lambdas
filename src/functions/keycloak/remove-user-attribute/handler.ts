@@ -16,7 +16,10 @@ const removeUserAttributeHandler: APIGatewayProxyHandler = async (
     const attributeName = event.pathParameters?.attributeName;
 
     if (!id || !attributeName) {
-      throw new Error("Missing path parameters: id or attributeName.");
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: "Missing required path parameters: 'id' or 'attributeName'." }),
+      };
     }
 
     const api = CreateKeycloakApiService();
@@ -25,7 +28,7 @@ const removeUserAttributeHandler: APIGatewayProxyHandler = async (
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: `User attribute '${attributeName}' removed successfully.` }),
+      body: JSON.stringify({ message: `User attribute "${attributeName}" removed successfully.` }),
     };
   } catch (error) {
     return {
