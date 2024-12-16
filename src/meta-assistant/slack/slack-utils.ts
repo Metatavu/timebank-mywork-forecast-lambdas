@@ -4,7 +4,7 @@ import type { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
 import MessageUtilities from "../generic/message-utils";
-import { NotificationMessageResult } from "src/types/trello-notification";
+import type { NotificationMessageResult } from "src/types/trello-notification";
 
 /**
  * Namespace for Slack utilities
@@ -51,24 +51,35 @@ namespace SlackUtilities {
   };
 
   /**
+  * Find the corresponding Slack user
+  * @param firstName user first name
+  * @param lastName user last name
+  */
+  export const findSlackUser = async (firstName: string, lastName: string) => {
+    try {
+      const users = await getSlackUsers();
+      return users.find(slackUser => slackUser.profile.first_name === firstName && slackUser.profile.last_name === lastName);
+    } catch (error) {
+      console.error(`Error finding user ID for ${firstName} ${lastName}:`, error);
+      return 
+    }
+  };
+  /**
    * Create message based on specific users timebank data
    *
-   * @param user timebank data
+   * @param user severa data
    * @param numberOfToday Todays number
    * @returns string message if id match
    */
   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
-    const { name, date, firstName, minimumBillableRate } = user;
+    const { firstName, date, minimumBillableRate } = user;
 
-    const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
-
-    const {
-      logged,
-      loggedProject,
-      expected,
-      internal,
-      billableProject,
-      nonBillableProject
+    const { 
+      totalLoggedTime, 
+      expectedHours, 
+      projectTime,
+      totalBillableTime,
+      nonBillableProject,
     } = TimeUtilities.handleTimeFormatting(user);
 
     const {
@@ -76,26 +87,24 @@ namespace SlackUtilities {
       billableHoursPercentage
     } = MessageUtilities.calculateWorkedTimeAndBillableHours(user);
 
+    const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
+    
     const customMessage = `
-Hi ${firstName},
-${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${logged} with an expected time of ${expected}.
-${message}
-Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
-Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
-Have a great rest of the day!
-    `;
-
+      Hi ${firstName},
+      ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${totalLoggedTime} with an expected time of ${expectedHours}.
+      ${message}
+      Logged project time: ${projectTime}, Billable project time: ${totalBillableTime}, Non billable project time: ${nonBillableProject}.
+      Your percentage of billable hours was: ${billableHoursPercentage}% ${Number.parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
+      Have a great rest of the day!
+      `;
+  
     return {
       message: customMessage,
-      name: name,
+      name: firstName,
       displayDate: displayDate,
-      displayLogged: logged,
-      displayLoggedProject: loggedProject,
-      displayExpected: expected,
-      displayBillableProject: billableProject,
+      displayTotalLoggedTime: totalLoggedTime,
+      displayExpected: expectedHours,
       displayNonBillableProject: nonBillableProject,
-      displayInternal: internal,
-      billableHoursPercentage: billableHoursPercentage
     };
   };
 
@@ -196,22 +205,14 @@ Have a great week!
    */
   export const postDailyMessageToUsers = async (
     dailyCombinedData: DailyCombinedData[],
-    timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]
   ): Promise<DailyMessageResult[]> => {
-    const { numberOfToday, yesterday, today } = previousWorkDays;
+    const { numberOfToday } = previousWorkDays;
 
     const messageResults: DailyMessageResult[] = [];
     for (const userData of dailyCombinedData) {
-      const { slackId, personId, expected } = userData;
-
-      const isAway = TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, today.toISODate(), nonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserShouldRecieveMessage(timeRegistrations, personId, expected, yesterday.toISODate(), nonProjectTimes);
-
+      const { slackId } = userData;
       const message = constructDailyMessage(userData, numberOfToday);
-
-      if (!isAway && !firstDayBack) {
         if (!slackOverride) {
           messageResults.push({
             message: message,
@@ -227,9 +228,8 @@ Have a great week!
           }
         }
       }
-    }
-    return messageResults;
-  };
+      return messageResults;
+    };
 
   /**
    * Post a weekly summary slack message to users

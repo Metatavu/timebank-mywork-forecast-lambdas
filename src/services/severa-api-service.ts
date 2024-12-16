@@ -1,18 +1,26 @@
 import fetch from "node-fetch";
-import type Flextime from "../models/severa";
+import type { Flextime } from "../types/severa/flexTime/flexTime";
 import { DateTime } from "luxon";
+import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import type SeveraResponseWorkHours from "src/types/severa/workHour/severaResponseWorkHours";
 import type SeveraResponsePhases from "src/types/severa/phase/severaResponsePhases";
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
+import type SeveraResponsePreviousWorkHours from "src/types/severa/previousWorkHours/severaResponsePreviousWorkHours";
+import type SeveraResponseWorkDays from "src/types/severa/workDays/severaResponseWorkDays";
+import type SeveraResponseUser from "src/types/severa/user/severaResponseUser";
 
 /**
  * Interface for a SeveraApiService.
  */
 export interface SeveraApiService {
-  getFlextimeBySeveraUserId: (severaUserId: string) => Promise<Flextime>;
+  getFlextimeBySeveraUserId: (severaUserId: string, eventDate: string) => Promise<Flextime>;
   getResourceAllocation: (severaUserId: string) => Promise<SeveraResponseResourceAllocation[]>;
   getPhasesBySeveraProjectId: (severaProjectId: string) => Promise<SeveraResponsePhases[]>;
   getWorkHours: (endpointPath: URL, startDate?: string, endDate?: string) => Promise<SeveraResponseWorkHours[]>;
+  getPreviousWorkHours: () => Promise<SeveraResponsePreviousWorkHours[]>;
+  getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
+  getOptInUsers: () => Promise<SeveraResponseUser[]>;
+  getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
 }
 
 /**
@@ -56,7 +64,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
      * @param severaUserId Severa user id
      * @returns Resource allocation of a user
      */
-       getResourceAllocation: async (severaUserId: string) => {
+      getResourceAllocation: async (severaUserId: string) => {
         const url: string = `${baseUrl}/v1/users/${severaUserId}/resourceallocations/allocations`;
         const response = await fetch(url,{
             method: "GET",
@@ -124,8 +132,116 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       }
       return response.json();
     },
-  };
-};
+
+    /**
+     * 
+     * Gets Workdays from Severa
+     * 
+     * @param severaUserId Severa user id
+     * @returns Workdays of a user
+     */
+    getWorkDays: async (severaUserId: string) => {
+
+      const eventDateYesterday = TimeUtilities.getPreviousTwoWorkdays().yesterday.toISODate();
+      const today = DateTime.now().toISODate();
+      const isProduction = process.env.NODE_ENV === "production";
+      const startDate = isProduction ? eventDateYesterday : "2024-11-26";
+      const endDate = isProduction ? today : "2024-11-26";
+
+      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${startDate}&endDate=${endDate}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch workdays: ${response.status} - ${response.statusText}`,
+        );
+      }
+      return response.json();
+    },
+
+    /**
+     * Gets resourceallocations from Severa
+     */
+    getResourceAllocations: async () => {
+      const url = `${baseUrl}/v1/resourceallocations`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch resourceallocations: ${response.status} - ${response.statusText}`,
+        );
+      }
+      return response.json();
+    },
+
+    /**
+     * Gets users from Severa
+     */
+    getOptInUsers: async () => {
+      const optInKeywordId = "8e7b363e-aa8c-34b1-478f-0a9633848fde";
+      const url = `${baseUrl}/v1/users?keywordGuids=${optInKeywordId}`;
+    
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+    
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch users: ${response.status} - ${response.statusText}`,
+        );
+      }
+      return response.json();
+    },
+
+    /**
+     * Gets previous workdays Workhours from Severa
+     */
+    getPreviousWorkHours: async () => {
+      const eventDateYesterday = TimeUtilities.getPreviousTwoWorkdays().yesterday.toISODate();
+      const today = DateTime.now().toISODate();
+      const isProduction = process.env.NODE_ENV === "production";
+      const startDate = isProduction ? eventDateYesterday : "2024-11-26";
+      const endDate = isProduction ? today : "2024-11-26";
+
+      const url = `${baseUrl}/v1/workhours?eventDateStart=${startDate}&eventDateEnd=${endDate}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
+        );
+      }
+      return response.json();
+  }};
+}
 
 /**
  * Gets Severa access token
