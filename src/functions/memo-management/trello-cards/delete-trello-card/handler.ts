@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { TrelloService } from "src/services/trello-api-service";
 import { middyfy } from "src/libs/lambda";
 
