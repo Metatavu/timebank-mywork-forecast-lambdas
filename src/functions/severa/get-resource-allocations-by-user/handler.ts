@@ -1,5 +1,5 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
-import { CreateSeveraApiService } from "src/database/services/severa-api-service";
+import { CreateSeveraApiService } from "src/services/severa-api-service";
 import { middyfy } from "src/libs/lambda";
 import type ResourceAllocationModel from "src/types/severa/resourceAllocation/resourceAllocation";
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
@@ -39,14 +39,14 @@ export const getResourceAllocationHandler: APIGatewayProxyHandler = async (event
           severaPhaseId: resourceAllocation.phase?.guid,
           name: resourceAllocation.phase?.name,
         },
-        users: {
-          severaUserId: resourceAllocation.users?.guid,
-          name: resourceAllocation.users?.name,
+        user: {
+          severaUserId: resourceAllocation.user?.guid,
+          name: resourceAllocation.user?.name,
         },
-        projects: {
-          severaProjectId: resourceAllocation.projects?.guid,
-          name: resourceAllocation.projects?.name,
-          isInternal: resourceAllocation.projects?.isInternal,
+        project: {
+          severaProjectId: resourceAllocation.project?.guid,
+          name: resourceAllocation.project?.name,
+          isInternal: resourceAllocation.project?.isInternal,
         },
       }))
   );

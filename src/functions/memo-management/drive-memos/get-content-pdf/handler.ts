@@ -4,7 +4,7 @@ import {
   APIGatewayProxyHandlerV2,
 } from "aws-lambda";
 import { middyfy } from "src/libs/lambda";
-import { getFileContentPdf } from "src/service/google-drive-api-service";
+import { getFileContentPdf } from "src/services/google-drive-api-service";
 
 /**
  * Lambda to retrieve a specific PDF content by Google Docs file ID and return as a stream

@@ -9,11 +9,11 @@ interface SeveraResponseResourceAllocation {
     guid: string;
     name: string;
   }
-  users: {
+  user: {
     guid: string;
     name: string;
   }
-  projects?: {
+  project?: {
     guid: string;
     name: string;
     isInternal: boolean;

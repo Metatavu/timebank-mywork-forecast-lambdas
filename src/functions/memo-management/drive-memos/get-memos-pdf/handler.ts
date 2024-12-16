@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { DateTime } from "luxon";
-import { getFilesInYear } from "src/service/google-drive-api-service";
+import { getFilesInYear } from "src/services/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 
 /**

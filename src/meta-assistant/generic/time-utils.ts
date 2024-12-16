@@ -1,6 +1,6 @@
 import type { Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues } from "src/types/meta-assistant/index";
 import { DateTime, Duration } from "luxon";
-import type { PersonTotalTime } from "src/generated/client/api";
+import type { TotalTime } from "src/types/severa/totalTime/totalTime";
 
 /**
  * Namespace for time utilities
@@ -14,7 +14,7 @@ namespace TimeUtilities {
    * @returns string of timebank data converted to hours and minutes
    */
   export const timeConversion = (duration: number): string => {
-    const dur = Duration.fromObject({ minutes: duration });
+    const dur = Duration.fromObject({ hours: duration });
     const time = dur.shiftTo("hours", "minutes");
     return time.toHuman();
   };
@@ -42,25 +42,21 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns human friendly time formats
    */
-  export const handleTimeFormatting = (user: PersonTotalTime): DisplayValues => {
-    const { logged, expected, internalTime, balance, loggedProjectTime, billableProjectTime, nonBillableProjectTime } = user;
+  export const handleTimeFormatting = (user: TotalTime): DisplayValues => {
+    const { totalLoggedTime, expectedHours, projectTime, totalBillableTime, nonBillableProject } = user;
 
-    const displayLogged = TimeUtilities.timeConversion(logged);
-    const displayLoggedProject = TimeUtilities.timeConversion(loggedProjectTime);
-    const displayExpected = TimeUtilities.timeConversion(expected);
-    const displayDifference = TimeUtilities.timeConversion(balance);
-    const displayBillableProject = TimeUtilities.timeConversion(billableProjectTime);
-    const displayNonBillableProjectTime = TimeUtilities.timeConversion(nonBillableProjectTime);
-    const displayInternal = TimeUtilities.timeConversion(internalTime);
+    const displayTotalLoggedTime = TimeUtilities.timeConversion(totalLoggedTime);
+    const displayExpectedHours = TimeUtilities.timeConversion(expectedHours);
+    const displayProjectTime = TimeUtilities.timeConversion(projectTime);
+    const displayTotalBillableTime = TimeUtilities.timeConversion(totalBillableTime);
+    const displayNonBillableProject = TimeUtilities.timeConversion(nonBillableProject);
 
     return {
-      logged: displayLogged,
-      loggedProject: displayLoggedProject,
-      expected: displayExpected,
-      difference: displayDifference,
-      billableProject: displayBillableProject,
-      nonBillableProject: displayNonBillableProjectTime,
-      internal: displayInternal
+      totalLoggedTime: displayTotalLoggedTime,
+      expectedHours: displayExpectedHours,
+      projectTime: displayProjectTime,
+      totalBillableTime: displayTotalBillableTime,
+      nonBillableProject: displayNonBillableProject
     };
   };
 
