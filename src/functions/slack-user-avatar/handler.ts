@@ -53,11 +53,15 @@ const fetchSlackUsersWithRetry = async (retries = 5): Promise<any[]> => {
 const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
   const { accessToken } = await Auth.getAccessToken();
   if (!accessToken) {
-    throw new Error("Severa authentication failed");
+    throw new Error("User authentication failed");
   }
 
   try {
-    
+    // TODO: Needs to be updated to use SeveraUsers
+    // const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
+    // if (!timebankUsers) {
+    //   throw new Error("No persons retrieved from Timebank");
+    // }
     const cacheTimeToExpire = 3600 * 1000;
     const currentTime = Date.now();
 
@@ -75,7 +79,14 @@ const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async () => 
     }
 
     const images: Response[] = [];
-    
+    // TODO: Needs to be updated to use SeveraUsers
+    // for (const timebankUser of timebankUsers) {
+    //   const emailPrefix = timebankUser.email.split("@")[0];
+    //   const slackUser = slackUsersCache.users.find(user => user.name === emailPrefix);
+    //   if (slackUser) {
+    //     images.push({ personId: timebankUser.id, image_original: slackUser.profile.image_original });
+    //   }
+    // }
     return {
       statusCode: 200,
       body: JSON.stringify(images)
