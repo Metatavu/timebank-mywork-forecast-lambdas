@@ -2,7 +2,6 @@ import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import Auth from "src/meta-assistant/auth/auth-provider";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
-import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
 
 /**
  * Response schema for lambda
@@ -58,11 +57,7 @@ const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async () => 
   }
 
   try {
-    const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
-    if (!timebankUsers) {
-      throw new Error("No persons retrieved from Timebank");
-    }
-
+    
     const cacheTimeToExpire = 3600 * 1000;
     const currentTime = Date.now();
 
@@ -80,14 +75,7 @@ const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async () => 
     }
 
     const images: Response[] = [];
-    for (const timebankUser of timebankUsers) {
-      const emailPrefix = timebankUser.email.split("@")[0];
-      const slackUser = slackUsersCache.users.find(user => user.name === emailPrefix);
-      if (slackUser) {
-        images.push({ personId: timebankUser.id, image_original: slackUser.profile.image_original });
-      }
-    }
-
+    
     return {
       statusCode: 200,
       body: JSON.stringify(images)
