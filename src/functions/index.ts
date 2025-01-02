@@ -6,11 +6,6 @@ export { default as addInterestToDealHandler } from "./pipedrive/add-interest-to
 export { default as addInterestToLeadHandler } from "./pipedrive/add-interest-to-lead";
 export { default as removeInterestFrmoDealHandler } from "./pipedrive/remove-interest-from-deal";
 export { default as removeInterestFrmoLeadHandler } from "./pipedrive/remove-interest-from-lead";
-export { default as listAllocationsHandler } from "./forecast/list-allocations";
-export { default as listProjectsHandler } from "./forecast/list-projects";
-export { default as listTasksHandler } from "./forecast/list-tasks";
-export { default as listTimeEntriesHandler } from "./forecast/list-time-entries";
-export { default as listProjectSprintsHandler } from "./forecast/list-project-sprints";
 export { default as sendDailyMessage } from "./meta-assistant/send-daily-message";
 export { default as sendWeeklyMessage } from "./meta-assistant/send-weekly-message";
 export { default as listOnCallDataHandler } from "./on-call/list-on-call-data"

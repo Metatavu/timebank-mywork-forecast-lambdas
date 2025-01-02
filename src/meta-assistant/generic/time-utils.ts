@@ -10,8 +10,8 @@ namespace TimeUtilities {
   /**
    * Converts minutes into hours and minutes
    *
-   * @param duration in minutes from timebank Data
-   * @returns string of timebank data converted to hours and minutes
+   * @param duration in minutes from severa Data
+   * @returns string of severa data converted to hours and minutes
    */
   export const timeConversion = (duration: number): string => {
     const dur = Duration.fromObject({ hours: duration });
@@ -39,7 +39,7 @@ namespace TimeUtilities {
   /**
    * Handle formatting multiple time variables
    *
-   * @param user data from timebank
+   * @param user data from severa
    * @returns human friendly time formats
    */
   export const handleTimeFormatting = (user: TotalTime): DisplayValues => {
@@ -63,7 +63,7 @@ namespace TimeUtilities {
   /**
    * Checks if user has vacation periods in time allocation
    *
-   * @param user data from timebank
+   * @param user data from severa
    * @returns human friendly time formats
    */
   export const checkIfVacationCaseExists = (

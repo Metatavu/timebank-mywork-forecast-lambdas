@@ -64,8 +64,9 @@ namespace SlackUtilities {
       return 
     }
   };
+
   /**
-   * Create message based on specific users timebank data
+   * Create message based on specific users severa data
    *
    * @param user severa data
    * @param numberOfToday Todays number
@@ -109,9 +110,9 @@ namespace SlackUtilities {
   };
 
   /**
-   * Create weekly message from users timebank data
+   * Create weekly message from users severa data
    *
-   * @param user timebank data
+   * @param user severa data
    * @param weekStart date for data
    * @param weekEnd date for data
    * @returns message
@@ -198,7 +199,7 @@ Have a great week!
   /**
    * Post a daily slack message to users
    *
-   * @param dailyCombinedData list of combined timebank and slack user data
+   * @param dailyCombinedData list of combined severa and slack user data
    * @param timeRegistrations all time registrations after yesterday
    * @param previousWorkDays dates and the number of today
    * @param nonProjectTimes all non project times
@@ -234,7 +235,7 @@ Have a great week!
   /**
    * Post a weekly summary slack message to users
    *
-   * @param weeklyCombinedData list of combined timebank and slack user data
+   * @param weeklyCombinedData list of combined severa and slack user data
    * @param nonProjectTimes all non project times
    * @param timeRegistrations all time registrations after yesterday
    * @param previousWorkDays dates and the number of today
