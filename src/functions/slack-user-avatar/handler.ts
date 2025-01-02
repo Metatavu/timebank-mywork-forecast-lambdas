@@ -53,7 +53,7 @@ const fetchSlackUsersWithRetry = async (retries = 5): Promise<any[]> => {
 const getSlackUserAvatar: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
   const { accessToken } = await Auth.getAccessToken();
   if (!accessToken) {
-    throw new Error("Timebank authentication failed");
+    throw new Error("Severa authentication failed");
   }
 
   try {
