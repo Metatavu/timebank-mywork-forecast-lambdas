@@ -134,7 +134,6 @@ export const CreateSeveraApiService = (): SeveraApiService => {
     },
 
     /**
-     * 
      * Gets Workdays from Severa
      * 
      * @param severaUserId Severa user id

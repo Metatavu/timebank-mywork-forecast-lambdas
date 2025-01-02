@@ -10,11 +10,6 @@ import addInterestToDealHandler from "@functions/pipedrive/add-interest-to-deal"
 import addInterestToLeadHandler from "@functions/pipedrive/add-interest-to-lead";
 import removeInterestFromDealHandler from "@functions/pipedrive/remove-interest-from-deal";
 import removeInterestFromLeadHandler from "@functions/pipedrive/remove-interest-from-lead";
-import listAllocationsHandler from "src/functions/forecast/list-allocations";
-import listProjectsHandler from "src/functions/forecast/list-projects";
-import listTasksHandler from "src/functions/forecast/list-tasks";
-import listTimeEntriesHandler from "src/functions/forecast/list-time-entries";
-import listProjectSprintsHandler from "src/functions/forecast/list-project-sprints";
 import sendDailyMessage from "@functions/meta-assistant/send-daily-message";
 import sendWeeklyMessage from "@functions/meta-assistant/send-weekly-message";
 import updatePaidHandler from "@/functions/on-call/update-paid";
@@ -84,13 +79,10 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
-      FORECAST_API_KEY: env.FORECAST_API_KEY,
       AUTH_ISSUER: env.AUTH_ISSUER,
       PIPEDRIVE_API_KEY: env.PIPEDRIVE_API_KEY,
       PIPEDRIVE_API_URL: env.PIPEDRIVE_API_URL,
       METATAVU_BOT_TOKEN: env.METATAVU_BOT_TOKEN,
-      TIMEBANK_BASE_URL: env.TIMEBANK_BASE_URL,
-      FORECAST_BASE_URL: env.FORECAST_BASE_URL,
       KEYCLOAK_CLIENT_SECRET: env.KEYCLOAK_CLIENT_SECRET,
       KEYCLOAK_BASE_URL: env.KEYCLOAK_BASE_URL,
       KEYCLOAK_REALM: env.KEYCLOAK_REALM,
@@ -171,11 +163,6 @@ const serverlessConfiguration: AWS = {
     addInterestToLeadHandler,
     removeInterestFromDealHandler,
     removeInterestFromLeadHandler,
-    listAllocationsHandler,
-    listProjectsHandler,
-    listTasksHandler,
-    listTimeEntriesHandler,
-    listProjectSprintsHandler,
     listOnCallDataHandler,
     weeklyCheckHandler,
     sendDailyMessage,

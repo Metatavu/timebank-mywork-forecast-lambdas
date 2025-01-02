@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { createPdfFile, getBaseFolderByName, getFile, getFileContentPdf, getFileTranslated } from "src/services/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 import { getTranslatedPdf } from "src/services/google-translation-api-service";
@@ -10,7 +10,7 @@ import { getTranslatedPdf } from "src/services/google-translation-api-service";
  * @param fileId Id of file to translate
  * @returns translated pdf buffer object
  */
- const getTranslatedMemoPdf = async (fileId: string) => {
+const getTranslatedMemoPdf = async (fileId: string) => {
   const file = await getFile(fileId);
   if (!file) return;
   const filesInFolder = await getFileTranslated();

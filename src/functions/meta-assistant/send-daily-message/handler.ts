@@ -82,6 +82,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     };
   }
 };
+
 /**
  * Lambda function for sending slack message
  *
