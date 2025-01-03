@@ -18,8 +18,14 @@ const removeUserAttributeHandler: APIGatewayProxyHandler = async (
     if (!id || !attributeName) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: "Missing required path parameters: 'id' or 'attributeName'." }),
+        body: JSON.stringify({ message: "Missing required path parameters: 'id' or  valid 'attributeName'." }),
       };
+    }
+    if (attributeName !== 'isSeveraOptIn') {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({message: 'Attribute "${attributeName}" cannot be removed. Only isSeveraOptin is allowed.'})
+      }
     }
 
     const api = CreateKeycloakApiService();
