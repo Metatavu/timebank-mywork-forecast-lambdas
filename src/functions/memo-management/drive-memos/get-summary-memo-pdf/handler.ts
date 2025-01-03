@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { getBaseFolderByName, getBaseFolderFiles, getFile, getFileSummaries, getFileText } from "src/services/google-drive-api-service";
 import { middyfy } from "src/libs/lambda";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
