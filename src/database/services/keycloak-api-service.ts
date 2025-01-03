@@ -58,7 +58,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
      * @returns user by Id
      */
     findUser: async (id: string): Promise<CustomKeycloakProfile> => {
-      const response = await fetch(
+      try { const response = await fetch(
         `${baseUrl}/admin/realms/${realm}/users/${id}`,
         {
           method: "GET",
@@ -77,6 +77,9 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
         ...user,
         severaUserId: (user as CustomKeycloakProfile).severaUserId ?? undefined,
       } as CustomKeycloakProfile;
+      } catch(error) {
+        throw new Error(`An error occurred while fetching the user: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      }
     },
 
     /**
