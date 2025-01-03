@@ -13,9 +13,6 @@ export interface Configuration {
     auth: {
         issuer: string;
     },
-    api: {
-        apiKey: string;
-    },
     onCall: {
         bucketName: string;
     },

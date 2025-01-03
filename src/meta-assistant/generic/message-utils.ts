@@ -9,7 +9,7 @@ namespace MessageUtilities {
   /**
    * Calculates worked time and billable hours
    *
-   * @param user data from timebank
+   * @param user data from severa
    * @returns a message based on the worked time and the percentage of billable hours
    */
   export const calculateWorkedTimeAndBillableHours = (user: TotalTime| DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
