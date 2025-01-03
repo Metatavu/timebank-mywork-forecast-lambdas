@@ -17,19 +17,19 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
     }
 
     const body = JSON.parse(JSON.stringify(event.body));
-    const { id, attributes } = body;
+    const { id, attribute } = body;
 
-    if (!id || !attributes || typeof attributes !== "object") {
+    if (!id || !attribute || typeof attribute !== "object") {
       throw new Error("Missing or invalid body parameters: id, attributes.");
     }
 
     const api = CreateKeycloakApiService();
 
-    if (!attributes.isActive) {
-      attributes.isActive = ["Active"];
+    if (!attribute.isActive) {
+      attribute.isActive = ["Active"];
     }
 
-    await api.updateUserAttribute(id, attributes);
+    await api.updateUserAttribute(id, attribute);
 
     return {
       statusCode: 200,

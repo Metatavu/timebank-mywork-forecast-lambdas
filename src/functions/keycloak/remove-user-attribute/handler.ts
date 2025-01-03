@@ -27,7 +27,7 @@ const removeUserAttributeHandler: APIGatewayProxyHandler = async (
     await api.removeUserAttribute(id, attributeName);
 
     return {
-      statusCode: 200,
+      statusCode: 204,
       body: JSON.stringify({ message: `User attribute "${attributeName}" removed successfully.` }),
     };
   } catch (error) {
