@@ -7,12 +7,12 @@ interface SeveraResponsePhases {
   isCompleted: boolean;
   workHoursEstimate: number;
   startDate: Date;
-  deadLine: Date;
-  project:{
+  deadline: Date;
+  project: {
     guid: string;
     name: string;
     isClosed: boolean;
-  }
+  };
 }
 
 export default SeveraResponsePhases;
