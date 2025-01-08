@@ -21,6 +21,7 @@ const removeUserAttributeHandler: APIGatewayProxyHandler = async (
         body: JSON.stringify({ message: "Missing required path parameters: 'id' or  valid 'attributeName'." }),
       };
     }
+    
     if (attributeName !== 'isSeveraOptIn') {
       return {
         statusCode: 403,
