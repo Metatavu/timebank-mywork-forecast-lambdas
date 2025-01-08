@@ -22,6 +22,7 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const { dayBeforeYesterday } = previousWorkDays;
     const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates(dayBeforeYesterday);
     const severaUsers = await severaApi.getOptInUsers() as SeveraResponseUser[];
+    // const workWeek = await severaApi.getWorkWeek(severaUsers, weekStartDate);
     const slackUsers = await SlackUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(weekStartDate);
     const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
@@ -31,14 +32,13 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
 
     const personTotalTimes: WeeklyCombinedData[] = [];
 
-    for (const timebankUser of timebankUsers) {
+    for (const severaUser of severaUsers) {
       const personTotalTime = await TimeBankApiProvider.getPersonTotalEntries(
         Timespan.WEEK,
-        timebankUser,
+        severaUser,
         weekStartDate.year,
         weekStartDate.month,
         weekEndDate.weekNumber,
-        accessToken
       );
       if (personTotalTime) {
         personTotalTimes.push(personTotalTime);

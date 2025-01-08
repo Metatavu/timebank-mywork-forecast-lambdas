@@ -21,6 +21,7 @@ export interface SeveraApiService {
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
   getOptInUsers: () => Promise<SeveraResponseUser[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
+  getWorkWeek: (severaUserId: string, weekStartDate: number) => Promise<SeveraResponseWorkDays[]>;
 }
 
 /**
@@ -148,6 +149,36 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const endDate = isProduction ? today : "2024-11-26";
 
       const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${startDate}&endDate=${endDate}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch workdays: ${response.status} - ${response.statusText}`,
+        );
+      }
+      return response.json();
+    },
+
+    /**
+     * Gets Work week from Severa
+     * 
+     * @param severaUserId Severa user id
+     * @returns Workdays of a user
+     */
+    getWorkWeek: async (severaUserId: string, weekStartDate: number) => {
+
+      const today = DateTime.now().toISODate();
+      const isProduction = process.env.NODE_ENV === "production";
+      const endDate = isProduction ? today : "2024-11-26";
+
+      const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${weekStartDate}&endDate=${endDate}`;
 
       const response = await fetch(url, {
         method: "GET",
