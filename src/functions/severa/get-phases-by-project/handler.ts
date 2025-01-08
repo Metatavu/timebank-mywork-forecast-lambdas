@@ -37,7 +37,7 @@ export const getPhasesHandler: APIGatewayProxyHandler = async (event) => {
         isCompleted: phases.isCompleted,
         workHoursEstimate: phases.workHoursEstimate,
         startDate: phases.startDate,
-        deadLine: phases.deadline,
+        deadline: phases.deadline,
         project: {
           severaProjectId: phases.project.guid,
           name: phases.project.name,
