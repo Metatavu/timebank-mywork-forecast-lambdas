@@ -46,36 +46,3 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
 };
 
 export const main = middyfy(updateUserAttributeHandler);
-
-
-/*   try {
-    if (!event.body) {
-      throw new Error("Request body is missing.");
-    }
-
-    const body = JSON.parse(JSON.stringify(event.body));
-    const { id, attribute } = body;
-
-     if (!id || !attribute || typeof attribute !== "object") {
-      throw new Error("Missing or invalid body parameters: id, attributes.");
-    }
- 
-    const api = CreateKeycloakApiService();
-
-    if (!attribute.isActive) {
-      attribute.isActive = ["Active"];
-    }
-
-    await api.updateUserAttribute(id, attribute);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: "User attribute updated successfully." }),
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: error.message, stack: error.stack }),
-    };
-  } */
