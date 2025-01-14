@@ -7,7 +7,7 @@ interface PhaseModel {
   isCompleted: boolean;
   workHoursEstimate: number;
   startDate: Date;
-  deadLine: Date;
+  deadline: Date;
   project: PhaseProjectModel;
 }
 
