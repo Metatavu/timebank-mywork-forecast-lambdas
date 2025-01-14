@@ -1,9 +1,6 @@
 import { type ValidatedAPIGatewayProxyEvent, type ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, type WeeklyHandlerResponse } from "src/libs/api-gateway";
-import ForecastApiUtilities from "src/meta-assistant/forecastapi/forecast-api";
 import TimeUtilities from "src/meta-assistant/generic/time-utils";
 import SlackUtilities from "src/meta-assistant/slack/slack-utils";
-import TimeBankApiProvider from "src/meta-assistant/timebank/timebank-api";
-import TimebankUtilities from "src/meta-assistant/timebank/timebank-utils";
 import { CreateSeveraApiService } from "src/services/severa-api-service";
 import type SeveraResponseUser from "src/types/severa/user/severaResponseUser";
 import type schema from "src/types/meta-assistant/index";
@@ -22,10 +19,7 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const { dayBeforeYesterday } = previousWorkDays;
     const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates(dayBeforeYesterday);
     const severaUsers = await severaApi.getOptInUsers() as SeveraResponseUser[];
-    // const workWeek = await severaApi.getWorkWeek(severaUsers, weekStartDate);
     const slackUsers = await SlackUtilities.getSlackUsers();
-    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(weekStartDate);
-    const nonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
     if (!severaUsers) {
       throw new Error("No users retrieved from Severa");
     }
@@ -33,17 +27,14 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const personTotalTimes: WeeklyCombinedData[] = [];
 
     for (const severaUser of severaUsers) {
-      const personTotalTime = await TimeBankApiProvider.getPersonTotalEntries(
-        Timespan.WEEK,
-        severaUser,
-        weekStartDate.year,
-        weekStartDate.month,
-        weekEndDate.weekNumber,
-      );
-      if (personTotalTime) {
-        personTotalTimes.push(personTotalTime);
+      const workWeek = await severaApi.getWorkWeek(severaUser.guid);
+      if (workWeek) {
+        personTotalTimes.push(severaUser.firstName);
+        personTotalTimes.push(workWeek);
       }
     }
+
+    console.log("personTotalTimes", personTotalTimes);
 
     const weeklyCombinedData = TimebankUtilities.combineWeeklyData(personTotalTimes, slackUsers);
 
