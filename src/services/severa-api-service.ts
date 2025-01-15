@@ -22,6 +22,7 @@ export interface SeveraApiService {
   getOptInUsers: () => Promise<SeveraResponseUser[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
   getWorkWeek: (severaUserId: string) => Promise<SeveraResponseWorkDays[]>;
+  getPreviousWeekHours: (severaUserId: string) => Promise<SeveraResponsePreviousWorkHours[]>;
 }
 
 /**
@@ -256,6 +257,35 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const endDate = isProduction ? today : "2024-11-26";
 
       const url = `${baseUrl}/v1/workhours?eventDateStart=${startDate}&eventDateEnd=${endDate}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch work hours: ${response.status} - ${response.statusText}`,
+        );
+      }
+      return response.json();
+    },
+
+    /**
+     * Gets previous workweeks Workhours from Severa
+     */
+    getPreviousWeekHours: async (severaUserId: string) => {
+      const weekAgo = DateTime.now().minus({ days: 7 }).toISODate();
+      const today = DateTime.now().toISODate();
+      const isProduction = process.env.NODE_ENV === "production";
+      const startDate = isProduction ? weekAgo : "2024-11-19";
+      const endDate = isProduction ? today : "2024-11-26";
+
+      const url = `${baseUrl}/v1/users/${severaUserId}/workhours?eventDateStart=${startDate}&eventDateEnd=${endDate}`;
 
       const response = await fetch(url, {
         method: "GET",

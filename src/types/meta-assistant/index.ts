@@ -34,13 +34,12 @@ export interface DailyCombinedData {
  * WeeklyCombinedData interface
  */
 export interface WeeklyCombinedData {
-  selectedWeek: PersonTotalTime;
-  name: string;
   firstName: string;
   slackId?: string;
-  userId: number;
-  expectedHours: number;
+  totalExpectedHours: number;
+  totalEnteredHours: number;
   minimumBillableRate: number;
+  projectTime: number;
 }
 
 /**

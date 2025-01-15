@@ -28,17 +28,31 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
 
     for (const severaUser of severaUsers) {
       const workWeek = await severaApi.getWorkWeek(severaUser.guid);
+      const workWeekHours = await severaApi.getPreviousWeekHours(severaUser.guid)
+      let totalWorkHours = 0;
+      let totalExpectedHours = 0;
+      let totalProjectTime = 0;
       if (workWeek) {
-        personTotalTimes.push(severaUser.firstName);
-        personTotalTimes.push(workWeek);
+        for (const day of workWeek) {
+          totalWorkHours += day.enteredHours;
+          totalExpectedHours += day.expectedHours;
+        }
+        for (const day of workWeekHours) {
+          totalProjectTime += day.quantity;
+        }
+        personTotalTimes.push({
+          firstName: severaUser.firstName,
+          totalExpectedHours: totalExpectedHours,
+          totalEnteredHours: totalWorkHours,
+          minimumBillableRate: 75,
+          projectTime: totalProjectTime
+        });
       }
     }
 
     console.log("personTotalTimes", personTotalTimes);
 
-    const weeklyCombinedData = TimebankUtilities.combineWeeklyData(personTotalTimes, slackUsers);
-
-    const messagesSent = await SlackUtilities.postWeeklyMessageToUsers(weeklyCombinedData, timeRegistrations, previousWorkDays, nonProjectTimes);
+    const messagesSent = await SlackUtilities.postWeeklyMessageToUsers(personTotalTimes, previousWorkDays);
 
     const errors = messagesSent.filter(messageSent => messageSent.response.error);
 
