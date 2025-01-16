@@ -97,6 +97,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
       };
 
       try {
+        console.log("Updating user attributes: ", bodyContent);
         const response = await fetch(
           `${baseUrl}/admin/realms/${realm}/users/${id}`,
           {

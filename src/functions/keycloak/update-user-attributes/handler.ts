@@ -41,7 +41,7 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
 
   const severaUser = await severaApi.getUserbyId(id);
 
-  if (!severaUser || !severaUser.id) {
+  if (!severaUser || !severaUser.guid) {
     return {
       statusCode: 404,
       body: JSON.stringify({ message: "Severa user not found." }),

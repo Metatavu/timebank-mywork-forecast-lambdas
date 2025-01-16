@@ -8,7 +8,6 @@ import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllo
 import type SeveraResponsePreviousWorkHours from "src/types/severa/previousWorkHours/severaResponsePreviousWorkHours";
 import type SeveraResponseWorkDays from "src/types/severa/workDays/severaResponseWorkDays";
 import type SeveraResponseUser from "src/types/severa/user/severaResponseUser";
-import type UserModel from "src/types/severa/user/user";
 
 /**
  * Interface for a SeveraApiService.
@@ -22,7 +21,7 @@ export interface SeveraApiService {
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
   getOptInUsers: () => Promise<SeveraResponseUser[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
-  getUserbyId: (severaUserId: string) => Promise <UserModel>;
+  getUserbyId: (severaUserId: string) => Promise <SeveraResponseUser>;
 }
 
 /**
