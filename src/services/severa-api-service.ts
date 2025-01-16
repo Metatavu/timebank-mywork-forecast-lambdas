@@ -8,6 +8,7 @@ import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllo
 import type SeveraResponsePreviousWorkHours from "src/types/severa/previousWorkHours/severaResponsePreviousWorkHours";
 import type SeveraResponseWorkDays from "src/types/severa/workDays/severaResponseWorkDays";
 import type SeveraResponseUser from "src/types/severa/user/severaResponseUser";
+import type UserModel from "src/types/severa/user/user";
 
 /**
  * Interface for a SeveraApiService.
@@ -21,6 +22,7 @@ export interface SeveraApiService {
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
   getOptInUsers: () => Promise<SeveraResponseUser[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
+  getUserbyId: (severaUserId: string) => Promise <UserModel>;
 }
 
 /**
@@ -53,6 +55,30 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       if (!response.ok) {
         throw new Error(
           `Failed to fetch flextime: ${response.status} - ${response.statusText}`,
+        );
+      }
+      return response.json();
+    },
+
+
+    getUserbyId: async (severaUserId: string)=> {
+      const url = `${baseUrl}/v1/users/${severaUserId}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+    
+      if (!response.ok) {
+        const errorDetails = await response.text(); // Hakee virheviestin
+        console.error(`Failed to fetch user by ID: ${response.status} - ${response.statusText}`);
+        console.error("Error details:", errorDetails);
+        throw new Error(
+          `Failed to fetch user by ID: ${response.status} - ${response.statusText}`,
         );
       }
       return response.json();
@@ -257,7 +283,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "projects:read, resourceallocations:read, hours:read, users:read",
+    scope: "projects:read, resourceallocations:read, hours:read, users:read, users:write",
   };
 
   try {

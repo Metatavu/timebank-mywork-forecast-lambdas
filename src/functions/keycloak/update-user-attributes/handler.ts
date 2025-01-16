@@ -1,7 +1,7 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
 import { middyfy } from "src/libs/lambda";
-
+import { CreateSeveraApiService } from "src/services/severa-api-service";
 /**
  * Lambda handler to update a user's attributes
  * 
@@ -19,11 +19,34 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
   const body = JSON.parse(JSON.stringify(event.body));
   const { id, attribute } = body;
 
+  const allowedKeys = ["isSeveraOptIn"]
+
   if (!id || !attribute || typeof attribute !== "object") {
-    throw new Error("Missing or invalid body parameters: id, attributes.");
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: "Missing or invalid parameters: 'id' or 'attribute'." }),
+    };
+  }
+
+  const keys = Object.keys(attribute);
+  if (!keys.every(key => allowedKeys.includes(key))) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: "Attributes contain invalid keys." }),
+    };
   }
 
   const api = CreateKeycloakApiService();
+  const severaApi = CreateSeveraApiService()
+
+  const severaUser = await severaApi.getUserbyId(id);
+
+  if (!severaUser || !severaUser.id) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ message: "Severa user not found." }),
+    };
+  }
 
   if (!attribute.isActive) {
     attribute.isActive = ["Active"];
