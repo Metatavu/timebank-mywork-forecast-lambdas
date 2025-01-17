@@ -10,21 +10,21 @@ import { CreateSeveraApiService } from "src/services/severa-api-service";
  */
 const updateUserAttributeHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
-) => { 
+  ) => { 
   try {
   if (!event.body) {
     throw new Error("Request body is missing.");
   }
 
   const body = JSON.parse(JSON.stringify(event.body));
-  const { id, attribute } = body;
+  const { email, attribute } = body;
 
   const allowedKeys = ["isSeveraOptIn"]
 
-  if (!id || !attribute || typeof attribute !== "object") {
+  if (!email || !attribute || typeof attribute !== "object") {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: "Missing or invalid parameters: 'id' or 'attribute'." }),
+      body: JSON.stringify({ message: "Missing or invalid parameters: 'email' or 'attribute'." }),
     };
   }
 
@@ -39,7 +39,7 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
   const api = CreateKeycloakApiService();
   const severaApi = CreateSeveraApiService()
 
-  const severaUser = await severaApi.getUserbyId(id);
+  const severaUser = await severaApi.getUserByEmail(email);
 
   if (!severaUser || !severaUser.guid) {
     return {
@@ -52,7 +52,7 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
     attribute.isActive = ["Active"];
   }
 
-  await api.updateUserAttribute(id, attribute);
+  await api.updateUserAttribute(email, attribute);
 
   return {
     statusCode: 200,

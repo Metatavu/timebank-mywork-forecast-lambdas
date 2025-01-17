@@ -21,7 +21,7 @@ export interface SeveraApiService {
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
   getOptInUsers: () => Promise<SeveraResponseUser[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
-  getUserbyId: (severaUserId: string) => Promise <SeveraResponseUser>;
+  getUserByEmail: (email: string) => Promise <SeveraResponseUser>;
 }
 
 /**
@@ -58,10 +58,14 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       }
       return response.json();
     },
-
-
-    getUserbyId: async (severaUserId: string)=> {
-      const url = `${baseUrl}/v1/users/${severaUserId}`;
+    /**
+     *  Get severa user email
+     * 
+     * @param email severa email
+     * @returns email
+     */
+    getUserByEmail: async (email: string)=> {
+      const url = `${baseUrl}/v1/users?email=${encodeURIComponent(email)}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -73,14 +77,19 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       });
     
       if (!response.ok) {
-        const errorDetails = await response.text(); // Hakee virheviestin
-        console.error(`Failed to fetch user by ID: ${response.status} - ${response.statusText}`);
+        const errorDetails = await response.text();
+        console.error(`Failed to fetch user by email: ${response.status} - ${response.statusText}`);
         console.error("Error details:", errorDetails);
         throw new Error(
-          `Failed to fetch user by ID: ${response.status} - ${response.statusText}`,
+          `Failed to fetch user by email: ${response.status} - ${response.statusText}`,
         );
       }
-      return response.json();
+    
+      const users = await response.json();
+      if (!users || users.length === 0) {
+        throw new Error(`No user found with email: ${email}`);
+      }
+      return users[0];
     },
 
     /** 

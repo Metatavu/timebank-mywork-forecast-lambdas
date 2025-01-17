@@ -13,7 +13,7 @@ export interface CustomKeycloakProfile extends KeycloakProfile {
 export interface KeycloakApiService {
   getUsers: () => Promise<CustomKeycloakProfile[]>;
   findUser: (id: string) => Promise<CustomKeycloakProfile>;
-  updateUserAttribute: (id: string, attribute: Record<string, string[]>) => Promise<void>;
+  updateUserAttribute: (email: string, attribute: Record<string, string[]>) => Promise<void>;
   removeUserAttribute: (id: string, attributeName:string) => Promise<void>;
 }
 
@@ -85,38 +85,58 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
     /**
      * Updates a user's attributes
      * 
-     * @param id string
+     * @param email string
      * @param attributes  Record<string, string[]>
      */
     updateUserAttribute: async (
-      id: string,
-      attributes: Record<string, string[]> 
+      email: string,
+      attributes: Record<string, string[]>
     ): Promise<void> => {
-      const bodyContent = {
-        attributes: attributes,
-      };
-
       try {
-        console.log("Updating user attributes: ", bodyContent);
-        const response = await fetch(
-          `${baseUrl}/admin/realms/${realm}/users/${id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${await getAccessToken()}`, 
-            },
-            body: JSON.stringify(bodyContent),
-          }
-        );
+        const userIdResponse = await fetch(`${baseUrl}/admin/realms/${realm}/users?email=${encodeURIComponent(email)}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${await getAccessToken()}`,
+          },
+        });
     
-        if (!response.ok) {
-          const errorText = await response.text();
+        if (!userIdResponse.ok) {
+          const errorText = await userIdResponse.text();
           throw new Error(
-            `Failed to update user attribute: ${response.status} - ${response.statusText}. Details: ${errorText}`
+            `Failed to fetch user ID: ${userIdResponse.status} - ${userIdResponse.statusText}. Details: ${errorText}`
           );
         }
-
+    
+        const users = await userIdResponse.json();
+    
+        if (!users || users.length === 0) {
+          throw new Error(`No user found with email: ${email}`);
+        }
+    
+        const userId = users[0].id;
+    
+        const bodyContent = {
+          attributes: attributes,
+        };
+    
+        console.log("Updating user attributes: ", bodyContent);
+    
+        const updateResponse = await fetch(`${baseUrl}/admin/realms/${realm}/users/${userId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${await getAccessToken()}`,
+          },
+          body: JSON.stringify(bodyContent),
+        });
+    
+        if (!updateResponse.ok) {
+          const errorText = await updateResponse.text();
+          throw new Error(
+            `Failed to update user attribute: ${updateResponse.status} - ${updateResponse.statusText}. Details: ${errorText}`
+          );
+        }
       } catch (error) {
         throw new Error(
           error instanceof Error
