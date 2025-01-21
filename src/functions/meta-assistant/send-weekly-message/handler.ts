@@ -45,14 +45,17 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
           totalExpectedHours: totalExpectedHours,
           totalEnteredHours: totalWorkHours,
           minimumBillableRate: 75,
-          projectTime: totalProjectTime
+          projectTime: totalProjectTime,
+          week: weekStartDate.weekNumber,
+          startDate: weekStartDate.toISODate(),
+          endDate: weekEndDate.toISODate()
         });
       }
     }
 
     console.log("personTotalTimes", personTotalTimes);
 
-    const messagesSent = await SlackUtilities.postWeeklyMessageToUsers(personTotalTimes, previousWorkDays);
+    const messagesSent = await SlackUtilities.postWeeklyMessageToUsers(personTotalTimes);
 
     const errors = messagesSent.filter(messageSent => messageSent.response.error);
 

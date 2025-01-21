@@ -242,12 +242,12 @@ Have a great week!
    */
   export const postWeeklyMessageToUsers = async (
     weeklyCombinedData: WeeklyCombinedData[],
-    timeRegistrations:TimeRegistrations[],
-    previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]
+    // timeRegistrations:TimeRegistrations[],
+    // previousWorkDays: PreviousWorkdayDates,
+    // nonProjectTimes: NonProjectTime[]
   ): Promise<WeeklyMessageResult[]> => {
     const { weekStartDate, weekEndDate } = TimeUtilities.getlastWeeksDates();
-    const { yesterday, today } = previousWorkDays;
+    // const { yesterday, today } = previousWorkDays;
 
     const messageResults: WeeklyMessageResult[] = [];
 

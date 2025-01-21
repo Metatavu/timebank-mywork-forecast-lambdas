@@ -40,6 +40,9 @@ export interface WeeklyCombinedData {
   totalEnteredHours: number;
   minimumBillableRate: number;
   projectTime: number;
+  week?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 /**
