@@ -178,8 +178,8 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const today = DateTime.now().toISODate();
       const weekAgo = DateTime.now().minus({ days: 7 }).toISODate();
       const isProduction = process.env.NODE_ENV === "production";
-      const endDate = isProduction ? today : "2024-11-26";
-      const startDate = isProduction ? weekAgo : "2024-11-19";
+      const endDate = isProduction ? today : "2025-01-20";
+      const startDate = isProduction ? weekAgo : "2025-01-13";
 
       const url = `${baseUrl}/v1/users/${severaUserId}/workdays?startDate=${startDate}&endDate=${endDate}`;
 
@@ -282,8 +282,8 @@ export const CreateSeveraApiService = (): SeveraApiService => {
       const weekAgo = DateTime.now().minus({ days: 7 }).toISODate();
       const today = DateTime.now().toISODate();
       const isProduction = process.env.NODE_ENV === "production";
-      const startDate = isProduction ? weekAgo : "2024-11-19";
-      const endDate = isProduction ? today : "2024-11-26";
+      const startDate = isProduction ? weekAgo : "2025-01-13";
+      const endDate = isProduction ? today : "2025-01-20";
 
       const url = `${baseUrl}/v1/users/${severaUserId}/workhours?eventDateStart=${startDate}&eventDateEnd=${endDate}`;
 
