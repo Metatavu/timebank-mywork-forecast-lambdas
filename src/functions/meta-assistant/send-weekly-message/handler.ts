@@ -55,7 +55,7 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
 
     console.log("personTotalTimes", personTotalTimes);
 
-    const messagesSent = await SlackUtilities.postWeeklyMessageToUsers(personTotalTimes);
+    const messagesSent = await SlackUtilities.postWeeklyMessageToUsers(personTotalTimes, previousWorkDays);
 
     const errors = messagesSent.filter(messageSent => messageSent.response.error);
 

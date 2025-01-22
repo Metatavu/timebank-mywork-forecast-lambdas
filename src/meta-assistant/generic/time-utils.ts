@@ -68,8 +68,8 @@ namespace TimeUtilities {
    */
   export const checkIfVacationCaseExists = (
     personId: number,
-    timeRegistrations: TimeRegistrations[],
-    nonProjectTimes: NonProjectTime[],
+    // timeRegistrations: TimeRegistrations[],
+    // nonProjectTimes: NonProjectTime[],
     startDate: DateTime,
     endDate: DateTime
   ) => {  
@@ -98,11 +98,11 @@ namespace TimeUtilities {
    * @returns false if can't find a time registration
    */
   export const checkIfUserShouldRecieveMessage = (
-    timeRegistrations: TimeRegistrations[],
+    // timeRegistrations: TimeRegistrations[],
     personId: number,
     expected: number,
     date: string,
-    nonProjectTimes: NonProjectTime[]
+    // nonProjectTimes: NonProjectTime[]
   ): boolean => {
     const personsTimeRegistration = timeRegistrations.find(timeRegistration =>
       timeRegistration.person === personId
