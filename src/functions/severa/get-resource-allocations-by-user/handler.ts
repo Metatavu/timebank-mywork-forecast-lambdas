@@ -5,7 +5,7 @@ import type ResourceAllocationModel from "src/types/severa/resourceAllocation/re
 import type SeveraResponseResourceAllocation from "src/types/severa/resourceAllocation/severaResponseResourceAllocation";
 
 /**
- * Handler for getting all resourceAllocation from Severa API .
+ * Handler for getting all resourceAllocation from Severa API.
  * 
  * @param event - API Gateway event containing the severaUserId as queryParams.
  */
