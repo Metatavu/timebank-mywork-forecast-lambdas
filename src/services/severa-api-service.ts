@@ -84,6 +84,7 @@ export const CreateSeveraApiService = (): SeveraApiService => {
           `Failed to fetch user by email: ${response.status} - ${response.statusText}`,
         );
       }
+      
     
       const users = await response.json();
       if (!users || users.length === 0) {

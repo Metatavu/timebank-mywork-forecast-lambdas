@@ -94,6 +94,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
     ): Promise<void> => {
       try {
         const userIdResponse = await fetch(`${baseUrl}/admin/realms/${realm}/users?email=${encodeURIComponent(email)}`, {
+          
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -107,7 +108,7 @@ export const CreateKeycloakApiService = (): KeycloakApiService => {
             `Failed to fetch user ID: ${userIdResponse.status} - ${userIdResponse.statusText}. Details: ${errorText}`
           );
         }
-    
+        console.log("Looking up user by email:", email);
         const users = await userIdResponse.json();
     
         if (!users || users.length === 0) {

@@ -2,6 +2,8 @@ import type { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { CreateKeycloakApiService } from "src/database/services/keycloak-api-service";
 import { middyfy } from "src/libs/lambda";
 import { CreateSeveraApiService } from "src/services/severa-api-service";
+
+
 /**
  * Lambda handler to update a user's attributes
  * 
@@ -39,7 +41,17 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
   const api = CreateKeycloakApiService();
   const severaApi = CreateSeveraApiService()
 
-  const severaUser = await severaApi.getUserByEmail(email);
+  let severaUser: { email: string, guid: string } | null = null
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("Current NODE_ENV:", process.env.NODE_ENV);
+    severaUser = { email: "test-user@example.com", guid: process.env.SEVERA_TEST_USER_GUID };
+    console.log("Using test user for development environment:", severaUser);
+  } else {
+    console.log("Looking up Severa user by email:", email);
+    severaUser = await severaApi.getUserByEmail(email);
+    console.log("Found user from Severa:", severaUser);
+  }
 
   if (!severaUser || !severaUser.guid) {
     return {
