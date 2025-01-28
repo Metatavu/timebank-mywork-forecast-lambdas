@@ -6,7 +6,7 @@ export default {
     {
       httpApi: {
         method: "put",
-        path: "/users/{email}",
+        path: "/users/{id}",
         authorizer: {
           name: "timebankKeycloakAuthorizer",
         },

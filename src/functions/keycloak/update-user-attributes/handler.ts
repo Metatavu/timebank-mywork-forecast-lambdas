@@ -19,14 +19,14 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
   }
 
   const body = JSON.parse(JSON.stringify(event.body));
-  const { email, attribute } = body;
+  const { id, attribute } = body;
 
   const allowedKeys = ["isSeveraOptIn"]
 
-  if (!email || !attribute || typeof attribute !== "object") {
+  if (!id || !attribute || typeof attribute !== "object") {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: "Missing or invalid parameters: 'email' or 'attribute'." }),
+      body: JSON.stringify({ message: "Missing or invalid parameters: 'id' or 'attribute'." }),
     };
   }
 
@@ -39,17 +39,17 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
   }
 
   const api = CreateKeycloakApiService();
-  const severaApi = CreateSeveraApiService()
+ /*  const severaApi = CreateSeveraApiService() */
 
-  let severaUser: { email: string, guid: string } | null = null
+ /*  let severaUser: { email: string, guid: string } | null = null
 
   if (process.env.NODE_ENV === "development") {
     console.log("Current NODE_ENV:", process.env.NODE_ENV);
     severaUser = { email: "test-user@example.com", guid: process.env.SEVERA_TEST_USER_GUID };
     console.log("Using test user for development environment:", severaUser);
   } else {
-    console.log("Looking up Severa user by email:", email);
-    severaUser = await severaApi.getUserByEmail(email);
+    console.log("Looking up Severa user by Keycloak ID::", id);
+    severaUser = await severaApi.getUserByEmail(id);
     console.log("Found user from Severa:", severaUser);
   }
 
@@ -59,12 +59,12 @@ const updateUserAttributeHandler: APIGatewayProxyHandler = async (
       body: JSON.stringify({ message: "Severa user not found." }),
     };
   }
-
+ */
   if (!attribute.isActive) {
     attribute.isActive = ["Active"];
   }
 
-  await api.updateUserAttribute(email, attribute);
+  await api.updateUserAttribute(id, attribute);
 
   return {
     statusCode: 200,
