@@ -21,6 +21,7 @@ export interface SeveraApiService {
   getWorkDays: (severaUserId: string) => Promise<SeveraResponseWorkDays>;
   getOptInUsers: () => Promise<SeveraResponseUser[]>;
   getResourceAllocations: () => Promise<SeveraResponseResourceAllocation>;
+  getUserByEmail: (email: string) => Promise <SeveraResponseUser>;
 }
 
 /**
@@ -56,6 +57,40 @@ export const CreateSeveraApiService = (): SeveraApiService => {
         );
       }
       return response.json();
+    },
+    /**
+     *  Get severa user email
+     * 
+     * @param email severa email
+     * @returns email
+     */
+    getUserByEmail: async (email: string)=> {
+      const url = `${baseUrl}/v1/users?email=${encodeURIComponent(email)}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${await getSeveraAccessToken()}`,
+          "Client_Id": process.env.SEVERA_DEMO_CLIENT_ID,
+          "Content-Type": "application/json",
+        },
+      });
+    
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        console.error(`Failed to fetch user by email: ${response.status} - ${response.statusText}`);
+        console.error("Error details:", errorDetails);
+        throw new Error(
+          `Failed to fetch user by email: ${response.status} - ${response.statusText}`,
+        );
+      }
+      
+    
+      const users = await response.json();
+      if (!users || users.length === 0) {
+        throw new Error(`No user found with email: ${email}`);
+      }
+      return users[0];
     },
 
     /** 
@@ -256,7 +291,7 @@ const getSeveraAccessToken = async (): Promise<string> => {
   const requestBody = {
     client_id: client_Id,
     client_secret: client_Secret,
-    scope: "projects:read, resourceallocations:read, hours:read, users:read",
+    scope: "projects:read, resourceallocations:read, hours:read, users:read, users:write",
   };
 
   try {
